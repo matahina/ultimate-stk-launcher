@@ -41,7 +41,7 @@ def update_extra_files():
     response = request.urlretrieve("https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_cake.xml", os.path.expanduser('~')+"/.config/ustkl/"+"powerup_cake.xml")
     response = request.urlretrieve("https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_gums.xml", os.path.expanduser('~')+"/.config/ustkl/"+"powerup_gums.xml")
     response = request.urlretrieve("https://stk.kimden.online/public/powerup_mimiz.xml", os.path.expanduser('~')+"/.config/ustkl/"+"powerup_random.xml")
-    response = request.urlretrieve("https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_rebalanced.xml", os.path.expanduser('~')+"/.config/ustkl/"+"powerup_rebalanced.xml")
+    response = request.urlretrieve("https://stk.kimden.online/public/rebalanced.xml", os.path.expanduser('~')+"/.config/ustkl/"+"powerup_rebalanced.xml")
     response = request.urlretrieve("https://stk.kimden.online/public/0104.xml", os.path.expanduser('~')+"/.config/ustkl/"+"powerup_aprilfool.xml")
     response = request.urlretrieve("https://raw.githubusercontent.com/supertuxkart/stk-code/1.3/data/emoji_used.txt", os.path.expanduser('~')+"/.config/ustkl/"+"emoji_used.txt")
     
@@ -194,9 +194,9 @@ def goo():
     print("6) YEET (Iluvatyr)")
     print("7) April 1st (mimiz)")
     print("")
-    key_answer = input("Pls tell me: ")
+    super_key_answer = input("Pls tell me: ")
     
-    if key_answer not in ["1","2","3","4","5","6","7"]:
+    if super_key_answer not in ["1","2","3","4","5","6","7"]:
         goo()
         
     print("")
@@ -220,6 +220,24 @@ def goo():
     if config.get("Profile_"+str(key_answer),"type") == "sudo":
         prefix = "sudo "
     
+    print("")
+    print(color.BOLD + color.CYAN + "Do you wanna debüg today?".upper() + color.END)
+    print("")
+    print("1) NÖ (default)")
+    print("2) Checklines")
+    print("3) Drivelines")
+    print("4) CHecklines AND Drivelines")
+    print("")
+    key_answer = input("Pls tell me: ")
+    
+    suffix = ""
+    if key_answer == 2:
+        suffix = "--check-debug "
+    if key_answer == 3:
+        suffix = "--track-debug "
+    if key_answer == 4:
+        suffix = "--check-debug --track-debug "
+        
     if config.get("General","kde_openbox_stuff") == "yes":
         print("KDE STUFF")
         os.system("killall -9 plasmashell &>/dev/null")
@@ -233,23 +251,24 @@ def goo():
     
     print("Using the choosen powerup file")
     kfile="kart_characteristics_orig.xml"
-    if key_answer == "1":
+    if super_key_answer == "1":
         pfile = "powerup_orig.xml"
-    if key_answer == "2":
+    if super_key_answer == "2":
         pfile = "powerup_random.xml"
-    if key_answer == "3":
+    if super_key_answer == "3":
         pfile = "powerup_rebalanced.xml"
-    if key_answer == "4":
+    if super_key_answer == "4":
         pfile = "powerup_cake.xml"
-    if key_answer == "5":
+    if super_key_answer == "5":
         pfile = "powerup_gums.xml"
-    if key_answer == "6":
+    if super_key_answer == "6":
         pfile = "powerup_yeet.xml"
         kfile = "kart_characteristics_yeet.xml"
-    if key_answer == "7":
+    if super_key_answer == "7":
         pfile = "powerup_aprilfool.xml"
     print("Using the choosen powerup file")
     os.chdir(config.get("Profile_"+str(key_answer), 'data_path'))
+    print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+pfile+" powerup.xml")
     os.system(prefix+"rm powerup.xml")
     os.system(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+pfile+" powerup.xml")
     os.system(prefix+"rm kart_characteristics.xml")
