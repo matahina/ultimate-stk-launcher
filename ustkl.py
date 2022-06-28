@@ -232,11 +232,11 @@ def goo():
     
     suffix = ""
     if key_answer == 2:
-        suffix = "--check-debug "
+        suffix = " --check-debug "
     if key_answer == 3:
-        suffix = "--track-debug "
+        suffix = " --track-debug "
     if key_answer == 4:
-        suffix = "--check-debug --track-debug "
+        suffix = " --check-debug --track-debug "
         
     if config.get("General","kde_openbox_stuff") == "yes":
         print("KDE STUFF")
@@ -275,10 +275,10 @@ def goo():
     os.system(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
     
     os.chdir(os.path.dirname( config.get("Profile_"+str(key_answer), 'bin_path')  ))
-    suffix = ""
+    suffixbis = ""
     if config.get("General", 'echoing_stdout') != "":
-        suffix = " | tee -a "+config.get("General", 'echoing_stdout')
-    os.system("."+config.get("Profile_"+str(key_answer), 'bin_path').replace(os.path.dirname( config.get("Profile_"+str(key_answer), 'bin_path')  ),'') + suffix)
+        suffixbis = " | tee -a "+config.get("General", 'echoing_stdout')
+    os.system("."+config.get("Profile_"+str(key_answer), 'bin_path').replace(os.path.dirname( config.get("Profile_"+str(key_answer), 'bin_path')  ),'') + suffix + suffixbis)
     
     if config.get("General","kde_openbox_stuff") == "yes":
         print("KDE STUFF")
