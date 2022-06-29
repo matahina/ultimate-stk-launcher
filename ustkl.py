@@ -228,14 +228,14 @@ def goo():
     print("3) Drivelines")
     print("4) CHecklines AND Drivelines")
     print("")
-    key_answer = input("Pls tell me: ")
+    new_key_answer = input("Pls tell me: ")
     
     suffix = ""
-    if key_answer == 2:
+    if new_key_answer == "2":
         suffix = " --check-debug "
-    if key_answer == 3:
+    if new_key_answer == "3":
         suffix = " --track-debug "
-    if key_answer == 4:
+    if new_key_answer == "4":
         suffix = " --check-debug --track-debug "
         
     if config.get("General","kde_openbox_stuff") == "yes":
@@ -278,6 +278,7 @@ def goo():
     suffixbis = ""
     if config.get("General", 'echoing_stdout') != "":
         suffixbis = " | tee -a "+config.get("General", 'echoing_stdout')
+    #print("\n\n\n\n"+"."+config.get("Profile_"+str(key_answer), 'bin_path').replace(os.path.dirname( config.get("Profile_"+str(key_answer), 'bin_path')  ),'') + suffix + suffixbis)
     os.system("."+config.get("Profile_"+str(key_answer), 'bin_path').replace(os.path.dirname( config.get("Profile_"+str(key_answer), 'bin_path')  ),'') + suffix + suffixbis)
     
     if config.get("General","kde_openbox_stuff") == "yes":
