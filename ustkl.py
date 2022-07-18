@@ -63,7 +63,7 @@ def edit_profile(number):
             print(color.BLUE + color.BOLD + "So, what kind of install is it (for this profile)?" + color.END)
             print("")
             print("1) distro-based (apt-get, rpm, pacman, emerge, whatever...)")
-            print("2) from git (for the bolds!)")
+            print("2) from git (for the bold!)")
             print("3) from a tarball (so locally, no sudo required to change any file)")
             print("")
             if i == 0:
@@ -111,12 +111,25 @@ def edit_profile(number):
         print()
         an_answer = input(color.BOLD + "Do you have custom sfx files? (very optional, only choose files with exact name and not already in sfx directory) [y/N] " + color.END)
         if (an_answer == "y"):
-            an_answer = subprocess.run(['zenity', '--file-selection', '--multiple', '--title=WHERE THE CUSTOM sfx FILES???'], stdout=subprocess.PIPE)
-            the_answers = an_answer.stdout.decode('utf-8').replace("\n","").split('|')
-            i=0
-            for ans in the_answers:
-                i+=1
-                config.set('General','sfx_file'+str(i),ans)
+            an_answer = subprocess.run(['zenity', '--file-selection', '--directory', '--title=WHERE THE CUSTOM sfx FILES???'], stdout=subprocess.PIPE)
+            config.set('General','sfx_files',an_answer.stdout.decode('utf-8').replace("\n","")+"/")
+            
+            filelist = []
+            path = config.get("General", 'sfx_files')
+            
+            for root, dirs, files in os.walk(path):
+                for file in files:
+                    #append the file name to the list
+                    filelist.append(os.path.join(root,file).replace(path,""))
+
+            #print all the file names
+            for name in filelist:
+                os.mkdir(os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number))
+                os.chdir(config.get("Profile_"+str(number), 'data_path'))
+                os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
+                os.chdir(config.get("Profile_"+str(number), 'svn_path'))
+                os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
+            
         
         with open(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini", 'w') as configfile:
             config.write(configfile)
@@ -165,10 +178,6 @@ def stk_update():
             print(color.RED + "UPDATING SVN" + color.END)
             os.system("svn up")
             base = dict(config.items("General"))
-            if len([value for key, value in base.items() if 'sfx_file' in key.lower()]) > 0:
-                print(color.RED + "REPLACING SFX FILES" + color.END)
-                for sfx in [value for key, value in base.items() if 'sfx_file' in key.lower()]:
-                    os.system("cp "+sfx+" "+config.get(real_matching[(int(key_answer) -1)], 'svn_path'))
             os.chdir(config.get(real_matching[(int(key_answer) -1)], 'git_path'))
             print(color.RED + "UPDATING GIT" + color.END)
             os.system("git pull")
@@ -243,11 +252,29 @@ def goo():
         os.system("killall -9 plasmashell &>/dev/null")
         os.system("openbox --replace &>/dev/null")
     
+    if config.get("Profile_"+str(key_answer),"type") == "git":
+        os.chdir(config.get("Profile_"+str(key_answer), 'git_path'))
+        os.system("git clean -f")
+    
     if config.get("General", 'emoji_file') != "":
         print("Using the choosen emoji_used file")
         os.chdir(config.get("Profile_"+str(key_answer), 'data_path'))
         os.system(prefix+"rm emoji_used.txt")
         os.system(prefix+"cp "+config.get("General", 'emoji_file')+" emoji_used.txt")
+    
+    if config.get("Profile_"+str(key_answer), 'svn_path') != "":
+        os.chdir(config.get("Profile_"+str(key_answer), 'svn_path'))
+        os.system("svn revert --recursive .")
+    
+    if config.get("General", 'sfx_files') != "":
+        os.chdir(config.get("General", 'sfx_files'))
+        the_path = config.get("Profile_"+str(key_answer), 'data_path')
+        os.system(prefix+"cp -R * "+the_path)
+        if config.get("Profile_"+str(key_answer), 'svn_path') != "":
+            the_path = config.get("Profile_"+str(key_answer), 'svn_path')
+        os.system(prefix+"cp -R * "+the_path)
+            
+        
     
     print("Using the choosen powerup file")
     kfile="kart_characteristics_orig.xml"
@@ -278,7 +305,6 @@ def goo():
     suffixbis = ""
     if config.get("General", 'echoing_stdout') != "":
         suffixbis = " | tee -a "+config.get("General", 'echoing_stdout')
-    #print("\n\n\n\n"+"."+config.get("Profile_"+str(key_answer), 'bin_path').replace(os.path.dirname( config.get("Profile_"+str(key_answer), 'bin_path')  ),'') + suffix + suffixbis)
     os.system("."+config.get("Profile_"+str(key_answer), 'bin_path').replace(os.path.dirname( config.get("Profile_"+str(key_answer), 'bin_path')  ),'') + suffix + suffixbis)
     
     if config.get("General","kde_openbox_stuff") == "yes":
@@ -304,6 +330,7 @@ def main(key_answer):
     print("1) Update STK from git and svn")
     print("2) Tweak your profiles")
     print("3) STÖÖÖÖRT STK")
+    print("4) Revert all changes made to git and svn (emoji file, sfx files, etc.)")
     print("")
     key_answer = input("Pls tell me: ")
     
@@ -314,6 +341,46 @@ def main(key_answer):
         print("At the moment, have fun at: "+os.path.expanduser('~')+"/.config/ustkl/magic_config.ini")
     elif key_answer == "3":
         goo()
+    elif key_answer == "4":
+        print("")
+        print(color.BOLD + color.CYAN + "Which profile do you want to clear today?".upper() + color.END)
+        print("(default: 1)")
+        print("")
+        
+        i=0
+        for elem in config.sections():
+            if elem != "General":
+                i+=1
+                print(str(i)+") "+elem+ " " + config.get(elem, 'name'))
+        print("")
+        key_answer = input("Pls tell me: ")
+        print("")
+        
+        if (int(key_answer) < 1) or (int(key_answer) > len(config.sections())):
+            key_answer = "1"
+        
+        prefix = ""
+        if config.get("Profile_"+str(key_answer),"type") == "sudo":
+            prefix = "sudo "
+        os.chdir(config.get("Profile_"+str(key_answer), 'git_path'))
+        os.system(prefix+"git clean -f")
+        if config.get("Profile_"+str(key_answer),'svn_path') != "":
+            os.chdir(config.get("Profile_"+str(key_answer), 'svn_path'))
+            os.system(prefix+"svn revert --recursive .")
+            
+        filelist = []
+        path = os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(key_answer)
+        
+        for root, dirs, files in os.walk(path):
+            for file in files:
+                #append the file name to the list
+                filelist.append(os.path.join(root,file).replace(path,""))
+
+        #print all the file names
+        for name in filelist:
+            os.chdir(path)
+            os.system(prefix+" cp --parents "+name+" "+config.get("Profile_"+str(key_answer), 'data_path'))
+            os.system(prefix+" cp --parents "+name+" "+config.get("Profile_"+str(key_answer), 'svn_path'))
     else:
         main(key_answer)
 
