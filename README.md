@@ -10,6 +10,11 @@ Where we are actually:
 - [ ] Making *emoji_used* file and *sfx* files _per profile_ and not in general section
 - [ ] Allowing to tweak profiles and to add new profiles (by example in case that both git and distro installations are available) without manually editing config file
 
+## Requirements
+
+- Python 3
+- data directory
+
 ## Getting started
 
 You're now gonna be able to launch STK with:
