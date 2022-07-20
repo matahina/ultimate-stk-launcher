@@ -1,6 +1,6 @@
 # Ultimate STK Launcher
 
-**Version 0.499beta1**
+**Version 0.499beta2**
 
 Where we are actually:
 
@@ -8,7 +8,10 @@ Where we are actually:
 - [x] Working with apt / rpm / system installations from distro package and using sudo thingie
 - [ ] Working with flatpak (AAAAAAHHHHHHHH!!!!!!!! ~~and using sudo thingie~~) (maybit, pls try and tell me)
 - [ ] Making *emoji_used* file and *sfx* files _per profile_ and not in general section
+- [ ] Making more than sfx files user-tweakable (because some files stay in data, some go into stk-assets from svn)
 - [ ] Allowing to tweak profiles and to add new profiles (by example in case that both git and distro installations are available) without manually editing config file
+
+*See commit changelog for changelog.*
 
 ## Requirements
 

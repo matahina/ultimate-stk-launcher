@@ -125,10 +125,12 @@ def edit_profile(number):
             #print all the file names
             for name in filelist:
                 os.mkdir(os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number))
-                os.chdir(config.get("Profile_"+str(number), 'data_path'))
-                os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
-                os.chdir(config.get("Profile_"+str(number), 'svn_path'))
-                os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
+                if (config.get("Profile_"+str(number), 'svn_path') != ""):
+                    os.chdir(config.get("Profile_"+str(number), 'svn_path'))
+                    os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
+                else:
+                    os.chdir(config.get("Profile_"+str(number), 'data_path'))
+                    os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
             
         
         with open(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini", 'w') as configfile:
@@ -269,7 +271,6 @@ def goo():
     if config.get("General", 'sfx_files') != "":
         os.chdir(config.get("General", 'sfx_files'))
         the_path = config.get("Profile_"+str(key_answer), 'data_path')
-        os.system(prefix+"cp -R * "+the_path)
         if config.get("Profile_"+str(key_answer), 'svn_path') != "":
             the_path = config.get("Profile_"+str(key_answer), 'svn_path')
         os.system(prefix+"cp -R * "+the_path)
@@ -369,16 +370,16 @@ def main(key_answer):
             os.system(prefix+"svn revert --recursive .")
             
         filelist = []
-        path = os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(key_answer)
+        the_path = os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(key_answer)
         
-        for root, dirs, files in os.walk(path):
+        for root, dirs, files in os.walk(the_path):
             for file in files:
                 #append the file name to the list
-                filelist.append(os.path.join(root,file).replace(path,""))
+                filelist.append(os.path.join(root,file).replace(the_path,""))
 
         #print all the file names
         for name in filelist:
-            os.chdir(path)
+            os.chdir(the_path)
             os.system(prefix+" cp --parents "+name+" "+config.get("Profile_"+str(key_answer), 'data_path'))
             os.system(prefix+" cp --parents "+name+" "+config.get("Profile_"+str(key_answer), 'svn_path'))
     else:
