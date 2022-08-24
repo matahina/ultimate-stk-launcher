@@ -1,6 +1,6 @@
 # Ultimate STK Launcher
 
-**Version 0.499beta2**
+**Version 0.499beta3**
 
 Where we are actually:
 
@@ -8,7 +8,7 @@ Where we are actually:
 - [x] Working with apt / rpm / system installations from distro package and using sudo thingie
 - [ ] Working with flatpak (AAAAAAHHHHHHHH!!!!!!!! ~~and using sudo thingie~~) (maybit, pls try and tell me)
 - [ ] Making *emoji_used* file and *sfx* files _per profile_ and not in general section
-- [ ] Making more than sfx files user-tweakable (because some files stay in data, some go into stk-assets from svn)
+- [x] Making more than sfx files user-tweakable (because some files stay in data, some go into stk-assets from svn)
 - [ ] Allowing to tweak profiles and to add new profiles (by example in case that both git and distro installations are available) without manually editing config file
 
 *See commit changelog for changelog.*
@@ -16,7 +16,8 @@ Where we are actually:
 ## Requirements
 
 - Python 3
-- data directory
+- Python pick (pip install pick)
+- Optional: cowsay and lolcat
 
 ## Getting started
 
@@ -39,7 +40,7 @@ At first start, you'll be prompt about those files and directories:
 You can also tweak:
 - if using KDE, and Openbox installed, enable a script to switch temporarily from KDE to Openbox while playing (and saving CPU×RAM)
 - choose a specific emoji_used file you keep stored somewhere in your computer (will be used each time, you can still modify it later without moving file manually)
-- change some sfx files — you need to have them stored in a directory reproducing the same structure _data_ or _stk-assets_ have. 
+- change some sfx files — you need to have them stored in a directory reproducing the same structure _data_ (or _stk-assets_) have. 
 
 ## License
 This bunch of crap code lines is GPL, free, public domain, have fun with it!!!
