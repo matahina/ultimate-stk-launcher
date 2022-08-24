@@ -89,9 +89,9 @@ def update_extra_files():
         print("")
         quest(key[0])
         try:
-            request.urlretrieve(urls[key], os.path.expanduser('~')+"/.config/ustkl/"+key[0]+".xml")
+            request.urlretrieve(key[2], os.path.expanduser('~')+"/.config/ustkl/"+key[0]+".xml")
         except:
-            print(color.RED + "Could not retrieve " + urls[key] + color.END)
+            print(color.RED + "Could not retrieve " + key[2] + color.END)
         else:
             print("OK " + key[2])
     
@@ -269,7 +269,7 @@ def edit_profile(number):
             Path(os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)).mkdir(parents=True, exist_ok=True)
             for name in filelist:
                 
-                if ( (config.get("Profile_"+str(number), 'svn_path') != "") and (name[0:name.find("/")] in issvn) ):
+                if ( (config.get("Profile_"+str(number), 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
                     os.chdir(config.get("Profile_"+str(number), 'svn_path'))
                     os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
                 else:
@@ -323,14 +323,17 @@ def stk_update():
         quest("Updating "+profile_answer + " " + config.get(profile_answer, 'name'))
         
         print("Updating SVN")
+        print("")    
         os.chdir(config.get(profile_answer, 'svn_path'))
-        os.system("svn up")
+        os.system("svn up")     
         
         print("Updating GIT")
+        print("")    
         os.chdir(config.get(profile_answer, 'git_path'))
         os.system("git pull")
         
         print("Building GIT")
+        print("")    
         os.chdir(config.get(profile_answer, 'git_path')+"cmake_build")
         os.system("cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo")
         os.system("make -j10")
@@ -366,19 +369,24 @@ def stk_revert():
         os.chdir(config.get(profile_answer, 'svn_path'))
         os.system(prefix+"svn revert --recursive .")
         
-    filelist = []
-    the_path = os.path.expanduser('~')+"/.config/ustkl/"+profile_answer
+    the_path = os.path.expanduser('~')+"/.config/ustkl/"+profile_answer+"/"
     
+    filelist = []  
     for root, dirs, files in os.walk(the_path):
         for file in files:
             #append the file name to the list
             filelist.append(os.path.join(root,file).replace(the_path,""))
 
     #print all the file names
+    os.chdir(the_path)
     for name in filelist:
-        os.chdir(the_path)
-        os.system(prefix+" cp --parents "+name+" "+config.get("Profile_"+str(key_answer), 'data_path'))
-        os.system(prefix+" cp --parents "+name+" "+config.get("Profile_"+str(key_answer), 'svn_path'))
+        if ( (config.get(profile_answer, 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
+            os.system(prefix+" cp --parents "+name+" "+config.get(profile_answer, 'svn_path'))
+        else:
+            os.system(prefix+" cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
+            
+        
+        
 
 def goo():
     powerups = [row[1] for row in urls]
@@ -470,6 +478,10 @@ def goo():
         quest("Replacing SFX/GFX files")
         os.chdir(config.get("General", 'sfx_files'))
     
+        filelist = []
+        
+        path = config.get("General", 'sfx_files')
+        
         for root, dirs, files in os.walk(config.get("General", 'sfx_files')):
             for file in files:
                 #append the file name to the list
@@ -477,11 +489,10 @@ def goo():
 
         #print all the file names
         for name in filelist:
-            Path(os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)).mkdir(parents=True, exist_ok=True)
-            if ( (config.get("Profile_"+str(number), 'svn_path') != "") and (name[0:name.find("/")] in issvn) ):
-                os.system(prefix+"cp --parents "+name+" "+config.get("Profile_"+str(number), 'svn_path'))
+            if ( (config.get(profile_answer, 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
+                os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'svn_path'))
             else:
-                os.system(prefix+"cp --parents "+name+" "+config.get("Profile_"+str(number), 'data_path'))
+                os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
         
         print("")
             
@@ -497,11 +508,11 @@ def goo():
     
     os.chdir(config.get(profile_answer, 'data_path'))
     
-    quest(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+pfile+" powerup.xml")
+    print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+pfile+" powerup.xml")
     os.system(prefix+"rm powerup.xml")
     os.system(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+pfile+" powerup.xml")
     
-    quest(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
+    print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
     os.system(prefix+"rm kart_characteristics.xml")
     os.system(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
     
@@ -512,7 +523,9 @@ def goo():
     if config.get("General", 'echoing_stdout') != "":
         suffixbis = " | tee -a "+config.get("General", 'echoing_stdout')
     
-    quest("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
+    quest("running")
+    print("chdir "+ os.path.dirname( config.get(profile_answer, 'bin_path')  ))
+    print("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
     os.system("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
     print("")
     
@@ -564,8 +577,10 @@ def main():
     elif index == 2:
         stk_revert()
     elif index == 3:
-        print("not implemented yet")
-        print("At the moment, have fun at: "+os.path.expanduser('~')+"/.config/ustkl/magic_config.ini")
+        output_title("Profiles Tuning",2)
+        quest("not implemented yet",True)
+        quest("At the moment, have fun at: "+os.path.expanduser('~')+"/.config/ustkl/magic_config.ini",True)
+        print("")
 
 
 

@@ -16,6 +16,7 @@ Where we are actually:
 ## Requirements
 
 - Python 3
+- Zenity
 - Python pick (pip install pick)
 - Optional: cowsay and lolcat
 
