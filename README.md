@@ -1,6 +1,6 @@
 # Ultimate STK Launcher
 
-**Version 0.499beta3**
+**Version 0.499beta4**
 
 Where we are actually:
 
@@ -10,6 +10,7 @@ Where we are actually:
 - [ ] Making *emoji_used* file and *sfx* files _per profile_ and not in general section
 - [x] Making more than sfx files user-tweakable (because some files stay in data, some go into stk-assets from svn)
 - [ ] Allowing to tweak profiles and to add new profiles (by example in case that both git and distro installations are available) without manually editing config file
+- [x] IT CAN UPDATE YOUR ADDONS AND SHOW YOU FRESH ONES NOT DOWNLOADED YET
 
 *See commit changelog for changelog.*
 

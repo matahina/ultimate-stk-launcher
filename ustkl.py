@@ -11,9 +11,9 @@ from pathlib import Path
 
 from pick import pick
 
-import re
+from lxml import etree
+import xml.etree.ElementTree as ET
 
-import inquirer
 
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
@@ -97,6 +97,208 @@ def update_extra_files():
     
     print("")
     
+
+    output_title("Checking for addons",2)
+    try:
+        request.urlretrieve("https://online.supertuxkart.net/downloads/xml/online_assets.xml", os.path.expanduser('~')+"/.config/ustkl/online_assets.xml")
+    except:
+        print(color.RED + "Could not retrieve " + "https://online.supertuxkart.net/downloads/xml/online_assets.xml" + color.END)
+
+    tree = etree.parse(os.path.expanduser('~')+"/.config/ustkl/online_assets.xml")
+
+    mytree = ET.parse(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
+    root = mytree.getroot()
+
+    avail_tracks = []
+    installed_tracks = []
+
+    for user in tree.xpath("/assets/track"):
+        avail_tracks.append([user.get("id"),user.get("name"),user.get("file"),user.get("date"),user.get("uploader"),user.get("designer"),user.get("description"),user.get("revision"),user.get("size")])
+
+    for child in root:
+        if child.tag == '{https://online.supertuxkart.net/}track':
+            if child.attrib['installed'] == "true":
+                installed_tracks.append([child.attrib["id"], child.attrib["name"], child.attrib["installed-revision"],child.attrib["date"]])
+
+    list_a = [row[0] for row in avail_tracks]
+    list_b = [row[0] for row in installed_tracks]
+
+    indexes_online = []
+    indexes_offline = []
+    for idx,track in enumerate(list_b):
+        try:
+            indices = ([i for i, x in enumerate(list_a) if x == track])
+            maxi = 0
+            idx_online = 0
+            for i in indices:
+                if int(avail_tracks[i][7])>maxi:
+                    maxi = int(list_g[i])
+                    idx_online = i
+        except:
+            pass
+        else:
+            if maxi > int(installed_tracks[idx][2]):
+                indexes_online.append(idx_online)
+                indexes_offline.append(idx)
+
+    if indexes_offline != [] and indexes_online != []:
+        complmt = ""
+        for i in indexes_online:
+            complmt = complmt + "\n" + "\n- " + avail_tracks[i][1] + " by " + avail_tracks[i][4] + " " + avail_tracks[i][5] + "\n" + "desc: " + avail_tracks[i][6] + "\n" + "size: " + str(round(int(avail_tracks[i][8])/(1024*1024),1)) + "MB"
+        
+        title = "Do you wanna update those addon tracks?"+complmt
+        options = ['Yeah',
+                    'Nope'
+                    ]
+        option, index = pick(options, title)
+        quest("Do you wanna update those addon tracks?")
+        print(option)
+        print("") 
+        
+        if index == 0:
+            for j,i in enumerate(indexes_online):
+                os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
+                os.system("rm -rf "+installed_tracks[indexes_offline[j]][0])
+                Path(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+avail_tracks[i][0]).mkdir(parents=True, exist_ok=True)
+                os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+avail_tracks[i][0])
+                request.urlretrieve(avail_tracks[i][2], avail_tracks[i][3]+".zip")
+                os.system("unzip "+avail_tracks[i][3]+".zip")
+                os.system("rm "+avail_tracks[i][3]+".zip")
+        
+        
+    list_aa = [row[3] for row in avail_tracks]
+    last_avail = max(list_aa)
+    list_bb = [row[3] for row in installed_tracks]
+    last_installed = max(list_bb)
+
+    new_tracks = []
+
+    if last_avail > last_installed:
+        for i, stamps in enumerate(list_aa):
+            if stamps > last_installed:
+                if not(avail_tracks[i][1] in list_b):
+                    new_tracks.append(i)
+                
+    if new_tracks != []:
+        options = []
+        for i in new_tracks:
+            options.append(avail_tracks[i][1] + "  |  " + "by " + avail_tracks[i][4] + " " + avail_tracks[i][5] + "  |  " + "desc: " + avail_tracks[i][6] + "  |  " + "size: " + str(round(int(avail_tracks[i][8])/(1024*1024),1)) + "MB"+ "\n")
+        
+        title = "Maybe you wanna install those new addon tracks since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
+        selected = pick(options, title, multiselect=True)
+        quest("Maybe you wanna install those new addon tracks since last time?")
+        print(selected)
+        print("") 
+        
+        if selected != []:
+            sel_tracks = []
+            for i in [row[1] for row in selected]:
+                sel_tracks.append(new_tracks[i])
+            for j,i in enumerate(sel_tracks):
+                os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
+                os.system("rm -rf "+avail_tracks[i][0])
+                Path(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+avail_tracks[i][0]).mkdir(parents=True, exist_ok=True)
+                os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+avail_tracks[i][0])
+                request.urlretrieve(avail_tracks[i][2], avail_tracks[i][3]+".zip")
+                os.system("unzip "+avail_tracks[i][3]+".zip")
+                os.system("rm "+avail_tracks[i][3]+".zip")
+
+        
+    
+    avail_arenas = []
+    installed_arenas = []
+
+    for user in tree.xpath("/assets/arena"):
+        avail_arenas.append([user.get("id"),user.get("name"),user.get("file"),user.get("date"),user.get("uploader"),user.get("designer"),user.get("description"),user.get("revision"),user.get("size")])
+
+    for child in root:
+        if child.tag == '{https://online.supertuxkart.net/}arena':
+            if child.attrib['installed'] == "true":
+                installed_arenas.append([child.attrib["id"], child.attrib["name"], child.attrib["installed-revision"],child.attrib["date"]])
+
+    list_a = [row[0] for row in avail_arenas]
+    list_b = [row[0] for row in installed_arenas]
+
+    indexes_online = []
+    indexes_offline = []
+    for idx,arena in enumerate(list_b):
+        try:
+            indices = ([i for i, x in enumerate(list_a) if x == arena])
+            maxi = 0
+            idx_online = 0
+            for i in indices:
+                if int(avail_arenas[i][7])>maxi:
+                    maxi = int(list_g[i])
+                    idx_online = i
+        except:
+            pass
+        else:
+            if maxi > int(installed_arenas[idx][2]):
+                indexes_online.append(idx_online)
+                indexes_offline.append(idx)
+                
+    if indexes_offline != [] and indexes_online != []:
+        complmt = ""
+        for i in indexes_online:
+            complmt = complmt + "\n" + "\n- " + avail_arenas[i][1] + " by " + avail_arenas[i][4] + " " + avail_arenas[i][5] + "\n" + "desc: " + avail_arenas[i][6] + "\n" + "size: " + str(round(int(avail_arenas[i][8])/(1024*1024),1)) + "MB"
+
+        title = "Do you wanna update those addon arenas?"+complmt
+        options = ['Yeah',
+                    'Nope'
+                    ]
+        option, index = pick(options, title)
+        quest("Do you wanna update those addon arenas?")
+        print(option)
+        print("") 
+            
+        if index == 0:
+            for j,i in enumerate(indexes_online):
+                os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
+                os.system("rm -rf "+installed_arenas[indexes_offline[j]][0])
+                Path(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+avail_arenas[i][0]).mkdir(parents=True, exist_ok=True)
+                os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+avail_arenas[i][0])
+                request.urlretrieve(avail_arenas[i][2], avail_arenas[i][3]+".zip")
+                os.system("unzip "+avail_arenas[i][3]+".zip")
+                os.system("rm "+avail_arenas[i][3]+".zip")
+    
+    
+    list_aa = [row[3] for row in avail_arenas]
+    last_avail = max(list_aa)
+    list_bb = [row[3] for row in installed_arenas]
+    last_installed = max(list_bb)
+
+    new_arenas = []
+
+    if last_avail > last_installed:
+        for i, stamps in enumerate(list_aa):
+            if stamps > last_installed:
+                if not(avail_arenas[i][1] in list_b):
+                    new_arenas.append(i)
+                
+    if new_arenas != []:
+        options = []
+        for i in new_arenas:
+            options.append(avail_arenas[i][1] + "  |  " + "by " + avail_arenas[i][4] + " " + avail_arenas[i][5] + "  |  " + "desc: " + avail_arenas[i][6] + "  |  " + "size: " + str(round(int(avail_arenas[i][8])/(1024*1024),1)) + "MB"+ "\n")
+        
+        title = "Maybe you wanna install those new addon arenas since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
+        selected = pick(options, title, multiselect=True)
+        quest("Maybe you wanna install those new addon arenas since last time?")
+        print(selected)
+        print("") 
+        
+        if selected != []:
+            sel_arenas = []
+            for i in [row[1] for row in selected]:
+                sel_arenas.append(new_arenas[i])
+            for j,i in enumerate(sel_arenas):
+                os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
+                os.system("rm -rf "+avail_arenas[i][0])
+                Path(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+avail_arenas[i][0]).mkdir(parents=True, exist_ok=True)
+                os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+avail_arenas[i][0])
+                request.urlretrieve(avail_arenas[i][2], avail_arenas[i][3]+".zip")
+                os.system("unzip "+avail_arenas[i][3]+".zip")
+                os.system("rm "+avail_arenas[i][3]+".zip")
+            
 def edit_profile(number):
     nice_clue = config.get('Profile_'+number,'name')
     if nice_clue == 'NotThisName':
