@@ -130,13 +130,13 @@ def update_extra_files():
             indices = ([i for i, x in enumerate(list_a) if x == track])
             maxi = 0
             idx_online = 0
-            for i in indices:
-                if int(avail_tracks[i][7])>maxi:
-                    maxi = int(list_g[i])
-                    idx_online = i
         except:
             pass
         else:
+            for i in indices:
+                if int(avail_tracks[i][7])>maxi:
+                    maxi = int(avail_tracks[i][7])
+                    idx_online = i
             if maxi > int(installed_tracks[idx][2]):
                 indexes_online.append(idx_online)
                 indexes_offline.append(idx)
@@ -164,6 +164,8 @@ def update_extra_files():
                 request.urlretrieve(avail_tracks[i][2], avail_tracks[i][3]+".zip")
                 os.system("unzip "+avail_tracks[i][3]+".zip")
                 os.system("rm "+avail_tracks[i][3]+".zip")
+                installed_tracks[indexes_offline[j]][2] = avail_tracks[i][7]
+                mytree.write(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
         
         
     list_aa = [row[3] for row in avail_tracks]
@@ -226,13 +228,13 @@ def update_extra_files():
             indices = ([i for i, x in enumerate(list_a) if x == arena])
             maxi = 0
             idx_online = 0
-            for i in indices:
-                if int(avail_arenas[i][7])>maxi:
-                    maxi = int(list_g[i])
-                    idx_online = i
         except:
             pass
         else:
+            for i in indices:
+                if int(avail_arenas[i][7])>maxi:
+                    maxi = int(avail_arenas[i][7])
+                    idx_online = i
             if maxi > int(installed_arenas[idx][2]):
                 indexes_online.append(idx_online)
                 indexes_offline.append(idx)
@@ -260,6 +262,8 @@ def update_extra_files():
                 request.urlretrieve(avail_arenas[i][2], avail_arenas[i][3]+".zip")
                 os.system("unzip "+avail_arenas[i][3]+".zip")
                 os.system("rm "+avail_arenas[i][3]+".zip")
+                installed_arenas[indexes_offline[j]][2] = avail_arenas[i][7]
+                mytree.write(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
     
     
     list_aa = [row[3] for row in avail_arenas]
@@ -703,7 +707,7 @@ def goo():
 
     quest("Using the choosen powerup file")
     pfile = urls[powerups.index(powerup_answer)][0]+".xml"
-    if powerups.index(powerup_answer) == 2:
+    if powerups.index(powerup_answer) == 4:
         kfile = urls[powerups.index(powerup_answer)+1][0]+".xml"
     else:
         kfile="kart_characteristics_orig.xml"
@@ -716,6 +720,7 @@ def goo():
     
     print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
     os.system(prefix+"rm kart_characteristics.xml")
+    print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
     os.system(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
     
     print("")
