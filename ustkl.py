@@ -844,7 +844,7 @@ def main():
     input("Press Enter to continue...")
     cls()
     
-    if (not(path.exists(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini")) or os.stat("/home/petite_fleur/.config/ustkl/magic_config.ini").st_size == 0):
+    if (not(path.exists(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini")) or os.stat(path.exists(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini").st_size == 0):
         initialize()
         
     output_title("Let's Go!", 1)
