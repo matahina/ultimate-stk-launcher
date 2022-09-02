@@ -1,6 +1,6 @@
 # Ultimate STK Launcher
 
-**Version 0.499beta4**
+**Version 0.499beta6**
 
 Where we are actually:
 
