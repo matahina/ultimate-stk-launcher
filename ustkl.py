@@ -561,10 +561,13 @@ def edit_profile(number):
             print("")  
             Path(os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)).mkdir(parents=True, exist_ok=True)
             for name in filelist:
-                
-                if ( (config.get("Profile_"+str(number), 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
-                    os.chdir(config.get("Profile_"+str(number), 'svn_path'))
-                    os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
+                if 'svn_path' in [row[0] for row in config.items("Profile_"+str(number))]:
+                    if ( (config.get("Profile_"+str(number), 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
+                        os.chdir(config.get("Profile_"+str(number), 'svn_path'))
+                        os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
+                    else:
+                        os.chdir(config.get("Profile_"+str(number), 'data_path'))
+                        os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
                 else:
                     os.chdir(config.get("Profile_"+str(number), 'data_path'))
                     os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
@@ -658,9 +661,10 @@ def stk_revert():
     if config.get(profile_answer,"type") == "git":
         os.chdir(config.get(profile_answer, 'git_path'))
         os.system(prefix+"git clean -f")
-    if config.get(profile_answer,'svn_path') != "":
-        os.chdir(config.get(profile_answer, 'svn_path'))
-        os.system(prefix+"svn revert --recursive .")
+    if 'svn_path' in [row[0] for row in config.items(profile_answer)]:
+        if config.get(profile_answer,'svn_path') != "":
+            os.chdir(config.get(profile_answer, 'svn_path'))
+            os.system(prefix+"svn revert --recursive .")
         
     the_path = os.path.expanduser('~')+"/.config/ustkl/"+profile_answer+"/"
     
@@ -673,8 +677,11 @@ def stk_revert():
     #print all the file names
     os.chdir(the_path)
     for name in filelist:
-        if ( (config.get(profile_answer, 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
-            os.system(prefix+" cp --parents "+name+" "+config.get(profile_answer, 'svn_path'))
+        if 'svn_path' in [row[0] for row in config.items(profile_answer)]:
+            if ( (config.get(profile_answer, 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
+                os.system(prefix+" cp --parents "+name+" "+config.get(profile_answer, 'svn_path'))
+            else:
+                os.system(prefix+" cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
         else:
             os.system(prefix+" cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
             
@@ -742,52 +749,59 @@ def goo():
     output_title("Am gonna make your dreams come true...", 2)
     print("")
     
-    if config.get("General","kde_openbox_stuff") == "yes":
-        quest("KDE STUFF")
-        os.system("kquitapp5 plasmashell &>/dev/null")
-        os.system("openbox --replace &>/dev/null")
-        print("")
+    if 'kde_openbox_stuff' in [row[0] for row in config.items("General")]:
+        if config.get("General","kde_openbox_stuff") == "yes":
+            quest("KDE STUFF")
+            os.system("kquitapp5 plasmashell &>/dev/null")
+            os.system("openbox --replace &>/dev/null")
+            print("")
         
     if config.get(profile_answer,"type") == "git":
         quest("Cleaning GIT")
         os.chdir(config.get(profile_answer, 'git_path'))
         os.system("git clean -f")
         print("")
-    
-    if config.get("General", 'emoji_file') != "":
-        quest("Using the choosen emoji_used file")
-        os.chdir(config.get(profile_answer, 'data_path'))
-        os.system(prefix+"rm emoji_used.txt")
-        os.system(prefix+"cp "+config.get("General", 'emoji_file')+" emoji_used.txt")
-        print("")
-    
-    if config.get(profile_answer, 'svn_path') != "":
-        quest("Cleaning SVN")
-        os.chdir(config.get(profile_answer, 'svn_path'))
-        os.system("svn revert --recursive .")
-        print("")
-    
-    if config.get("General", 'sfx_files') != "":
-        quest("Replacing SFX/GFX files")
-        os.chdir(config.get("General", 'sfx_files'))
-    
-        filelist = []
         
-        path = config.get("General", 'sfx_files')
+    if 'emoji_file' in [row[0] for row in config.items("General")]:
+        if config.get("General", 'emoji_file') != "":
+            quest("Using the choosen emoji_used file")
+            os.chdir(config.get(profile_answer, 'data_path'))
+            os.system(prefix+"rm emoji_used.txt")
+            os.system(prefix+"cp "+config.get("General", 'emoji_file')+" emoji_used.txt")
+            print("")
+    
+    if 'svn_path' in [row[0] for row in config.items(profile_answer)]:
+        if config.get(profile_answer, 'svn_path') != "":
+            quest("Cleaning SVN")
+            os.chdir(config.get(profile_answer, 'svn_path'))
+            os.system("svn revert --recursive .")
+            print("")
         
-        for root, dirs, files in os.walk(config.get("General", 'sfx_files')):
-            for file in files:
-                #append the file name to the list
-                filelist.append(os.path.join(root,file).replace(path,""))
+    if 'sfx_files' in [row[0] for row in config.items("General")]:
+        if config.get("General", 'sfx_files') != "":
+            quest("Replacing SFX/GFX files")
+            os.chdir(config.get("General", 'sfx_files'))
+        
+            filelist = []
+            
+            path = config.get("General", 'sfx_files')
+            
+            for root, dirs, files in os.walk(config.get("General", 'sfx_files')):
+                for file in files:
+                    #append the file name to the list
+                    filelist.append(os.path.join(root,file).replace(path,""))
 
-        #print all the file names
-        for name in filelist:
-            if ( (config.get(profile_answer, 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
-                os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'svn_path'))
-            else:
-                os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
-        
-        print("")
+            #print all the file names
+            for name in filelist:
+                if 'svn_path' in [row[0] for row in config.items(profile_answer)]:
+                    if ( (config.get(profile_answer, 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
+                        os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'svn_path'))
+                    else:
+                        os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
+                else:
+                    os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
+            
+            print("")
             
         
     powerups.index(powerup_answer)
@@ -814,8 +828,9 @@ def goo():
     
     os.chdir(os.path.dirname( config.get(profile_answer, 'bin_path')  ))
     suffixbis = ""
-    if config.get("General", 'echoing_stdout') != "":
-        suffixbis = " | tee -a "+config.get("General", 'echoing_stdout')
+    if 'echoing_stdout' in [row[0] for row in config.items("General")]:
+        if config.get("General", 'echoing_stdout') != "":
+            suffixbis = " | tee -a "+config.get("General", 'echoing_stdout')
     
     quest("running")
     print("chdir "+ os.path.dirname( config.get(profile_answer, 'bin_path')  ))
