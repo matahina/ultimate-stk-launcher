@@ -1,6 +1,6 @@
 # Ultimate STK Launcher
 
-**Version 0.4999RC1**
+**Version 0.4999RC1+1commit**
 
 Where we are actually:
 

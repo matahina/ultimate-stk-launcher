@@ -752,8 +752,10 @@ def goo():
     if 'kde_openbox_stuff' in [row[0] for row in config.items("General")]:
         if config.get("General","kde_openbox_stuff") == "yes":
             quest("KDE STUFF")
-            os.system("kquitapp5 plasmashell &>/dev/null")
-            os.system("openbox --replace &>/dev/null")
+            dakilla = subprocess.Popen(["kquitapp5", "plasmashell"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
+            dakillb = subprocess.Popen(["openbox","--replace"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
+            #os.system("kquitapp5 plasmashell &>/dev/null")
+            #os.system("openbox --replace &>/dev/null")
             print("")
         
     if config.get(profile_answer,"type") == "git":
@@ -840,8 +842,10 @@ def goo():
     
     if config.get("General","kde_openbox_stuff") == "yes":
         quest("KDE STUFF")
-        os.system("kstart5 plasmashell &>/dev/null")
-        os.system("kwin --replace &>/dev/null")
+        daunkilla = subprocess.Popen(["plasmashell"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
+        daunkillb = subprocess.Popen(["kwin","--replace"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
+        #os.system("plasmashell &>/dev/null 2>&1 &")
+        #os.system("kwin --replace &>/dev/null 2>&1")
         print("")
     
     
