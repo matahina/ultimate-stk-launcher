@@ -8,6 +8,9 @@ from urllib import request
 import time
 from pathlib import Path
 
+import setproctitle
+
+setproctitle.setproctitle('ult_STK_launch')
 
 from pick import pick
 
@@ -113,15 +116,16 @@ def update_extra_files():
     avail_tracks = []
     installed_tracks = []
 
+    
+    for user in tree.xpath("/assets/track"):
+        avail_tracks.append([user.get("id"),user.get("name"),user.get("file"),user.get("date"),user.get("uploader"),user.get("designer"),user.get("description"),user.get("revision"),user.get("size")])
+
+    for child in root:
+        if child.tag == '{https://online.supertuxkart.net/}track':
+            if child.attrib['installed'] == "true":
+                installed_tracks.append([child.attrib["id"], child.attrib["name"], child.attrib["installed-revision"],child.attrib["date"]])
+    
     if installed_tracks != []:
-        for user in tree.xpath("/assets/track"):
-            avail_tracks.append([user.get("id"),user.get("name"),user.get("file"),user.get("date"),user.get("uploader"),user.get("designer"),user.get("description"),user.get("revision"),user.get("size")])
-
-        for child in root:
-            if child.tag == '{https://online.supertuxkart.net/}track':
-                if child.attrib['installed'] == "true":
-                    installed_tracks.append([child.attrib["id"], child.attrib["name"], child.attrib["installed-revision"],child.attrib["date"]])
-
         list_a = [row[0] for row in avail_tracks]
         list_b = [row[0] for row in installed_tracks]
 
@@ -255,15 +259,15 @@ def update_extra_files():
     avail_arenas = []
     installed_arenas = []
 
+    for user in tree.xpath("/assets/arena"):
+        avail_arenas.append([user.get("id"),user.get("name"),user.get("file"),user.get("date"),user.get("uploader"),user.get("designer"),user.get("description"),user.get("revision"),user.get("size")])
+
+    for child in root:
+        if child.tag == '{https://online.supertuxkart.net/}arena':
+            if child.attrib['installed'] == "true":
+                installed_arenas.append([child.attrib["id"], child.attrib["name"], child.attrib["installed-revision"],child.attrib["date"]])
+
     if installed_arenas != []:
-        for user in tree.xpath("/assets/arena"):
-            avail_arenas.append([user.get("id"),user.get("name"),user.get("file"),user.get("date"),user.get("uploader"),user.get("designer"),user.get("description"),user.get("revision"),user.get("size")])
-
-        for child in root:
-            if child.tag == '{https://online.supertuxkart.net/}arena':
-                if child.attrib['installed'] == "true":
-                    installed_arenas.append([child.attrib["id"], child.attrib["name"], child.attrib["installed-revision"],child.attrib["date"]])
-
         list_a = [row[0] for row in avail_arenas]
         list_b = [row[0] for row in installed_arenas]
 
@@ -857,7 +861,7 @@ def main():
     lala = os.system('cowsay -f unipony-smaller  "WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜" | lolcat')
     
     if lala != 0:
-        print("You need to install" + color.BOLD + "cowsay" + color.END + "and" + color.BOLD + "lolcat" + color.END + "in order to get the welcome message displayed. So sorry!")
+        print("You need to install" + color.BOLD + " cowsay " + color.END + "and" + color.BOLD + " lolcat " + color.END + "in order to get the welcome message displayed. So sorry!")
     
     print("")
     input("Press Enter to continue...")
