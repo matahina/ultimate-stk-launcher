@@ -65,6 +65,7 @@ urls = [["powerup_orig", "normal", "https://raw.githubusercontent.com/supertuxka
         ["powerup_cake", "cake (matahina)", "https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_cake.xml"],
         ["powerup_gums", "gums (matahina)", "https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_gums.xml"],
         ["powerup_aprilfool", "April 1st (mimiz)", "https://stk.kimden.online/public/0104.xml"],
+        ["powerup_triple", "Triple 3years FF servers", "https://stk.kimden.online/public/triple.xml"]
         ["emoji_used", "", "https://raw.githubusercontent.com/supertuxkart/stk-code/1.3/data/emoji_used.txt"]]
     
 class color:
@@ -847,9 +848,9 @@ def goo():
     if config.get("General","kde_openbox_stuff") == "yes":
         quest("KDE STUFF")
         daunkilla = subprocess.Popen(["plasmashell"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
-        daunkillb = subprocess.Popen(["kwin","--replace"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
+        daunkillb = subprocess.Popen(["kwin_x11","--replace"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
         #os.system("plasmashell &>/dev/null 2>&1 &")
-        #os.system("kwin --replace &>/dev/null 2>&1")
+        #os.system("kwin_x11 --replace &>/dev/null 2>&1")
         print("")
     
     
@@ -857,8 +858,8 @@ def goo():
     
 def main():
     
-
-    lala = os.system('cowsay -f unipony-smaller  "WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜" | lolcat')
+    lala = os.system('echo "WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜" | lolcat ')
+    lala = os.system('echo "" | cowsay -f hellokitty | lolcat')
     
     if lala != 0:
         print("You need to install" + color.BOLD + " cowsay " + color.END + "and" + color.BOLD + " lolcat " + color.END + "in order to get the welcome message displayed. So sorry!")
