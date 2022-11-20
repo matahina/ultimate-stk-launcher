@@ -65,7 +65,7 @@ urls = [["powerup_orig", "normal", "https://raw.githubusercontent.com/supertuxka
         ["powerup_cake", "cake (matahina)", "https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_cake.xml"],
         ["powerup_gums", "gums (matahina)", "https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_gums.xml"],
         ["powerup_aprilfool", "April 1st (mimiz)", "https://stk.kimden.online/public/0104.xml"],
-        ["powerup_triple", "Triple 3years FF servers", "https://stk.kimden.online/public/triple.xml"]
+        ["powerup_triple", "Triple 3years FF servers", "https://stk.kimden.online/public/triple.xml"],
         ["emoji_used", "", "https://raw.githubusercontent.com/supertuxkart/stk-code/1.3/data/emoji_used.txt"]]
     
 class color:
