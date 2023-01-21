@@ -67,6 +67,7 @@ urls = [["powerup_orig", "normal", "https://raw.githubusercontent.com/supertuxka
         ["powerup_aprilfool", "April 1st (mimiz)", "https://stk.kimden.online/public/0104.xml"],
         ["powerup_triple", "Triple 3years FF servers", "https://stk.kimden.online/public/triple.xml"],
         ["powerup_poll", "Special FF Poll Dec 18th", "https://stk.kimden.online/public/poll.xml"],
+        ["powerup_jan21", "Special FF Jan 21st", "https://stk.kimden.online/public/230121.xml"],
         ["emoji_used", "", "https://raw.githubusercontent.com/supertuxkart/stk-code/1.3/data/emoji_used.txt"]]
     
 class color:
