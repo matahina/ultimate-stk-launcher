@@ -60,8 +60,12 @@ urls = [["powerup_orig", "normal", "https://raw.githubusercontent.com/supertuxka
         ["kart_characteristics_orig", "normal", "https://raw.githubusercontent.com/supertuxkart/stk-code/1.3/data/kart_characteristics.xml"],
         ["powerup_random", "random (mimiz)", "https://stk.kimden.online/public/powerup_mimiz.xml"],
         ["powerup_rebalanced", "rebalanced (mimiz)", "https://stk.kimden.online/public/rebalanced.xml"],
-        ["powerup_yeet", "YEET (Iluvatyr)", "https://stk.iluvatyr.com/download/powerup.xml"],
+        ["powerup_yeet", "YEET (Iluvatyr)", "https://stk.iluvatyr.com/download/powerup.xml"], ##############################4
         ["kart_characteristics_yeet", "YEET (Iluvatyr)", "https://stk.iluvatyr.com/download/kart_characteristics.xml"],
+        ["powerup_randomAPRIL23", "random (mimiz)APR23", "https://stk.kimden.online/public/powerup_mimiz.xml"], ##############################6
+        ["kart_characteristics_randomAPRIL23", "random (mimiz)APR23", "https://stk.kimden.online/public/230401.xml"],
+        ["powerup_HALLOWEEN_PHYSICS_23", "HALLOWEEN PHYSICS 23", "https://stk.kimden.online/public/trending.xml"], ##############################8
+        ["kart_characteristics_HALLOWEEN_PHYSICS_23", "HALLOWEEN PHYSICS 23", "https://stk.kimden.online/public/hups.xml"],
         ["powerup_cake", "cake (matahina)", "https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_cake.xml"],
         ["powerup_gums", "gums (matahina)", "https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_gums.xml"],
         ["powerup_aprilfool", "April 1st (mimiz)", "https://stk.kimden.online/public/0104.xml"],
@@ -69,7 +73,7 @@ urls = [["powerup_orig", "normal", "https://raw.githubusercontent.com/supertuxka
         ["powerup_poll", "Special FF Poll Dec 18th", "https://stk.kimden.online/public/poll.xml"],
         ["powerup_jan21", "Special FF Jan 21st", "https://stk.kimden.online/public/230121.xml"],
         ["emoji_used", "", "https://raw.githubusercontent.com/supertuxkart/stk-code/1.3/data/emoji_used.txt"]]
-    
+
 class color:
    PURPLE = '\033[95m'
    CYAN = '\033[96m'
@@ -86,12 +90,12 @@ class color:
 
 def clear_console():
     os.system('clear')
-    
+
 def update_extra_files():
     output_title("Downloading powerup files in ",2)
     print(color.CYAN + os.path.expanduser('~')+"/.config/ustkl/" + color.END)
 
-    
+
     for key in urls:
         print("")
         quest(key[0])
@@ -101,9 +105,9 @@ def update_extra_files():
             print(color.RED + "Could not retrieve " + key[2] + color.END)
         else:
             print("OK " + key[2])
-    
+
     print("")
-    
+
 
     output_title("Checking for addons",2)
     try:
@@ -119,7 +123,7 @@ def update_extra_files():
     avail_tracks = []
     installed_tracks = []
 
-    
+
     for user in tree.xpath("/assets/track"):
         avail_tracks.append([user.get("id"),user.get("name"),user.get("file"),user.get("date"),user.get("uploader"),user.get("designer"),user.get("description"),user.get("revision"),user.get("size")])
 
@@ -127,7 +131,7 @@ def update_extra_files():
         if child.tag == '{https://online.supertuxkart.net/}track':
             if child.attrib['installed'] == "true":
                 installed_tracks.append([child.attrib["id"], child.attrib["name"], child.attrib["installed-revision"],child.attrib["date"]])
-    
+
     if installed_tracks != []:
         list_a = [row[0] for row in avail_tracks]
         list_b = [row[0] for row in installed_tracks]
@@ -154,7 +158,7 @@ def update_extra_files():
             complmt = ""
             for i in indexes_online:
                 complmt = complmt + "\n" + "\n- " + avail_tracks[i][1] + " by " + avail_tracks[i][4] + " " + avail_tracks[i][5] + "\n" + "desc: " + avail_tracks[i][6] + "\n" + "size: " + str(round(int(avail_tracks[i][8])/(1024*1024),1)) + "MB"
-            
+
             title = "Do you wanna update those addon tracks?"+complmt
             options = ['Yeah',
                         'Nope'
@@ -162,8 +166,8 @@ def update_extra_files():
             option, index = pick(options, title)
             quest("Do you wanna update those addon tracks?")
             print(option)
-            print("") 
-            
+            print("")
+
             if index == 0:
                 for j,i in enumerate(indexes_online):
                     os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
@@ -196,7 +200,7 @@ def update_extra_files():
                     file2.close()
                     os.system("rm "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
                     os.system("mv "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2'+" "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
-            
+
         tree = etree.parse(os.path.expanduser('~')+"/.config/ustkl/online_assets.xml")
 
         mytree = ET.parse(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
@@ -215,7 +219,7 @@ def update_extra_files():
 
         list_a = [row[0] for row in avail_tracks]
         list_b = [row[0] for row in installed_tracks]
-        
+
         list_aa = [row[3] for row in avail_tracks]
         last_avail = max(list_aa)
         list_bb = [row[3] for row in installed_tracks]
@@ -228,18 +232,18 @@ def update_extra_files():
                 if stamps > last_installed:
                     if not(avail_tracks[i][1] in list_b):
                         new_tracks.append(i)
-                    
+
         if new_tracks != []:
             options = []
             for i in new_tracks:
                 options.append(avail_tracks[i][1] + "  |  " + "by " + avail_tracks[i][4] + " " + avail_tracks[i][5] + "  |  " + "desc: " + avail_tracks[i][6] + "  |  " + "size: " + str(round(int(avail_tracks[i][8])/(1024*1024),1)) + "MB"+ "\n")
-            
+
             title = "Maybe you wanna install those new addon tracks since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
             selected = pick(options, title, multiselect=True)
             quest("Maybe you wanna install those new addon tracks since last time?")
             print(selected)
-            print("") 
-            
+            print("")
+
             if selected != []:
                 sel_tracks = []
                 for i in [row[1] for row in selected]:
@@ -253,12 +257,12 @@ def update_extra_files():
                     os.system("unzip "+avail_tracks[i][3]+".zip")
                     os.system("rm "+avail_tracks[i][3]+".zip")
 
-        
+
     tree = etree.parse(os.path.expanduser('~')+"/.config/ustkl/online_assets.xml")
 
     mytree = ET.parse(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
     root = mytree.getroot()
-    
+
     avail_arenas = []
     installed_arenas = []
 
@@ -291,7 +295,7 @@ def update_extra_files():
                 if maxi > int(installed_arenas[idx][2]):
                     indexes_online.append(idx_online)
                     indexes_offline.append(idx)
-                    
+
         if indexes_offline != [] and indexes_online != []:
             complmt = ""
             for i in indexes_online:
@@ -304,8 +308,8 @@ def update_extra_files():
             option, index = pick(options, title)
             quest("Do you wanna update those addon arenas?")
             print(option)
-            print("") 
-                
+            print("")
+
             if index == 0:
                 for j,i in enumerate(indexes_online):
                     os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
@@ -332,7 +336,7 @@ def update_extra_files():
                                 file2.write(line)
                         else:
                             file2.write(line)
-                            
+
 
                     #close file1 and file2
                     file1.close()
@@ -345,7 +349,7 @@ def update_extra_files():
 
         mytree = ET.parse(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
         root = mytree.getroot()
-        
+
         avail_arenas = []
         installed_arenas = []
 
@@ -359,7 +363,7 @@ def update_extra_files():
 
         list_a = [row[0] for row in avail_arenas]
         list_b = [row[0] for row in installed_arenas]
-        
+
         list_aa = [row[3] for row in avail_arenas]
         last_avail = max(list_aa)
         list_bb = [row[3] for row in installed_arenas]
@@ -372,18 +376,18 @@ def update_extra_files():
                 if stamps > last_installed:
                     if not(avail_arenas[i][1] in list_b):
                         new_arenas.append(i)
-                    
+
         if new_arenas != []:
             options = []
             for i in new_arenas:
                 options.append(avail_arenas[i][1] + "  |  " + "by " + avail_arenas[i][4] + " " + avail_arenas[i][5] + "  |  " + "desc: " + avail_arenas[i][6] + "  |  " + "size: " + str(round(int(avail_arenas[i][8])/(1024*1024),1)) + "MB"+ "\n")
-            
+
             title = "Maybe you wanna install those new addon arenas since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
             selected = pick(options, title, multiselect=True)
             quest("Maybe you wanna install those new addon arenas since last time?")
             print(selected)
-            print("") 
-            
+            print("")
+
             if selected != []:
                 sel_arenas = []
                 for i in [row[1] for row in selected]:
@@ -396,18 +400,18 @@ def update_extra_files():
                     request.urlretrieve(avail_arenas[i][2], avail_arenas[i][3]+".zip")
                     os.system("unzip "+avail_arenas[i][3]+".zip")
                     os.system("rm "+avail_arenas[i][3]+".zip")
-            
+
 def edit_profile(number):
     nice_clue = config.get('Profile_'+number,'name')
     if nice_clue == 'NotThisName':
-        
+
         output_title("This Profile", 2)
         print("")
-        
+
         an_answer = input(color.UNDERLINE + "Pls give a name to this profile:" + color.END +" ")
         print("")
         config.set('Profile_'+number,'name',an_answer)
-        
+
         quest("Now choose the bin file for STK")
         while True:
             an_answer = subprocess.run(['zenity', '--file-selection', '--title=WHERE IS THE BIN STK FILE???'], stdout=subprocess.PIPE)
@@ -418,7 +422,7 @@ def edit_profile(number):
         print(an_answer.stdout.decode('utf-8').replace("\n",""))
         print("")
         config.set('Profile_'+number,'bin_path',an_answer.stdout.decode('utf-8').replace("\n",""))
-        
+
         quest("then the location of the DATA folder")
         while True:
             an_answer = subprocess.run(['zenity', '--file-selection', '--directory', '--title=WHERE IS THE  Data  DIRECTORY???'], stdout=subprocess.PIPE)
@@ -427,10 +431,10 @@ def edit_profile(number):
             else:
                 print(color.RED + "Pls choose a directory" + color.END)
         print(an_answer.stdout.decode('utf-8').replace("\n",""))
-        print("")        
+        print("")
         config.set('Profile_'+number,'data_path',an_answer.stdout.decode('utf-8').replace("\n","")+"/")
-        
-        
+
+
         title = "So, what kind of install is it (for this profile)?"
         options = ['distro-based (apt-get, rpm, pacman, emerge, whatever...)',
                     'from git (for the bold!)',
@@ -439,14 +443,14 @@ def edit_profile(number):
         option, index = pick(options, title)
         quest(title)
         print(option)
-        print("") 
-        
+        print("")
+
         if index == 0:
             config.set('Profile_'+number,'type',"sudo")
-            
+
         elif index == 1:
             config.set('Profile_'+number,'type',"git")
-            
+
             quest("Now choose the location of the GIT folder")
             while True:
                 an_answer = subprocess.run(['zenity', '--file-selection', '--directory', '--title=WHERE IS THE  git  DIRECTORY???'], stdout=subprocess.PIPE)
@@ -457,7 +461,7 @@ def edit_profile(number):
             print(an_answer.stdout.decode('utf-8').replace("\n",""))
             print("")
             config.set('Profile_'+number,'git_path',an_answer.stdout.decode('utf-8').replace("\n","")+"/")
-            
+
             quest("then of the SVN folder")
             while True:
                 an_answer = subprocess.run(['zenity', '--file-selection', '--directory', '--title=WHERE IS THE  svn  DIRECTORY???'], stdout=subprocess.PIPE)
@@ -466,17 +470,17 @@ def edit_profile(number):
                 else:
                     print(color.RED + "Pls choose a directory" + color.END)
             print(an_answer.stdout.decode('utf-8').replace("\n",""))
-            print("")      
+            print("")
             config.set('Profile_'+number,'svn_path',an_answer.stdout.decode('utf-8').replace("\n","")+"/")
-            
+
         elif index == 2:
             config.set('Profile_'+number,'type',"from_tarball")
-        
+
         config.add_section('General')
         config.set('General','emoji_file','')
         config.set('General','KDE_Openbox_stuff','')
         config.set('General','echoing_stdout','')
-        
+
         title = "Do you have a particular emoji file?"
         options = ['Yeah',
                     'Nope'
@@ -484,8 +488,8 @@ def edit_profile(number):
         option, index = pick(options, title)
         quest(title)
         print(option)
-        print("") 
-        
+        print("")
+
         if index == 0:
             quest("Now choose your emoji file for STK")
             while True:
@@ -497,7 +501,7 @@ def edit_profile(number):
             print(an_answer.stdout.decode('utf-8').replace("\n",""))
             print("")
             config.set('General','emoji_file',an_answer.stdout.decode('utf-8').replace("\n",""))
-        
+
         title = "Do you run under KDE Plasma and wanna switch temporarily to OpenBox when launching STK?"
         options = ['Yeah',
                     'Nope'
@@ -505,11 +509,11 @@ def edit_profile(number):
         option, index = pick(options, title)
         quest(title)
         print(option)
-        print("") 
-        
+        print("")
+
         if index == 0:
             config.set('General','KDE_Openbox_stuff',"yes")
-        
+
         title = "Do you have an existing file where you want to cat stdout.log?"
         options = ['Yeah',
                     'Nope'
@@ -517,8 +521,8 @@ def edit_profile(number):
         option, index = pick(options, title)
         quest(title)
         print(option)
-        print("") 
-        
+        print("")
+
         if index == 0:
             quest("Now choose your output stdout file for STK")
             while True:
@@ -530,7 +534,7 @@ def edit_profile(number):
             print(an_answer.stdout.decode('utf-8').replace("\n",""))
             print("")
             config.set('General','echoing_stdout',an_answer.stdout.decode('utf-8').replace("\n",""))
-        
+
         title = "Do you have custom sfx files?"
         options = ['Yeah',
                     'Nope'
@@ -538,8 +542,8 @@ def edit_profile(number):
         option, index = pick(options, title)
         quest(title)
         print(option)
-        print("") 
-        
+        print("")
+
         if index == 0:
             quest("Now choose your sfx files for STK")
             quest("only choose files with exact names", True)
@@ -553,19 +557,19 @@ def edit_profile(number):
                     print(color.RED + "Pls choose a directory" + color.END)
             print(an_answer.stdout.decode('utf-8').replace("\n",""))
             config.set('General','sfx_files',an_answer.stdout.decode('utf-8').replace("\n","")+"/")
-            
+
             filelist = []
             path = config.get("General", 'sfx_files')
-            
+
             for root, dirs, files in os.walk(path):
                 for file in files:
                     #append the file name to the list
                     filelist.append(os.path.join(root,file).replace(path,""))
 
             #print all the file names
-            
+
             print("Saving back original files for this profile")
-            print("")  
+            print("")
             Path(os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)).mkdir(parents=True, exist_ok=True)
             for name in filelist:
                 if 'svn_path' in [row[0] for row in config.items("Profile_"+str(number))]:
@@ -578,24 +582,24 @@ def edit_profile(number):
                 else:
                     os.chdir(config.get("Profile_"+str(number), 'data_path'))
                     os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
-            
-        
+
+
         with open(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini", 'w') as configfile:
             config.write(configfile)
-            
+
         output_title("Profile Updated!", 2)
         print("")
         input("Press Enter to continue...")
         cls()
         #update_extra_files()
-        
+
 
 def initialize():
     output_title("Config is being created...", 1)
     print("")
-    
+
     Path(os.path.expanduser('~')+"/.config/ustkl/").mkdir(parents=True, exist_ok=True)
-    
+
     f = open(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini", 'w')
     f.close()
     config.read(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini")
@@ -620,36 +624,36 @@ def stk_update():
         option, index = pick(names, title)
         output_title(title, 2)
         print(option)
-        print("")     
+        print("")
         profile_answer = plist[index]
-        
+
         quest("Updating "+profile_answer + " " + config.get(profile_answer, 'name'))
-        
+
         print("Updating SVN")
-        print("")    
+        print("")
         os.chdir(config.get(profile_answer, 'svn_path'))
-        os.system("svn up")     
-        
+        os.system("svn up")
+
         print("Updating GIT")
-        print("")    
+        print("")
         os.chdir(config.get(profile_answer, 'git_path'))
         os.system("git pull")
-        
+
         print("Building GIT")
-        print("")    
+        print("")
         os.chdir(config.get(profile_answer, 'git_path')+"cmake_build")
         os.system("cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo")
         os.system("make -j10")
-        
+
         print()
     else:
         output_title(title, 2)
         quest("Sorry, not any git installs found in config",True)
         print()
-                    
+
 
 def stk_revert():
-    
+
     title = "Which profile do you want to revert today?"
     plist = config.sections()
     plist.remove("General")
@@ -659,9 +663,9 @@ def stk_revert():
     option, index = pick(names, title)
     output_title(title, 2)
     print(option)
-    print("")     
+    print("")
     profile_answer = plist[index]
-    
+
     prefix = ""
     if config.get(profile_answer,"type") == "sudo":
         prefix = "sudo "
@@ -672,10 +676,10 @@ def stk_revert():
         if config.get(profile_answer,'svn_path') != "":
             os.chdir(config.get(profile_answer, 'svn_path'))
             os.system(prefix+"svn revert --recursive .")
-        
+
     the_path = os.path.expanduser('~')+"/.config/ustkl/"+profile_answer+"/"
-    
-    filelist = []  
+
+    filelist = []
     for root, dirs, files in os.walk(the_path):
         for file in files:
             #append the file name to the list
@@ -691,9 +695,9 @@ def stk_revert():
                 os.system(prefix+" cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
         else:
             os.system(prefix+" cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
-            
-        
-        
+
+
+
 
 def goo():
     powerups = [row[1] for row in urls]
@@ -713,10 +717,10 @@ def goo():
     option, index = pick(options, title)
     output_title(title, 2)
     print(option)
-    print("")     
+    print("")
     powerup_answer = option
 
-            
+
     title = "Which profile do you want to use today?"
     plist = config.sections()
     plist.remove("General")
@@ -726,13 +730,13 @@ def goo():
     option, index = pick(names, title)
     output_title(title, 2)
     print(option)
-    print("")     
+    print("")
     profile_answer = plist[index]
-    
+
     prefix = ""
     if config.get(profile_answer,"type") == "sudo":
         prefix = "sudo "
-    
+
     title = "Do you wanna debüg today?"
     options = [
         "NÖ (default)",
@@ -743,19 +747,19 @@ def goo():
     option, index = pick(options, title)
     output_title(title, 2)
     print(option)
-    print("")     
-    
+    print("")
+
     suffix = ""
-    if index == "1":
+    if index == 1:
         suffix = " --check-debug "
-    if index == "2":
+    if index == 2:
         suffix = " --track-debug "
-    if index == "3":
+    if index == 3:
         suffix = " --check-debug --track-debug "
-    
+
     output_title("Am gonna make your dreams come true...", 2)
     print("")
-    
+
     if 'kde_openbox_stuff' in [row[0] for row in config.items("General")]:
         if config.get("General","kde_openbox_stuff") == "yes":
             quest("KDE STUFF")
@@ -764,13 +768,13 @@ def goo():
             #os.system("kquitapp5 plasmashell &>/dev/null")
             #os.system("openbox --replace &>/dev/null")
             print("")
-        
+
     if config.get(profile_answer,"type") == "git":
         quest("Cleaning GIT")
         os.chdir(config.get(profile_answer, 'git_path'))
         os.system("git clean -f")
         print("")
-        
+
     if 'emoji_file' in [row[0] for row in config.items("General")]:
         if config.get("General", 'emoji_file') != "":
             quest("Using the choosen emoji_used file")
@@ -778,23 +782,23 @@ def goo():
             os.system(prefix+"rm emoji_used.txt")
             os.system(prefix+"cp "+config.get("General", 'emoji_file')+" emoji_used.txt")
             print("")
-    
+
     if 'svn_path' in [row[0] for row in config.items(profile_answer)]:
         if config.get(profile_answer, 'svn_path') != "":
             quest("Cleaning SVN")
             os.chdir(config.get(profile_answer, 'svn_path'))
             os.system("svn revert --recursive .")
             print("")
-        
+
     if 'sfx_files' in [row[0] for row in config.items("General")]:
         if config.get("General", 'sfx_files') != "":
             quest("Replacing SFX/GFX files")
             os.chdir(config.get("General", 'sfx_files'))
-        
+
             filelist = []
-            
+
             path = config.get("General", 'sfx_files')
-            
+
             for root, dirs, files in os.walk(config.get("General", 'sfx_files')):
                 for file in files:
                     #append the file name to the list
@@ -809,44 +813,48 @@ def goo():
                         os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
                 else:
                     os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
-            
+
             print("")
-            
-        
+
+
     powerups.index(powerup_answer)
 
     quest("Using the choosen powerup file")
     pfile = urls[powerups.index(powerup_answer)][0]+".xml"
     if powerups.index(powerup_answer) == 4:
         kfile = urls[powerups.index(powerup_answer)+1][0]+".xml"
+    elif powerups.index(powerup_answer) == 6:
+        kfile = urls[powerups.index(powerup_answer)+1][0]+".xml"
+    elif powerups.index(powerup_answer) == 8:
+        kfile = urls[powerups.index(powerup_answer)+1][0]+".xml"
     else:
         kfile="kart_characteristics_orig.xml"
-    
+
     os.chdir(config.get(profile_answer, 'data_path'))
-    
+
     print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+pfile+" powerup.xml")
     os.system(prefix+"rm powerup.xml")
     os.system(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+pfile+" powerup.xml")
-    
+
     print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
     os.system(prefix+"rm kart_characteristics.xml")
     print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
     os.system(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
-    
+
     print("")
-    
+
     os.chdir(os.path.dirname( config.get(profile_answer, 'bin_path')  ))
     suffixbis = ""
     if 'echoing_stdout' in [row[0] for row in config.items("General")]:
         if config.get("General", 'echoing_stdout') != "":
             suffixbis = " | tee -a "+config.get("General", 'echoing_stdout')
-    
+
     quest("running")
     print("chdir "+ os.path.dirname( config.get(profile_answer, 'bin_path')  ))
     print("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
     os.system("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
     print("")
-    
+
     if config.get("General","kde_openbox_stuff") == "yes":
         quest("KDE STUFF")
         daunkilla = subprocess.Popen(["plasmashell"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
@@ -854,31 +862,31 @@ def goo():
         #os.system("plasmashell &>/dev/null 2>&1 &")
         #os.system("kwin_x11 --replace &>/dev/null 2>&1")
         print("")
-    
-    
-    
-    
+
+
+
+
 def main():
-    
+
     lala = os.system('echo "WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜" | lolcat ')
     lala = os.system('echo "" | cowsay -f hellokitty | lolcat')
-    
+
     if lala != 0:
         print("You need to install" + color.BOLD + " cowsay " + color.END + "and" + color.BOLD + " lolcat " + color.END + "in order to get the welcome message displayed. So sorry!")
-    
+
     print("")
     input("Press Enter to continue...")
     cls()
-    
+
     if (not(path.exists(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini")) or os.stat(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini").st_size == 0):
         initialize()
-        
+
     output_title("Let's Go!", 1)
     print("")
     config.read(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini")
     update_extra_files()
-    
-    
+
+
     title = "What do you want to do today?".upper()
     options = ['STÖÖÖÖRT STK',
                 'Update STK from git and svn',
@@ -888,8 +896,8 @@ def main():
     option, index = pick(options, title)
     output_title(title, 2)
     print(option)
-    print("") 
-        
+    print("")
+
     if index == 0:
         goo()
     elif index == 1:
