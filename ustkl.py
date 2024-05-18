@@ -7,6 +7,7 @@ from os import path
 from urllib import request
 import time
 from pathlib import Path
+import datetime
 
 import setproctitle
 
@@ -627,25 +628,35 @@ def stk_update():
         print("")
         profile_answer = plist[index]
 
+        uecho_file = "UPDATE_"+echo_file
+
+        os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+
         quest("Updating "+profile_answer + " " + config.get(profile_answer, 'name'))
 
         print("Updating SVN")
         print("")
         os.chdir(config.get(profile_answer, 'svn_path'))
-        os.system("svn up")
+        os.system("svn up >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
 
         print("Updating GIT")
         print("")
         os.chdir(config.get(profile_answer, 'git_path'))
-        os.system("git pull")
+        os.system("git pull >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
 
         print("Building GIT")
         print("")
         os.chdir(config.get(profile_answer, 'git_path')+"cmake_build")
-        os.system("cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo")
-        os.system("make -j10")
+        os.system("cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("make -j10 >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
 
         print()
+        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
     else:
         output_title(title, 2)
         quest("Sorry, not any git installs found in config",True)
@@ -763,8 +774,8 @@ def goo():
     if 'kde_openbox_stuff' in [row[0] for row in config.items("General")]:
         if config.get("General","kde_openbox_stuff") == "yes":
             quest("KDE STUFF")
-            dakilla = subprocess.Popen(["kquitapp5", "plasmashell"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
-            dakillb = subprocess.Popen(["openbox","--replace"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
+            # dakilla = subprocess.Popen(["kquitapp5", "plasmashell"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
+            # dakillb = subprocess.Popen(["openbox","--replace"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
             #os.system("kquitapp5 plasmashell &>/dev/null")
             #os.system("openbox --replace &>/dev/null")
             print("")
@@ -847,18 +858,25 @@ def goo():
     suffixbis = ""
     if 'echoing_stdout' in [row[0] for row in config.items("General")]:
         if config.get("General", 'echoing_stdout') != "":
-            suffixbis = " | tee -a "+config.get("General", 'echoing_stdout')
+            suffixbis = " >> "+config.get("General", 'echoing_stdout')+echo_file+".log"
 
     quest("running")
     print("chdir "+ os.path.dirname( config.get(profile_answer, 'bin_path')  ))
     print("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
+    os.system("echo '========================  '"+echo_file+"'  ========================' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
+    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
+    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
+    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
     os.system("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
+    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
+    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
+    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
     print("")
 
     if config.get("General","kde_openbox_stuff") == "yes":
         quest("KDE STUFF")
-        daunkilla = subprocess.Popen(["plasmashell"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
-        daunkillb = subprocess.Popen(["kwin_x11","--replace"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
+        # daunkilla = subprocess.Popen(["plasmashell"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
+        # daunkillb = subprocess.Popen(["kwin_x11","--replace"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
         #os.system("plasmashell &>/dev/null 2>&1 &")
         #os.system("kwin_x11 --replace &>/dev/null 2>&1")
         print("")
@@ -912,5 +930,7 @@ def main():
 
 
 
+started_at = datetime.datetime.now()
+echo_file = started_at.strftime("%Y%m%d_%H%M%S")
 clear_console()
 main()
