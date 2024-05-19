@@ -8,20 +8,28 @@ from urllib import request
 import time
 from pathlib import Path
 import datetime
-
 import setproctitle
-
-setproctitle.setproctitle('ult_STK_launch')
-
 from pick import pick
-
 from lxml import etree
 import xml.etree.ElementTree as ET
+from configparser import ConfigParser
+import csv
+import pandas as pd
 
+class color:
+   PURPLE = '\033[95m'
+   CYAN = '\033[96m'
+   DARKCYAN = '\033[36m'
+   BLUE = '\033[94m'
+   GREEN = '\033[92m'
+   YELLOW = '\033[93m'
+   RED = '\033[91m'
+   BOLD = '\033[1m'
+   UNDERLINE = '\033[4m'
+   END = '\033[0m'
 
 def cls():
     os.system('cls' if os.name=='nt' else 'clear')
-# Thanks https://stackoverflow.com/questions/517970/how-to-clear-the-interpreter-console
 
 def output_title(text, level):
     if level == 1:
@@ -29,19 +37,14 @@ def output_title(text, level):
     if level == 2:
         print(color.CYAN + text.upper() + color.END)
 
-def quest(text, important = False):
+def prompt(text, important = False):
     if important:
         print(color.UNDERLINE + color.YELLOW + text + color.END)
     else:
         print(color.UNDERLINE + text + color.END)
 
-try:
-    from configparser import ConfigParser
-except ImportError:
-    from ConfigParser import ConfigParser  # ver. < 3.0
 
-config = ConfigParser() # assumed as global variable
-# Thanks https://stackoverflow.com/questions/8884188/how-to-read-and-write-ini-file-with-python3
+config = ConfigParser()
 
 orig_directory = os.getcwd()
 
@@ -57,66 +60,34 @@ issvn = ["editor",
         "wip-library",
         "wip-tracks"]
 
-urls = [["powerup_orig", "normal", "https://raw.githubusercontent.com/supertuxkart/stk-code/1.3/data/powerup.xml"],
-        ["kart_characteristics_orig", "normal", "https://raw.githubusercontent.com/supertuxkart/stk-code/1.3/data/kart_characteristics.xml"],
-        ["powerup_random", "random (mimiz)", "https://stk.kimden.online/public/powerup_mimiz.xml"],
-        ["powerup_rebalanced", "rebalanced (mimiz)", "https://stk.kimden.online/public/rebalanced.xml"],
-        ["powerup_yeet", "YEET (Iluvatyr)", "https://stk.iluvatyr.com/download/powerup.xml"], ##############################4
-        ["kart_characteristics_yeet", "YEET (Iluvatyr)", "https://stk.iluvatyr.com/download/kart_characteristics.xml"],
-        ["powerup_randomAPRIL23", "random (mimiz)APR23", "https://stk.kimden.online/public/powerup_mimiz.xml"], ##############################6
-        ["kart_characteristics_randomAPRIL23", "random (mimiz)APR23", "https://stk.kimden.online/public/230401.xml"],
-        ["powerup_HALLOWEEN_PHYSICS_23", "HALLOWEEN PHYSICS 23", "https://stk.kimden.online/public/trending.xml"], ##############################8
-        ["kart_characteristics_HALLOWEEN_PHYSICS_23", "HALLOWEEN PHYSICS 23", "https://stk.kimden.online/public/hups.xml"],
-        ["powerup_cake", "cake (matahina)", "https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_cake.xml"],
-        ["powerup_gums", "gums (matahina)", "https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_gums.xml"],
-        ["powerup_aprilfool", "April 1st (mimiz)", "https://stk.kimden.online/public/0104.xml"],
-        ["powerup_triple", "Triple 3years FF servers", "https://stk.kimden.online/public/triple.xml"],
-        ["powerup_poll", "Special FF Poll Dec 18th", "https://stk.kimden.online/public/poll.xml"],
-        ["powerup_jan21", "Special FF Jan 21st", "https://stk.kimden.online/public/230121.xml"],
-        ["emoji_used", "", "https://raw.githubusercontent.com/supertuxkart/stk-code/1.3/data/emoji_used.txt"]]
-
-class color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
-# Thanks https://stackoverflow.com/questions/8924173/how-to-print-bold-text-in-python
-
-
-def clear_console():
-    os.system('clear')
+assets_data = pd.read_csv('sources.csv')
+assets_data = assets_data.fillna("")
 
 def update_extra_files():
     output_title("Downloading powerup files in ",2)
-    print(color.CYAN + os.path.expanduser('~')+"/.config/ustkl/" + color.END)
+    print(color.CYAN + orig_directory+"/tmp_files/" + color.END)
 
 
-    for key in urls:
+    for index,row in assets_data[["url","name"]].iterrows():
         print("")
-        quest(key[0])
+        prompt(row["name"])
         try:
-            request.urlretrieve(key[2], os.path.expanduser('~')+"/.config/ustkl/"+key[0]+".xml")
+            request.urlretrieve(row["url"], orig_directory+"/tmp_files/"+row["name"]+".xml")
         except:
-            print(color.RED + "Could not retrieve " + key[2] + color.END)
+            print(color.RED + "Could not retrieve " + row["url"] + color.END)
         else:
-            print("OK " + key[2])
+            print("OK " + row["url"])
 
     print("")
 
-
+def update_addons():
     output_title("Checking for addons",2)
     try:
-        request.urlretrieve("https://online.supertuxkart.net/downloads/xml/online_assets.xml", os.path.expanduser('~')+"/.config/ustkl/online_assets.xml")
+        request.urlretrieve("https://online.supertuxkart.net/downloads/xml/online_assets.xml", orig_directory+"/tmp_files/online_assets.xml")
     except:
         print(color.RED + "Could not retrieve " + "https://online.supertuxkart.net/downloads/xml/online_assets.xml" + color.END)
 
-    tree = etree.parse(os.path.expanduser('~')+"/.config/ustkl/online_assets.xml")
+    tree = etree.parse(orig_directory+"/tmp_files/online_assets.xml")
 
     mytree = ET.parse(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
     root = mytree.getroot()
@@ -165,7 +136,7 @@ def update_extra_files():
                         'Nope'
                         ]
             option, index = pick(options, title)
-            quest("Do you wanna update those addon tracks?")
+            prompt("Do you wanna update those addon tracks?")
             print(option)
             print("")
 
@@ -202,7 +173,7 @@ def update_extra_files():
                     os.system("rm "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
                     os.system("mv "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2'+" "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
 
-        tree = etree.parse(os.path.expanduser('~')+"/.config/ustkl/online_assets.xml")
+        tree = etree.parse(orig_directory+"/tmp_files/online_assets.xml")
 
         mytree = ET.parse(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
         root = mytree.getroot()
@@ -241,7 +212,7 @@ def update_extra_files():
 
             title = "Maybe you wanna install those new addon tracks since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
             selected = pick(options, title, multiselect=True)
-            quest("Maybe you wanna install those new addon tracks since last time?")
+            prompt("Maybe you wanna install those new addon tracks since last time?")
             print(selected)
             print("")
 
@@ -259,7 +230,7 @@ def update_extra_files():
                     os.system("rm "+avail_tracks[i][3]+".zip")
 
 
-    tree = etree.parse(os.path.expanduser('~')+"/.config/ustkl/online_assets.xml")
+    tree = etree.parse(orig_directory+"/tmp_files/online_assets.xml")
 
     mytree = ET.parse(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
     root = mytree.getroot()
@@ -307,7 +278,7 @@ def update_extra_files():
                         'Nope'
                         ]
             option, index = pick(options, title)
-            quest("Do you wanna update those addon arenas?")
+            prompt("Do you wanna update those addon arenas?")
             print(option)
             print("")
 
@@ -346,7 +317,7 @@ def update_extra_files():
                     os.system("mv "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2'+" "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
 
 
-        tree = etree.parse(os.path.expanduser('~')+"/.config/ustkl/online_assets.xml")
+        tree = etree.parse(orig_directory+"/tmp_files/online_assets.xml")
 
         mytree = ET.parse(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
         root = mytree.getroot()
@@ -385,7 +356,7 @@ def update_extra_files():
 
             title = "Maybe you wanna install those new addon arenas since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
             selected = pick(options, title, multiselect=True)
-            quest("Maybe you wanna install those new addon arenas since last time?")
+            prompt("Maybe you wanna install those new addon arenas since last time?")
             print(selected)
             print("")
 
@@ -413,7 +384,7 @@ def edit_profile(number):
         print("")
         config.set('Profile_'+number,'name',an_answer)
 
-        quest("Now choose the bin file for STK")
+        prompt("Now choose the bin file for STK")
         while True:
             an_answer = subprocess.run(['zenity', '--file-selection', '--title=WHERE IS THE BIN STK FILE???'], stdout=subprocess.PIPE)
             if (an_answer.stdout.decode('utf-8').replace("\n","") != ""):
@@ -424,7 +395,7 @@ def edit_profile(number):
         print("")
         config.set('Profile_'+number,'bin_path',an_answer.stdout.decode('utf-8').replace("\n",""))
 
-        quest("then the location of the DATA folder")
+        prompt("then the location of the DATA folder")
         while True:
             an_answer = subprocess.run(['zenity', '--file-selection', '--directory', '--title=WHERE IS THE  Data  DIRECTORY???'], stdout=subprocess.PIPE)
             if (an_answer.stdout.decode('utf-8').replace("\n","") != ""):
@@ -442,7 +413,7 @@ def edit_profile(number):
                     'from a tarball (so locally, no sudo required to change any file)'
                     ]
         option, index = pick(options, title)
-        quest(title)
+        prompt(title)
         print(option)
         print("")
 
@@ -452,7 +423,7 @@ def edit_profile(number):
         elif index == 1:
             config.set('Profile_'+number,'type',"git")
 
-            quest("Now choose the location of the GIT folder")
+            prompt("Now choose the location of the GIT folder")
             while True:
                 an_answer = subprocess.run(['zenity', '--file-selection', '--directory', '--title=WHERE IS THE  git  DIRECTORY???'], stdout=subprocess.PIPE)
                 if (an_answer.stdout.decode('utf-8').replace("\n","") != ""):
@@ -463,7 +434,7 @@ def edit_profile(number):
             print("")
             config.set('Profile_'+number,'git_path',an_answer.stdout.decode('utf-8').replace("\n","")+"/")
 
-            quest("then of the SVN folder")
+            prompt("then of the SVN folder")
             while True:
                 an_answer = subprocess.run(['zenity', '--file-selection', '--directory', '--title=WHERE IS THE  svn  DIRECTORY???'], stdout=subprocess.PIPE)
                 if (an_answer.stdout.decode('utf-8').replace("\n","") != ""):
@@ -477,115 +448,7 @@ def edit_profile(number):
         elif index == 2:
             config.set('Profile_'+number,'type',"from_tarball")
 
-        config.add_section('General')
-        config.set('General','emoji_file','')
-        config.set('General','KDE_Openbox_stuff','')
-        config.set('General','echoing_stdout','')
-
-        title = "Do you have a particular emoji file?"
-        options = ['Yeah',
-                    'Nope'
-                    ]
-        option, index = pick(options, title)
-        quest(title)
-        print(option)
-        print("")
-
-        if index == 0:
-            quest("Now choose your emoji file for STK")
-            while True:
-                an_answer = subprocess.run(['zenity', '--file-selection', '--title=WHERE IS THE CUSTOM emoji_used.txt FILE???'], stdout=subprocess.PIPE)
-                if (an_answer.stdout.decode('utf-8').replace("\n","") != ""):
-                    break
-                else:
-                    print(color.RED + "Pls choose a file" + color.END)
-            print(an_answer.stdout.decode('utf-8').replace("\n",""))
-            print("")
-            config.set('General','emoji_file',an_answer.stdout.decode('utf-8').replace("\n",""))
-
-        title = "Do you run under KDE Plasma and wanna switch temporarily to OpenBox when launching STK?"
-        options = ['Yeah',
-                    'Nope'
-                    ]
-        option, index = pick(options, title)
-        quest(title)
-        print(option)
-        print("")
-
-        if index == 0:
-            config.set('General','KDE_Openbox_stuff',"yes")
-
-        title = "Do you have an existing file where you want to cat stdout.log?"
-        options = ['Yeah',
-                    'Nope'
-                    ]
-        option, index = pick(options, title)
-        quest(title)
-        print(option)
-        print("")
-
-        if index == 0:
-            quest("Now choose your output stdout file for STK")
-            while True:
-                an_answer = subprocess.run(['zenity', '--file-selection', '--title=WHERE IS THE CUSTOM output stdout FILE???'], stdout=subprocess.PIPE)
-                if (an_answer.stdout.decode('utf-8').replace("\n","") != ""):
-                    break
-                else:
-                    print(color.RED + "Pls choose a file" + color.END)
-            print(an_answer.stdout.decode('utf-8').replace("\n",""))
-            print("")
-            config.set('General','echoing_stdout',an_answer.stdout.decode('utf-8').replace("\n",""))
-
-        title = "Do you have custom sfx files?"
-        options = ['Yeah',
-                    'Nope'
-                    ]
-        option, index = pick(options, title)
-        quest(title)
-        print(option)
-        print("")
-
-        if index == 0:
-            quest("Now choose your sfx files for STK")
-            quest("only choose files with exact names", True)
-            quest("those files have to be stored in proper directory (sfx, gfx, models, etc.)", True)
-            quest("Then you select the directory in which these subdirectories are".upper(), True)
-            while True:
-                an_answer = subprocess.run(['zenity', '--file-selection', '--directory', '--title=WHERE THE CUSTOM sfx FILES???'], stdout=subprocess.PIPE)
-                if (an_answer.stdout.decode('utf-8').replace("\n","") != ""):
-                    break
-                else:
-                    print(color.RED + "Pls choose a directory" + color.END)
-            print(an_answer.stdout.decode('utf-8').replace("\n",""))
-            config.set('General','sfx_files',an_answer.stdout.decode('utf-8').replace("\n","")+"/")
-
-            filelist = []
-            path = config.get("General", 'sfx_files')
-
-            for root, dirs, files in os.walk(path):
-                for file in files:
-                    #append the file name to the list
-                    filelist.append(os.path.join(root,file).replace(path,""))
-
-            #print all the file names
-
-            print("Saving back original files for this profile")
-            print("")
-            Path(os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)).mkdir(parents=True, exist_ok=True)
-            for name in filelist:
-                if 'svn_path' in [row[0] for row in config.items("Profile_"+str(number))]:
-                    if ( (config.get("Profile_"+str(number), 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
-                        os.chdir(config.get("Profile_"+str(number), 'svn_path'))
-                        os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
-                    else:
-                        os.chdir(config.get("Profile_"+str(number), 'data_path'))
-                        os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
-                else:
-                    os.chdir(config.get("Profile_"+str(number), 'data_path'))
-                    os.system("cp --parents "+name+" "+os.path.expanduser('~')+"/.config/ustkl/"+"Profile_"+str(number)+"/")
-
-
-        with open(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini", 'w') as configfile:
+        with open(orig_directory+"/magic_config.ini", 'w') as configfile:
             config.write(configfile)
 
         output_title("Profile Updated!", 2)
@@ -599,11 +462,11 @@ def initialize():
     output_title("Config is being created...", 1)
     print("")
 
-    Path(os.path.expanduser('~')+"/.config/ustkl/").mkdir(parents=True, exist_ok=True)
+    Path(orig_directory+"/tmp_files/").mkdir(parents=True, exist_ok=True)
 
-    f = open(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini", 'w')
+    f = open(orig_directory+"/magic_config.ini", 'w')
     f.close()
-    config.read(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini")
+    config.read(orig_directory+"/magic_config.ini")
     config.add_section('Profile_1')
     config.set('Profile_1','name','NotThisName')
     edit_profile("1")
@@ -630,36 +493,36 @@ def stk_update():
 
         uecho_file = "UPDATE_"+echo_file
 
-        os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
-        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
-        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
-        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + orig_directory+"/logs/"+uecho_file+".log")
+        os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+        os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+        os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
 
-        quest("Updating "+profile_answer + " " + config.get(profile_answer, 'name'))
+        prompt("Updating "+profile_answer + " " + config.get(profile_answer, 'name'))
 
         print("Updating SVN")
         print("")
         os.chdir(config.get(profile_answer, 'svn_path'))
-        os.system("svn up >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("svn up >>" + orig_directory+"/logs/"+uecho_file+".log")
 
         print("Updating GIT")
         print("")
         os.chdir(config.get(profile_answer, 'git_path'))
-        os.system("git pull >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("git pull >>" + orig_directory+"/logs/"+uecho_file+".log")
 
         print("Building GIT")
         print("")
         os.chdir(config.get(profile_answer, 'git_path')+"cmake_build")
-        os.system("cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
-        os.system("make -j10 >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo >>" + orig_directory+"/logs/"+uecho_file+".log")
+        os.system("make -j10 >>" + orig_directory+"/logs/"+uecho_file+".log")
 
         print()
-        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
-        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
-        os.system("echo '' >>" + config.get("General", 'echoing_stdout')+uecho_file+".log")
+        os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+        os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+        os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
     else:
         output_title(title, 2)
-        quest("Sorry, not any git installs found in config",True)
+        prompt("Sorry, not any git installs found in config",True)
         print()
 
 
@@ -688,7 +551,7 @@ def stk_revert():
             os.chdir(config.get(profile_answer, 'svn_path'))
             os.system(prefix+"svn revert --recursive .")
 
-    the_path = os.path.expanduser('~')+"/.config/ustkl/"+profile_answer+"/"
+    the_path = orig_directory+"/tmp_files/"+profile_answer+"/"
 
     filelist = []
     for root, dirs, files in os.walk(the_path):
@@ -711,21 +574,11 @@ def stk_revert():
 
 
 def goo():
-    powerups = [row[1] for row in urls]
-
-    for i, filename in enumerate([row[0] for row in urls]):
-        if not(os.path.exists(os.path.expanduser('~')+"/.config/ustkl/"+filename+".xml")):
-            powerups[i] == ""
-            if (i==1 or i==3):
-                powerups[i+1] == ""
-            if (i==2 or i==4):
-                powerups[i-1] == ""
-
-    initial = [x for x in powerups if x]
+    p_up_list = list(dict.fromkeys(assets_data["id"]))
+    p_up_list.remove("")
 
     title = "Which powerup file do you want to use today?"
-    options = sorted(set(initial), key=initial.index)
-    option, index = pick(options, title)
+    option, index = pick(p_up_list, title)
     output_title(title, 2)
     print(option)
     print("")
@@ -734,7 +587,6 @@ def goo():
 
     title = "Which profile do you want to use today?"
     plist = config.sections()
-    plist.remove("General")
     names = []
     for name in plist:
         names.append(config.get(name, 'name'))
@@ -771,120 +623,85 @@ def goo():
     output_title("Am gonna make your dreams come true...", 2)
     print("")
 
-    if 'kde_openbox_stuff' in [row[0] for row in config.items("General")]:
-        if config.get("General","kde_openbox_stuff") == "yes":
-            quest("KDE STUFF")
-            # dakilla = subprocess.Popen(["kquitapp5", "plasmashell"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
-            # dakillb = subprocess.Popen(["openbox","--replace"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
-            #os.system("kquitapp5 plasmashell &>/dev/null")
-            #os.system("openbox --replace &>/dev/null")
-            print("")
-
     if config.get(profile_answer,"type") == "git":
-        quest("Cleaning GIT")
+        prompt("Cleaning GIT")
         os.chdir(config.get(profile_answer, 'git_path'))
         os.system("git clean -f")
         print("")
 
-    if 'emoji_file' in [row[0] for row in config.items("General")]:
-        if config.get("General", 'emoji_file') != "":
-            quest("Using the choosen emoji_used file")
-            os.chdir(config.get(profile_answer, 'data_path'))
-            os.system(prefix+"rm emoji_used.txt")
-            os.system(prefix+"cp "+config.get("General", 'emoji_file')+" emoji_used.txt")
-            print("")
-
     if 'svn_path' in [row[0] for row in config.items(profile_answer)]:
         if config.get(profile_answer, 'svn_path') != "":
-            quest("Cleaning SVN")
+            prompt("Cleaning SVN")
             os.chdir(config.get(profile_answer, 'svn_path'))
             os.system("svn revert --recursive .")
             print("")
 
-    if 'sfx_files' in [row[0] for row in config.items("General")]:
-        if config.get("General", 'sfx_files') != "":
-            quest("Replacing SFX/GFX files")
-            os.chdir(config.get("General", 'sfx_files'))
+    prompt("Replacing SFX/GFX files")
+    os.chdir(orig_directory+"/my_files/")
 
-            filelist = []
+    filelist = []
 
-            path = config.get("General", 'sfx_files')
+    path = orig_directory+"/my_files/"
 
-            for root, dirs, files in os.walk(config.get("General", 'sfx_files')):
-                for file in files:
-                    #append the file name to the list
-                    filelist.append(os.path.join(root,file).replace(path,""))
+    for root, dirs, files in os.walk(orig_directory+"/my_files/"):
+        for file in files:
+            filelist.append(os.path.join(root,file).replace(path,""))
 
-            #print all the file names
-            for name in filelist:
-                if 'svn_path' in [row[0] for row in config.items(profile_answer)]:
-                    if ( (config.get(profile_answer, 'svn_path') != "") and (name[0:name.find("/",1)].replace("/","") in issvn) ):
-                        os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'svn_path'))
-                    else:
-                        os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
-                else:
-                    os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
+    for name in filelist:
+        if 'svn_path' in [row[0] for row in config.items(profile_answer)]:
+            if ( (name[0:name.find("/",1)].replace("/","") in issvn) ):
+                os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'svn_path'))
+            else:
+                os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
+        else:
+            os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
 
-            print("")
+    print("")
 
 
-    powerups.index(powerup_answer)
-
-    quest("Using the choosen powerup file")
-    pfile = urls[powerups.index(powerup_answer)][0]+".xml"
-    if powerups.index(powerup_answer) == 4:
-        kfile = urls[powerups.index(powerup_answer)+1][0]+".xml"
-    elif powerups.index(powerup_answer) == 6:
-        kfile = urls[powerups.index(powerup_answer)+1][0]+".xml"
-    elif powerups.index(powerup_answer) == 8:
-        kfile = urls[powerups.index(powerup_answer)+1][0]+".xml"
-    else:
+    prompt("Using the choosen powerup file")
+    p_up_file_name = list(assets_data['name'].where(assets_data['id'] == powerup_answer).where(assets_data['type'] == "powerup").dropna())
+    pfile = p_up_file_name[0]+".xml"
+    kart_file_name = list(assets_data['name'].where(assets_data['id'] == powerup_answer).where(assets_data['type'] == "kart").dropna())
+    if kart_file_name == []:
         kfile="kart_characteristics_orig.xml"
+    else:
+        kfile = kart_file_name[0]+".xml"
 
     os.chdir(config.get(profile_answer, 'data_path'))
 
-    print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+pfile+" powerup.xml")
+    print(prefix+"cp "+orig_directory+"/tmp_files/"+pfile+" powerup.xml")
     os.system(prefix+"rm powerup.xml")
-    os.system(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+pfile+" powerup.xml")
+    os.system(prefix+"cp "+orig_directory+"/tmp_files/"+pfile+" powerup.xml")
 
-    print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
+    print(prefix+"cp "+orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml")
     os.system(prefix+"rm kart_characteristics.xml")
-    print(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
-    os.system(prefix+"cp "+os.path.expanduser('~')+"/.config/ustkl/"+kfile+" kart_characteristics.xml")
+    os.system(prefix+"cp "+orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml")
 
     print("")
 
     os.chdir(os.path.dirname( config.get(profile_answer, 'bin_path')  ))
-    suffixbis = ""
-    if 'echoing_stdout' in [row[0] for row in config.items("General")]:
-        if config.get("General", 'echoing_stdout') != "":
-            suffixbis = " >> "+config.get("General", 'echoing_stdout')+echo_file+".log"
+    suffixbis = " | tee -a "+orig_directory+"/logs/"+echo_file+".log"
 
-    quest("running")
+    prompt("running")
     print("chdir "+ os.path.dirname( config.get(profile_answer, 'bin_path')  ))
     print("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
-    os.system("echo '========================  '"+echo_file+"'  ========================' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
-    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
-    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
-    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
+    os.system("echo '========================  '"+echo_file+"'  ========================' >>" + orig_directory+"/logs/"+echo_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
     os.system("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
-    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
-    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
-    os.system("echo '' >>" + config.get("General", 'echoing_stdout')+echo_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
     print("")
-
-    if config.get("General","kde_openbox_stuff") == "yes":
-        quest("KDE STUFF")
-        # daunkilla = subprocess.Popen(["plasmashell"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
-        # daunkillb = subprocess.Popen(["kwin_x11","--replace"],stdout=subprocess.DEVNULL,stderr=subprocess.STDOUT)
-        #os.system("plasmashell &>/dev/null 2>&1 &")
-        #os.system("kwin_x11 --replace &>/dev/null 2>&1")
-        print("")
 
 
 
 
 def main():
+    cls()
+    setproctitle.setproctitle('ult_STK_launch')
 
     lala = os.system('echo "WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜" | lolcat ')
     lala = os.system('echo "" | cowsay -f hellokitty | lolcat')
@@ -896,13 +713,14 @@ def main():
     input("Press Enter to continue...")
     cls()
 
-    if (not(path.exists(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini")) or os.stat(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini").st_size == 0):
+    if (not(path.exists(orig_directory+"/magic_config.ini")) or os.stat(orig_directory+"/magic_config.ini").st_size == 0):
         initialize()
 
     output_title("Let's Go!", 1)
     print("")
-    config.read(os.path.expanduser('~')+"/.config/ustkl/magic_config.ini")
+    config.read(orig_directory+"/magic_config.ini")
     update_extra_files()
+    update_addons()
 
 
     title = "What do you want to do today?".upper()
@@ -924,13 +742,15 @@ def main():
         stk_revert()
     elif index == 3:
         output_title("Profiles Tuning",2)
-        quest("not implemented yet",True)
-        quest("At the moment, have fun at: "+os.path.expanduser('~')+"/.config/ustkl/magic_config.ini",True)
+        prompt("not implemented yet",True)
+        prompt("At the moment, have fun at: "+orig_directory+"/magic_config.ini",True)
         print("")
+
+
+
 
 
 
 started_at = datetime.datetime.now()
 echo_file = started_at.strftime("%Y%m%d_%H%M%S")
-clear_console()
 main()
