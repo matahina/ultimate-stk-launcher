@@ -82,7 +82,7 @@ When at least one profile is configured in `magic_config.ini` file, just start `
 
 ## Other STK copies
 
-Either you feel okay to add sections in the `magic_config.ini` file in you have other copies of STK you would like to launch from this program, or you can also choose *Do another install* in the main menu to get different choices (including STK2 and [kimden version](https://github.com/kimden/stk-code)!)
+Either you feel okay to add sections in the `magic_config.ini` file if you have other copies of STK you would like to launch from this program, or you can also choose *Do another install* in the main menu to get several possibilities (including STK2 and [kimden version](https://github.com/kimden/stk-code)!)
 
 ## Bonus: change some files
 
