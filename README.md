@@ -22,8 +22,8 @@
 
 You installed STK with distro package and you just have to fill the missing fields in the \[Profile_1\] section of `magic_config_orig.ini`. Remove \[Profile_2\] section and save the file as `magic_config.ini`.
 
-*bin_path* is the absolute path of the executable itself.
-*data_path* is the absolute path of the *data* directory. Don't forget to add "/" at the end.
+- *bin_path* is the absolute path of the executable itself.
+- *data_path* is the absolute path of the *data* directory. Don't forget to add "/" at the end.
 
 Then start `ult_STK_launch.py`.
 
@@ -31,8 +31,8 @@ Then start `ult_STK_launch.py`.
 
 You have a local copy (executable file) and you just have to fill the missing fields in the \[Profile_1\] section of `magic_config_orig.ini`. Change type field from *sudo* to *other*. Remove \[Profile_2\] section and save the file as `magic_config.ini`.
 
-*bin_path* is the absolute path of the executable itself.
-*data_path* is the absolute path of the *data* directory. Don't forget to add "/" at the end.
+- *bin_path* is the absolute path of the executable itself.
+- *data_path* is the absolute path of the *data* directory. Don't forget to add "/" at the end.
 
 Then start `ult_STK_launch.py`.
 
@@ -41,10 +41,10 @@ Then start `ult_STK_launch.py`.
 You have a local copy of the git repo and you did compiled STK locally. You just have to fill the missing fields in the \[Profile_2\] section of `magic_config_orig.ini`. Remove \[Profile_1\] section and save the file as `magic_config.ini`.
 
 
-*bin_path* is the absolute path of the executable itself.
-*data_path* is the absolute path of the *data* directory. Don't forget to add "/" at the end.
-*git_path* is the absolute path of the directory where git repo is cloned (should normally ends with */stk-code/*)
-*svn_path* is the absolute path of the directory where svn repo is cloned (should normally ends with */stk-assets/*)
+- *bin_path* is the absolute path of the executable itself.
+- *data_path* is the absolute path of the *data* directory. Don't forget to add "/" at the end.
+- *git_path* is the absolute path of the directory where git repo is cloned (should normally ends with */stk-code/*)
+- *svn_path* is the absolute path of the directory where svn repo is cloned (should normally ends with */stk-assets/*)
 
 Then start `ult_STK_launch.py`.
 
@@ -67,11 +67,11 @@ All files supposed to be in `data` folder can be changed and used each time you 
 Just put them in `my_files` folder. Be careful and respect the path and the name they have in `data` or `stk-assets` directories. Example:
 
 ```
-my_files
+my_files/
 |
 - emoji_used.txt
 |
-- sfx
+- sfx/
    |
    - appear.ogg
    - energy_bar_full.ogg
