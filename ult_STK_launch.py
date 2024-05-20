@@ -181,7 +181,7 @@ def goo():
 def initialize():
     title = "What to do?".upper()
     options = ['Config existing install',
-                'Install last git version'
+                'Install last stable version from git (1.4-branch)'
                 ]
     option, index = pick(options, title)
     style.output_title(title, 2)
@@ -196,8 +196,9 @@ def initialize():
         style.prompt("Have fun at: "+orig_directory+"/magic_config.ini",True)
         print("")
         print("")
+        quit()
     elif index == 1:
-        helpers.stk_git(config)
+        helpers.stk_git_stable(config)
         main()
 
 def main():
@@ -228,7 +229,7 @@ def main():
     options = ['STÖÖÖÖRT STK',
                 'Update STK from git and svn',
                 'Tweak your profiles',
-                'Install a special version',
+                'Do another install',
                 'Quit'
                 ]
     option, index = pick(options, title)
@@ -244,7 +245,7 @@ def main():
         # options.remove("General")
         idx = []
         for i,prof in enumerate(options):
-            if config.get(prof, 'type') == "git" or config.get(prof, 'type') == "git2" :
+            if config.get(prof, 'type') == "git" or config.get(prof, 'type') == "git2" or config.get(prof, 'type') == "git-kimden" or config.get(prof, 'type') == "git-kimden-server" :
                 idx.append(i)
 
         if idx != []:
@@ -273,16 +274,27 @@ def main():
         print("")
     elif index == 3:
         title = "Which version?".upper()
-        options = ['STK SPEED',
-                    'STK 2',
-                    ]
+        options = ['STK GIT (master)',
+                   'STK GIT (1.4-stable)',
+                   'STK GIT Kimden (command-manager-prototype)',
+                   'STK GIT Kimden Server mode (command-manager-prototype)',
+                   'STK SPEED',
+                    'STK 2']
         option, sp_index = pick(options, title)
         style.output_title(title, 2)
         print(option)
         print("")
         if sp_index == 0:
-            helpers.stk_speed(config)
+            helpers.stk_git(config)
         if sp_index == 1:
+            helpers.stk_git_stable(config)
+        if sp_index == 2:
+            helpers.stk_git_kimden(config)
+        if sp_index == 3:
+            helpers.stk_git_kimden_server(config)
+        if sp_index == 4:
+            helpers.stk_speed(config)
+        if sp_index == 5:
             helpers.stk2(config)
         main()
     elif index == 4:

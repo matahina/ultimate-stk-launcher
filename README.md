@@ -1,51 +1,87 @@
 # Ultimate STK Launcher
 
-**Version 0.4999RC2**
-
-Where we are actually:
-
-- [x] Working with git / tarball installations
-- [x] Working with apt / rpm / system installations from distro package and using sudo thingie
-- [ ] Working with flatpak (AAAAAAHHHHHHHH!!!!!!!! ~~and using sudo thingie~~) (maybit, pls try and tell me)
-- [ ] Making *emoji_used* file and *sfx* files _per profile_ and not in general section
-- [x] Making more than sfx files user-tweakable (because some files stay in data, some go into stk-assets from svn)
-- [ ] Allowing to tweak profiles and to add new profiles (by example in case that both git and distro installations are available) without manually editing config file
-- [x] IT CAN UPDATE YOUR ADDONS AND SHOW YOU FRESH ONES NOT DOWNLOADED YET
-
-*See commit changelog for changelog.*
+**Version 24.05**
 
 ## Requirements
 
-- Python 3
-- Zenity
-- Python pick (pip install pick)
-- Optional: cowsay and lolcat
+- Bash
+- Python3 and some packages
+   - pick
+   - lxml
+   - setproctitle
+   - pandas
+- Optional tools
+   - cowsay
+   - lolcat
+- If you want to install and compile from git repos
+   - make sure you have all dependencies required as explained [here](https://github.com/supertuxkart/stk-code/blob/master/INSTALL.md)
 
-## Getting started
+## Getting started: several cases
 
-You're now gonna be able to launch STK with:
+### STK installed via package manager
 
-- either powerup file you need (and update these files automatically)
-- debug mode you need (both drivelines and checklines if needed)
-- ~~or from location (profile!) you want – either from git install or system install~~ (multi-profiles not yet fully implemented)
+You installed STK with distro package and you just have to fill the missing fields in the \[Profile_1\] section of `magic_config_orig.ini`. Remove \[Profile_2\] section and save the file as `magic_config.ini`.
 
-## Know where are your files stored
+*bin_path* is the absolute path of the executable itself.
+*data_path* is the absolute path of the *data* directory. Don't forget to add "/" at the end.
 
-At first start, you'll be prompt about those files and directories:
-- stk bin executable file
-- data directory
-- git directory (if u did install that way)
-- assets directory (i.e. svn if u installed via git)
+Then start `ult_STK_launch.py`.
 
-## Bonuses for geniuses
+### STK local binary
 
-You can also tweak:
-- if using KDE, and Openbox installed, enable a script to switch temporarily from KDE to Openbox while playing (and saving CPU×RAM)
-- choose a specific emoji_used file you keep stored somewhere in your computer (will be used each time, you can still modify it later without moving file manually)
-- change some sfx files — you need to have them stored in a directory reproducing the same structure _data_ (or _stk-assets_) have. 
+You have a local copy (executable file) and you just have to fill the missing fields in the \[Profile_1\] section of `magic_config_orig.ini`. Change type field from *sudo* to *other*. Remove \[Profile_2\] section and save the file as `magic_config.ini`.
+
+*bin_path* is the absolute path of the executable itself.
+*data_path* is the absolute path of the *data* directory. Don't forget to add "/" at the end.
+
+Then start `ult_STK_launch.py`.
+
+### STK local git copy
+
+You have a local copy of the git repo and you did compiled STK locally. You just have to fill the missing fields in the \[Profile_2\] section of `magic_config_orig.ini`. Remove \[Profile_1\] section and save the file as `magic_config.ini`.
+
+
+*bin_path* is the absolute path of the executable itself.
+*data_path* is the absolute path of the *data* directory. Don't forget to add "/" at the end.
+*git_path* is the absolute path of the directory where git repo is cloned (should normally ends with */stk-code/*)
+*svn_path* is the absolute path of the directory where svn repo is cloned (should normally ends with */stk-assets/*)
+
+Then start `ult_STK_launch.py`.
+
+### From scratch
+
+Just start `ult_STK_launch.py`. Choose *Install last stable version from git (1.4-branch)*. Make sure you have all the necessary software packages to let it build and compile.
+
+## Regular launch
+
+When at least one profile is configured in `magic_config.ini` file, just start `ult_STK_launch.py`.
+
+## Other STK copies
+
+Either you feel okay to add sections in the `magic_config.ini` file in you have other copies of STK you would like to launch from this program, or you can also choose *Do another install* in the main menu to get different choices (including [kimden version](https://github.com/kimden/stk-code)!)
+
+## Bonus: change some files
+
+All files supposed to be in `data` folder can be changed and used each time you run STK with this launcher. Original ones would be reverted when exiting.
+
+Just put them in `my_files` folder. Be careful and respect the path and the name they have in `data` or `stk-assets` directories. Example:
+
+```
+my_files
+|
+- emoji_used.txt
+|
+- sfx
+   |
+   - appear.ogg
+   - energy_bar_full.ogg
+   - explosion.ogg
+```
+
+Original ones will be renamed with *_old* suffix and those ones put at their places. At the end, those ones will be removed from `data` and `stk-assets` and *_old* suffix removed from original ones so eveything will remain as before. Your custom files in `my_files` will remain unchanged and ready for next launch.
 
 ## License
 This bunch of crap code lines is GPL, free, public domain, have fun with it!!!
 
 ## Project status
-"Active" or kinda.
+Active.

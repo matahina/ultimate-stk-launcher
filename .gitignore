@@ -3,3 +3,6 @@
 /my_files/*
 /tmp_files/*
 libs/__pycache__
+!/logs/.placeholder
+!/my_files/.placeholder
+!/tmp_files/.placeholder

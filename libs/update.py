@@ -340,6 +340,8 @@ def stk_profile(profile_answer, config):
 
     if config.get(profile_answer, 'type') == "git2":
         os.system("sh "+orig_directory+"/libs/update_stk_git2.sh "+config.get(profile_answer, 'svn_path')+ " " +config.get(profile_answer, 'git_path')+ " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
+    elif config.get(profile_answer, 'type') == "git-kimden-server":
+        os.system("sh "+orig_directory+"/libs/update_stk_kimden_server.sh "+config.get(profile_answer, 'svn_path')+ " " +config.get(profile_answer, 'git_path')+ " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
     else:
         os.system("sh "+orig_directory+"/libs/update_stk_git.sh "+config.get(profile_answer, 'svn_path')+ " " +config.get(profile_answer, 'git_path')+ " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
 
