@@ -1,11 +1,6 @@
 #! /bin/sh
 
 cd $1
-git clone https://github.com/supertuxkart/stk-code stk-code-stable
-svn co https://svn.code.sf.net/p/supertuxkart/code/stk-assets stk-assets
-cd stk-code-stable
-git checkout 1.4-branch
-mkdir cmake_build
-cd cmake_build
-cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
-make -j10
+wget https://github.com/supertuxkart/stk-code/releases/download/1.4/SuperTuxKart-1.4-linux-x86_64.tar.xz
+tar -xf SuperTuxKart-1.4-linux-x86_64.tar.xz
+rm SuperTuxKart-1.4-linux-x86_64.tar.xz

@@ -1,6 +1,12 @@
 # Ultimate STK Launcher
 
-**Version 24.05**
+**Version 24.05.1**
+
+```
+This program is designed to work on Linux 64bit.
+
+STK2 is now compatible!
+```
 
 ## Requirements
 
@@ -50,7 +56,7 @@ Then start `ult_STK_launch.py`.
 
 ### From scratch
 
-Just start `ult_STK_launch.py`. Choose *Install last stable version from git (1.4-branch)*. Make sure you have all the necessary software packages to let it build and compile.
+Just start `ult_STK_launch.py`. Choose *Install last stable version (1.4)*. It will ask you where to download the tarball, extract it, and set it all up.
 
 ## Regular launch
 
@@ -58,7 +64,7 @@ When at least one profile is configured in `magic_config.ini` file, just start `
 
 ## Other STK copies
 
-Either you feel okay to add sections in the `magic_config.ini` file in you have other copies of STK you would like to launch from this program, or you can also choose *Do another install* in the main menu to get different choices (including [kimden version](https://github.com/kimden/stk-code)!)
+Either you feel okay to add sections in the `magic_config.ini` file in you have other copies of STK you would like to launch from this program, or you can also choose *Do another install* in the main menu to get different choices (including STK2 and [kimden version](https://github.com/kimden/stk-code)!)
 
 ## Bonus: change some files
 
