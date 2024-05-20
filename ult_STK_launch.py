@@ -181,7 +181,7 @@ def goo():
 def initialize():
     title = "What to do?".upper()
     options = ['Config existing install',
-                'Install last stable version from git (1.4-branch)'
+                'Install last stable version (1.4)'
                 ]
     option, index = pick(options, title)
     style.output_title(title, 2)
@@ -198,7 +198,7 @@ def initialize():
         print("")
         quit()
     elif index == 1:
-        helpers.stk_git_stable(config)
+        helpers.stk_stable(config)
         main()
 
 def main():
@@ -239,6 +239,7 @@ def main():
 
     if index == 0:
         goo()
+        quit()
     elif index == 1:
         title = "Which profile do you want to update today?"
         options = config.sections()
@@ -275,7 +276,7 @@ def main():
     elif index == 3:
         title = "Which version?".upper()
         options = ['STK GIT (master)',
-                   'STK GIT (1.4-stable)',
+                   'STK STABLE (1.4)',
                    'STK GIT Kimden (command-manager-prototype)',
                    'STK GIT Kimden Server mode (command-manager-prototype)',
                    'STK SPEED',
@@ -287,7 +288,7 @@ def main():
         if sp_index == 0:
             helpers.stk_git(config)
         if sp_index == 1:
-            helpers.stk_git_stable(config)
+            helpers.stk_stable(config)
         if sp_index == 2:
             helpers.stk_git_kimden(config)
         if sp_index == 3:
@@ -299,6 +300,7 @@ def main():
         main()
     elif index == 4:
         print()
+        quit()
 
 
 

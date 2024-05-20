@@ -9,8 +9,8 @@ random (mimiz)APR23,powerup,powerup_randomAPRIL23,https://stk.kimden.online/publ
 random (mimiz)APR23,kart,kart_characteristics_randomAPRIL23,https://stk.kimden.online/public/230401.xml
 HALLOWEEN PHYSICS 23,powerup,powerup_HALLOWEEN_PHYSICS_23,https://stk.kimden.online/public/trending.xml
 HALLOWEEN PHYSICS 23,kart,kart_characteristics_HALLOWEEN_PHYSICS_23,https://stk.kimden.online/public/hups.xml
-cake (matahina),powerup,powerup_cake,https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_cake.xml
-gums (matahina),powerup,powerup_gums,https://framagit.org/hina-dev/stk-party/-/raw/main/powerup_gums.xml
+cake (matahina),powerup,powerup_cake,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/matahina_powerups/powerup_cake.xml
+gums (matahina),powerup,powerup_gums,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/matahina_powerups/powerup_gums.xml
 April 1st (mimiz),powerup,powerup_aprilfool,https://stk.kimden.online/public/0104.xml
 Triple 3years FF servers,powerup,powerup_triple,https://stk.kimden.online/public/triple.xml
 Special FF Poll Dec 18th,powerup,powerup_poll,https://stk.kimden.online/public/poll.xml

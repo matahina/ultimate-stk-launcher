@@ -63,11 +63,11 @@ def stk2(config):
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK 2')
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"alayan/stk-code-alayan/cmake_build/bin/supertuxkart")
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"alayan/stk-code-alayan/data/")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-2/stk-code-alayan/cmake_build/bin/supertuxkart")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-2/stk-code-alayan/data/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git2")
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"alayan/stk-code-alayan/")
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"alayan/stk-assets/")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-2/stk-code-alayan/")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-2/stk-assets/")
     with open(orig_directory+"/magic_config.ini", 'w') as configfile:
         config.write(configfile)
 
@@ -108,9 +108,9 @@ def stk_git(config):
 
 
 
-def stk_git_stable(config):
+def stk_stable(config):
     started_at = datetime.datetime.now()
-    uecho_file = "INSTALL_STK_GIT_STABLE_"+started_at.strftime("%Y%m%d_%H%M%S")
+    uecho_file = "INSTALL_STK_STABLE_"+started_at.strftime("%Y%m%d_%H%M%S")
 
     orig_directory = os.getcwd()
     os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + orig_directory+"/logs/"+uecho_file+".log")
@@ -133,12 +133,10 @@ def stk_git_stable(config):
 
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT stable')
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code-stable/cmake_build/bin/supertuxkart")
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code-stable/data/")
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-stable/")
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK Stable')
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"SuperTuxKart-1.4-linux-x86_64/bin/supertuxkart")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"SuperTuxKart-1.4-linux-x86_64/data/")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "stable")
     with open(orig_directory+"/magic_config.ini", 'w') as configfile:
         config.write(configfile)
 
