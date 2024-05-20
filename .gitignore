@@ -2,3 +2,4 @@
 /logs/*
 /my_files/*
 /tmp_files/*
+libs/__pycache__
