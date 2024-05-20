@@ -31,6 +31,24 @@ You installed STK with distro package and you just have to fill the missing fiel
 - *bin_path* is the absolute path of the executable itself.
 - *data_path* is the absolute path of the *data* directory. Don't forget to add "/" at the end.
 
+**By example: Manjaro**
+```
+[Profile_1]
+name = STK distro
+bin_path = /usr/bin/supertuxkart
+data_path = /usr/share/supertuxkart/data/
+type = sudo
+```
+
+**By example: Ubuntu**
+```
+[Profile_1]
+name = STK distro
+bin_path = /usr/games/supertuxkart
+data_path = /usr/share/games/supertuxkart/data/
+type = sudo
+```
+
 Then start `ult_STK_launch.py`.
 
 ### STK local binary

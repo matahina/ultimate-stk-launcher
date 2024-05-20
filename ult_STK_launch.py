@@ -105,6 +105,8 @@ def goo():
         for file in files:
             filelist.append(os.path.join(root,file).replace(path,""))
 
+    filelist.remove(".placeholder")
+
     for name in filelist:
         if 'svn_path' in [row[0] for row in config.items(profile_answer)]:
             if ( (name[0:name.find("/",1)].replace("/","") in issvn) ):
