@@ -208,6 +208,7 @@ def initialize():
         main()
 
 def main():
+    os.chdir(orig_directory)
     style.cls()
     setproctitle.setproctitle('ult_STK_launch')
 
