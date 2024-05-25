@@ -8,4 +8,4 @@ git checkout command-manager-prototype
 mkdir cmake_build
 cd cmake_build
 cmake .. -DSERVER_ONLY=ON -DUSE_SQLITE3=ON -DWEB_SUPPORT=ON -DUSE_RECORDS_V2=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo
-make -j10
+make -j$(( $(nproc) - 1 ))

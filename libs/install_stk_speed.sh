@@ -10,4 +10,4 @@ unzip -o src.zip
 mkdir cmake_build
 cd cmake_build
 cmake ..
-make -j10
+make -j$(( $(nproc) - 1 ))

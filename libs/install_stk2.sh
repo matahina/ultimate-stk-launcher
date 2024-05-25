@@ -10,4 +10,4 @@ git checkout BalanceSTK2
 mkdir cmake_build
 cd cmake_build
 cmake .. -DCMAKE_BUILD_TYPE=Debug -DNO_SHADERC=ON
-make -j10
+make -j$(( $(nproc) - 1 ))

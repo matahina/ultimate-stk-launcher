@@ -8,4 +8,4 @@ git checkout command-manager-prototype
 mkdir cmake_build
 cd cmake_build
 cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
-make -j10
+make -j$(( $(nproc) - 1 ))
