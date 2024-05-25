@@ -8,6 +8,7 @@ from urllib import request
 from configparser import ConfigParser
 import datetime
 import questionary
+from pathlib import Path
 
 def extra_files(assets_data):
     orig_directory = os.getcwd()
