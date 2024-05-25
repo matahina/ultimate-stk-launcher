@@ -16,6 +16,8 @@ sudo apt install python3-questionary python3-lxml python3-setproctitle python3-p
 - On Arch/Manjaro:
 ```
 sudo pacman -S python3-lxml python3-setproctitle python3-pandas cowsay lolcat
+```
+```
 yay -S python3-questionary
 ```
 
