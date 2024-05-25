@@ -314,7 +314,7 @@ def addons():
             if selected != []:
                 sel_arenas = []
                 for i in selected:
-                    sel_arenas.append(new_tracks[options.index(i)])
+                    sel_arenas.append(new_arenas[options.index(i)])
                 for j,i in enumerate(sel_arenas):
                     os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
                     os.system("rm -rf "+avail_arenas[i][0])
