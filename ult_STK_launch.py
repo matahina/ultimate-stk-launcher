@@ -209,9 +209,11 @@ def initialize():
 
 def main():
     os.chdir(orig_directory)
-    style.cls()
     setproctitle.setproctitle('ult_STK_launch')
-
+    print("")
+    print("")
+    print("")
+    print("")
     lala = os.system('echo "WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜" | lolcat ')
     lala = os.system('echo "" | cowsay -f hellokitty | lolcat')
 
@@ -220,7 +222,6 @@ def main():
 
     print("")
     input("Press Enter to continue...")
-    style.cls()
 
     if (not(os.path.exists(orig_directory+"/magic_config.ini")) or os.stat(orig_directory+"/magic_config.ini").st_size == 0):
         initialize()
