@@ -10,3 +10,6 @@ git pull
 cd cmake_build
 cmake .. -DSERVER_ONLY=ON -DUSE_SQLITE3=ON -DWEB_SUPPORT=ON -DUSE_RECORDS_V2=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo
 make -j10
+
+# Optional, if you have specific commands to add, create that file
+test -f ../../server_hooks.sh && sh ../../server_hooks.sh
