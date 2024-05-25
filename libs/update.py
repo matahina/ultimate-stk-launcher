@@ -7,6 +7,7 @@ import os
 from urllib import request
 from configparser import ConfigParser
 import datetime
+import questionary
 
 def extra_files(assets_data):
     orig_directory = os.getcwd()
@@ -82,7 +83,8 @@ def addons():
             options = ['Yeah',
                         'Nope'
                         ]
-            option, index = pick(options, title)
+            option = questionary.select(title, options).ask()
+            index = options.index(option)
             style.prompt("Do you wanna update those addon tracks?")
             print(option)
             print("")
@@ -158,15 +160,15 @@ def addons():
                 options.append(avail_tracks[i][1] + "  |  " + "by " + avail_tracks[i][4] + " " + avail_tracks[i][5] + "  |  " + "desc: " + avail_tracks[i][6] + "  |  " + "size: " + str(round(int(avail_tracks[i][8])/(1024*1024),1)) + "MB"+ "\n")
 
             title = "Maybe you wanna install those new addon tracks since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
-            selected = pick(options, title, multiselect=True)
+            selected = questionary.checkbox(title,choices=options).ask()
             style.prompt("Maybe you wanna install those new addon tracks since last time?")
             print(selected)
             print("")
 
             if selected != []:
                 sel_tracks = []
-                for i in [row[1] for row in selected]:
-                    sel_tracks.append(new_tracks[i])
+                for i in selected:
+                    sel_tracks.append(new_tracks[options.index(i)])
                 for j,i in enumerate(sel_tracks):
                     os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
                     os.system("rm -rf "+avail_tracks[i][0])
@@ -224,7 +226,8 @@ def addons():
             options = ['Yeah',
                         'Nope'
                         ]
-            option, index = pick(options, title)
+            option = questionary.select(title, options).ask()
+            index = options.index(option)
             style.prompt("Do you wanna update those addon arenas?")
             print(option)
             print("")
@@ -302,15 +305,15 @@ def addons():
                 options.append(avail_arenas[i][1] + "  |  " + "by " + avail_arenas[i][4] + " " + avail_arenas[i][5] + "  |  " + "desc: " + avail_arenas[i][6] + "  |  " + "size: " + str(round(int(avail_arenas[i][8])/(1024*1024),1)) + "MB"+ "\n")
 
             title = "Maybe you wanna install those new addon arenas since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
-            selected = pick(options, title, multiselect=True)
+            selected = questionary.checkbox(title,choices=options).ask()
             style.prompt("Maybe you wanna install those new addon arenas since last time?")
             print(selected)
             print("")
 
             if selected != []:
                 sel_arenas = []
-                for i in [row[1] for row in selected]:
-                    sel_arenas.append(new_arenas[i])
+                for i in selected:
+                    sel_tracks.append(new_tracks[options.index(i)])
                 for j,i in enumerate(sel_arenas):
                     os.chdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
                     os.system("rm -rf "+avail_arenas[i][0])

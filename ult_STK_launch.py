@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 import datetime
 import setproctitle
-from pick import pick
+import questionary
 from configparser import ConfigParser
 import csv
 import pandas as pd
@@ -44,7 +44,8 @@ def goo():
     names = []
     for name in plist:
         names.append(config.get(name, 'name'))
-    option, index = pick(names, title)
+    option = questionary.select(title, names).ask()
+    index = names.index(option)
     style.output_title(title, 2)
     print(option)
     print("")
@@ -60,7 +61,8 @@ def goo():
     else:
         p_up_list.remove("STK2")
     title = "Which powerup file do you want to use today?"
-    option, index = pick(p_up_list, title)
+    option = questionary.select(title, p_up_list).ask()
+    index = p_up_list.index(option)
     style.output_title(title, 2)
     print(option)
     print("")
@@ -77,7 +79,8 @@ def goo():
         "Drivelines",
         "CHecklines AND Drivelines"
         ]
-    option, index = pick(options, title)
+    option = questionary.select(title, options).ask()
+    index = options.index(option)
     style.output_title(title, 2)
     print(option)
     print("")
@@ -185,7 +188,8 @@ def initialize():
     options = ['Config existing install',
                 'Install last stable version (1.4)'
                 ]
-    option, index = pick(options, title)
+    option = questionary.select(title, options).ask()
+    index = options.index(option)
     style.output_title(title, 2)
     print(option)
     print("")
@@ -234,7 +238,8 @@ def main():
                 'Do another install',
                 'Quit'
                 ]
-    option, index = pick(options, title)
+    option = questionary.select(title, options).ask()
+    index = options.index(option)
     style.output_title(title, 2)
     print(option)
     print("")
@@ -256,7 +261,8 @@ def main():
             names = []
             for name in plist:
                 names.append(config.get(name, 'name'))
-            option, index = pick(names, title)
+            option = questionary.select(title, options).ask()
+            index = options.index(option)
             style.output_title(title, 2)
             print(option)
             print("")
@@ -283,7 +289,8 @@ def main():
                    'STK GIT Kimden Server mode (command-manager-prototype)',
                    'STK SPEED',
                     'STK 2']
-        option, sp_index = pick(options, title)
+        option = questionary.select(title, options).ask()
+        sp_index = options.index(option)
         style.output_title(title, 2)
         print(option)
         print("")
