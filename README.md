@@ -1,24 +1,23 @@
 # Ultimate STK Launcher
 
-**Version 24.05.1**
+**Version 24.06**
 
-```
-This program is designed to work on Linux 64bit.
-
-STK2 is now compatible!
-```
+> This program is designed to work on Linux 64bit.
+> STK2 is now compatible!
 
 ## Requirements
 
-- Bash
-- Python3 and some packages
-   - pick
-   - lxml
-   - setproctitle
-   - pandas
-- Optional tools
-   - cowsay
-   - lolcat
+- On Ubuntu:
+```
+sudo apt install python3-questionary python3-lxml python3-setproctitle python3-pandas cowsay lolcat
+```
+
+- On Arch/Manjaro:
+```
+sudo pacman -S python3-lxml python3-setproctitle python3-pandas cowsay lolcat
+yay -S python3-questionary
+```
+
 - If you want to install and compile from git repos
    - make sure you have all dependencies required as explained [here](https://github.com/supertuxkart/stk-code/blob/master/INSTALL.md)
 
