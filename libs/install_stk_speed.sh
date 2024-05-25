@@ -10,4 +10,4 @@ unzip -o src.zip
 mkdir cmake_build
 cd cmake_build
 cmake ..
-make -j$(( $(nproc) - 1 ))
+make -j`if [ $(( $(nproc) - 1 )) -eq 0 ]; then echo 1; else echo $(( $(nproc) - 1 )) ; fi`
