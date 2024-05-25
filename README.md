@@ -1,6 +1,6 @@
 # Ultimate STK Launcher
 
-**Version 24.05.2**
+**Version 24.05.3**
 
 ```
 This program is designed to work on Linux 64bit.

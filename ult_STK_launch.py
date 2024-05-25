@@ -204,6 +204,7 @@ def initialize():
         main()
 
 def main():
+    os.chdir(orig_directory)
     style.cls()
     setproctitle.setproctitle('ult_STK_launch')
 
@@ -225,6 +226,7 @@ def main():
     config.read(orig_directory+"/magic_config.ini")
     update.extra_files(assets_data)
     update.addons()
+    os.chdir(orig_directory)
 
 
     title = "What do you want to do today?".upper()
