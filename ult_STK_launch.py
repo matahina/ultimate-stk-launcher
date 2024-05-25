@@ -46,8 +46,6 @@ def goo():
         names.append(config.get(name, 'name'))
     option = questionary.select(title, names).ask()
     index = names.index(option)
-    style.output_title(title, 2)
-    print(option)
     print("")
     profile_answer = plist[index]
 
@@ -63,8 +61,6 @@ def goo():
     title = "Which powerup file do you want to use today?"
     option = questionary.select(title, p_up_list).ask()
     index = p_up_list.index(option)
-    style.output_title(title, 2)
-    print(option)
     print("")
     powerup_answer = option
 
@@ -81,8 +77,6 @@ def goo():
         ]
     option = questionary.select(title, options).ask()
     index = options.index(option)
-    style.output_title(title, 2)
-    print(option)
     print("")
 
     suffix = ""
@@ -190,8 +184,6 @@ def initialize():
                 ]
     option = questionary.select(title, options).ask()
     index = options.index(option)
-    style.output_title(title, 2)
-    print(option)
     print("")
 
     if index == 0:
@@ -243,8 +235,6 @@ def main():
                 ]
     option = questionary.select(title, options).ask()
     index = options.index(option)
-    style.output_title(title, 2)
-    print(option)
     print("")
 
     if index == 0:
@@ -266,8 +256,6 @@ def main():
                 names.append(config.get(name, 'name'))
             option = questionary.select(title, options).ask()
             index = options.index(option)
-            style.output_title(title, 2)
-            print(option)
             print("")
             profile_answer = plist[index]
             update.stk_profile(profile_answer, config)
@@ -294,8 +282,6 @@ def main():
                     'STK 2']
         option = questionary.select(title, options).ask()
         sp_index = options.index(option)
-        style.output_title(title, 2)
-        print(option)
         print("")
         if sp_index == 0:
             helpers.stk_git(config)

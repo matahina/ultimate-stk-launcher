@@ -86,8 +86,6 @@ def addons():
                         ]
             option = questionary.select(title, options).ask()
             index = options.index(option)
-            style.prompt("Do you wanna update those addon tracks?")
-            print(option)
             print("")
 
             if index == 0:
@@ -162,8 +160,6 @@ def addons():
 
             title = "Maybe you wanna install those new addon tracks since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
             selected = questionary.checkbox(title,choices=options).ask()
-            style.prompt("Maybe you wanna install those new addon tracks since last time?")
-            print(selected)
             print("")
 
             if selected != []:
@@ -229,8 +225,6 @@ def addons():
                         ]
             option = questionary.select(title, options).ask()
             index = options.index(option)
-            style.prompt("Do you wanna update those addon arenas?")
-            print(option)
             print("")
 
             if index == 0:
@@ -307,8 +301,6 @@ def addons():
 
             title = "Maybe you wanna install those new addon arenas since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
             selected = questionary.checkbox(title,choices=options).ask()
-            style.prompt("Maybe you wanna install those new addon arenas since last time?")
-            print(selected)
             print("")
 
             if selected != []:
