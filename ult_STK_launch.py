@@ -254,8 +254,8 @@ def main():
             names = []
             for name in plist:
                 names.append(config.get(name, 'name'))
-            option = questionary.select(title, options).ask()
-            index = options.index(option)
+            option = questionary.select(title, names).ask()
+            index = names.index(option)
             print("")
             profile_answer = plist[index]
             update.stk_profile(profile_answer, config)
