@@ -168,7 +168,44 @@ def stk_git_kimden(config):
 
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT stable')
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT KIMDEN')
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code-kimden/cmake_build/bin/supertuxkart")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code-kimden/data/")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-kimden/")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
+    with open(orig_directory+"/magic_config.ini", 'w') as configfile:
+        config.write(configfile)
+
+
+
+
+def stk_git_kimden_client(config):
+    started_at = datetime.datetime.now()
+    uecho_file = "INSTALL_STK_GIT_KIMDEN_CLIENT_"+started_at.strftime("%Y%m%d_%H%M%S")
+
+    orig_directory = os.getcwd()
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+
+    title = "Where to clone repos? [Give absolute path of the directory to exec git clone]"
+    style.output_title(title, 1)
+    the_path = ""
+    the_path = input('')
+    if the_path[-1] != "/":
+        the_path = the_path + "/"
+    os.system("sh "+orig_directory+"/libs/install_stk_kimden_client.sh "+the_path + " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
+
+    print()
+    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+
+
+    config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT KIMDEN CLIENT')
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code-kimden/cmake_build/bin/supertuxkart")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code-kimden/data/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
@@ -205,7 +242,7 @@ def stk_git_kimden_server(config):
 
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT stable')
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT KIMDEN SERVER')
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code-kimden-server/cmake_build/bin/supertuxkart")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code-kimden-server/data/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")

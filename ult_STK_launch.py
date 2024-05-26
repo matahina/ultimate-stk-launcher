@@ -276,6 +276,7 @@ def main():
         title = "Which version?".upper()
         options = ['STK GIT (master)',
                    'STK STABLE (1.4)',
+                   'STK GIT Kimden Client (local-client)',
                    'STK GIT Kimden (command-manager-prototype)',
                    'STK GIT Kimden Server mode (command-manager-prototype)',
                    'STK SPEED',
@@ -288,12 +289,14 @@ def main():
         if sp_index == 1:
             helpers.stk_stable(config)
         if sp_index == 2:
-            helpers.stk_git_kimden(config)
+            helpers.stk_git_kimden_client(config)
         if sp_index == 3:
-            helpers.stk_git_kimden_server(config)
+            helpers.stk_git_kimden(config)
         if sp_index == 4:
-            helpers.stk_speed(config)
+            helpers.stk_git_kimden_server(config)
         if sp_index == 5:
+            helpers.stk_speed(config)
+        if sp_index == 6:
             helpers.stk2(config)
         main()
     elif index == 4:
