@@ -1,7 +1,7 @@
 #! /bin/sh
 
 cd $1
-git clone https://github.com/kimden/stk-code.git stk-code-kimden
+git clone https://github.com/kimden/stk-code.git stk-code-kimden-client
 svn co https://svn.code.sf.net/p/supertuxkart/code/stk-assets stk-assets
 cd stk-code-kimden
 git checkout local-client
