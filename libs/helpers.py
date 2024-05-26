@@ -206,10 +206,10 @@ def stk_git_kimden_client(config):
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT KIMDEN CLIENT')
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code-kimden/cmake_build/bin/supertuxkart")
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code-kimden/data/")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code-kimden-client/cmake_build/bin/supertuxkart")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code-kimden-client/data/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
-    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-kimden/")
+    config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-kimden-client/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
     with open(orig_directory+"/magic_config.ini", 'w') as configfile:
         config.write(configfile)
