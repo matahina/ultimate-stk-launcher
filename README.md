@@ -2,6 +2,7 @@
 
 **Version 24.06**
 
+> [!NOTE] 
 > This program is designed to work on Linux 64bit.
 >
 > STK2 is now compatible!
