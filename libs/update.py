@@ -151,8 +151,13 @@ def addons():
         if last_avail > last_installed:
             for i, stamps in enumerate(list_aa):
                 if stamps > last_installed:
-                    if not(avail_tracks[i][1] in list_b):
-                        new_tracks.append(i)
+                    if not(avail_tracks[i][0] in list_b):
+                        new_elem=[i,avail_tracks[i][0],avail_tracks[i][1]]
+                        if new_tracks != []:
+                            if new_tracks[-1][1] == new_elem[1]:
+                                brrr=new_tracks.pop()
+                        new_tracks.append(new_elem)
+            new_tracks=[row[0] for row in new_tracks]
 
         if new_tracks != []:
             options = []
@@ -292,8 +297,13 @@ def addons():
         if last_avail > last_installed:
             for i, stamps in enumerate(list_aa):
                 if stamps > last_installed:
-                    if not(avail_arenas[i][1] in list_b):
-                        new_arenas.append(i)
+                    if not(avail_arenas[i][0] in list_b):
+                        new_elem=[i,avail_arenas[i][0],avail_arenas[i][1]]
+                        if new_arenas != []:
+                            if new_arenas[-1][1] == new_elem[1]:
+                                brrr=new_arenas.pop()
+                        new_arenas.append(new_elem)
+            new_arenas=[row[0] for row in new_arenas]
 
         if new_arenas != []:
             options = []
