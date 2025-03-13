@@ -10,4 +10,4 @@ git checkout BalanceSTK2
 mkdir cmake_build
 cd cmake_build
 cmake .. -DCMAKE_BUILD_TYPE=Debug -DNO_SHADERC=ON
-make -j10
+make -j`if [ $(( $(nproc) - 1 )) -eq 0 ]; then echo 1; else echo $(( $(nproc) - 1 )) ; fi`

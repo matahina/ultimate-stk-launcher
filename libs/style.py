@@ -12,9 +12,6 @@ class color:
    UNDERLINE = '\033[4m'
    END = '\033[0m'
 
-def cls():
-    os.system('cls' if os.name=='nt' else 'clear')
-
 def output_title(text, level):
     if level == 1:
         print(color.PURPLE + color.BOLD + text.upper() + color.END)

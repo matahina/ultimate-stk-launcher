@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 import datetime
 import setproctitle
-from pick import pick
+import questionary
 from configparser import ConfigParser
 import csv
 import pandas as pd
@@ -44,9 +44,8 @@ def goo():
     names = []
     for name in plist:
         names.append(config.get(name, 'name'))
-    option, index = pick(names, title)
-    style.output_title(title, 2)
-    print(option)
+    option = questionary.select(title, names).ask()
+    index = names.index(option)
     print("")
     profile_answer = plist[index]
 
@@ -60,9 +59,8 @@ def goo():
     else:
         p_up_list.remove("STK2")
     title = "Which powerup file do you want to use today?"
-    option, index = pick(p_up_list, title)
-    style.output_title(title, 2)
-    print(option)
+    option = questionary.select(title, p_up_list).ask()
+    index = p_up_list.index(option)
     print("")
     powerup_answer = option
 
@@ -77,9 +75,8 @@ def goo():
         "Drivelines",
         "CHecklines AND Drivelines"
         ]
-    option, index = pick(options, title)
-    style.output_title(title, 2)
-    print(option)
+    option = questionary.select(title, options).ask()
+    index = options.index(option)
     print("")
 
     suffix = ""
@@ -185,9 +182,8 @@ def initialize():
     options = ['Config existing install',
                 'Install last stable version (1.4)'
                 ]
-    option, index = pick(options, title)
-    style.output_title(title, 2)
-    print(option)
+    option = questionary.select(title, options).ask()
+    index = options.index(option)
     print("")
 
     if index == 0:
@@ -205,9 +201,11 @@ def initialize():
 
 def main():
     os.chdir(orig_directory)
-    style.cls()
     setproctitle.setproctitle('ult_STK_launch')
-
+    print("")
+    print("")
+    print("")
+    print("")
     lala = os.system('echo "WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜" | lolcat ')
     lala = os.system('echo "" | cowsay -f hellokitty | lolcat')
 
@@ -216,7 +214,6 @@ def main():
 
     print("")
     input("Press Enter to continue...")
-    style.cls()
 
     if (not(os.path.exists(orig_directory+"/magic_config.ini")) or os.stat(orig_directory+"/magic_config.ini").st_size == 0):
         initialize()
@@ -236,9 +233,8 @@ def main():
                 'Do another install',
                 'Quit'
                 ]
-    option, index = pick(options, title)
-    style.output_title(title, 2)
-    print(option)
+    option = questionary.select(title, options).ask()
+    index = options.index(option)
     print("")
 
     if index == 0:
@@ -258,9 +254,8 @@ def main():
             names = []
             for name in plist:
                 names.append(config.get(name, 'name'))
-            option, index = pick(names, title)
-            style.output_title(title, 2)
-            print(option)
+            option = questionary.select(title, names).ask()
+            index = names.index(option)
             print("")
             profile_answer = plist[index]
             update.stk_profile(profile_answer, config)
@@ -281,25 +276,27 @@ def main():
         title = "Which version?".upper()
         options = ['STK GIT (master)',
                    'STK STABLE (1.4)',
+                   'STK GIT Kimden Client (local-client)',
                    'STK GIT Kimden (command-manager-prototype)',
                    'STK GIT Kimden Server mode (command-manager-prototype)',
                    'STK SPEED',
                     'STK 2']
-        option, sp_index = pick(options, title)
-        style.output_title(title, 2)
-        print(option)
+        option = questionary.select(title, options).ask()
+        sp_index = options.index(option)
         print("")
         if sp_index == 0:
             helpers.stk_git(config)
         if sp_index == 1:
             helpers.stk_stable(config)
         if sp_index == 2:
-            helpers.stk_git_kimden(config)
+            helpers.stk_git_kimden_client(config)
         if sp_index == 3:
-            helpers.stk_git_kimden_server(config)
+            helpers.stk_git_kimden(config)
         if sp_index == 4:
-            helpers.stk_speed(config)
+            helpers.stk_git_kimden_server(config)
         if sp_index == 5:
+            helpers.stk_speed(config)
+        if sp_index == 6:
             helpers.stk2(config)
         main()
     elif index == 4:
