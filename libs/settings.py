@@ -13,6 +13,8 @@ def init():
     global assets_data
     global addon_lib
     global lock
+    global data_relocation
+    global assets_relocation
 
     ustkl_config = ConfigParser()
     ustkl_config.read("magic_config.ini")
@@ -23,6 +25,8 @@ def init():
     assets_data = assets_data.assign(downloaded = [""] * len(assets_data["id"]))
     addon_lib = AddonLibrary()
     lock = 0
+    data_relocation = ""
+    assets_relocation = ""
 
 class AddonLibrary:
     def __init__(self):

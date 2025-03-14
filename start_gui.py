@@ -26,8 +26,9 @@ from configparser import ConfigParser
 
 import libs.settings
 import libs.helpers
+import libs.common
 
-libs.settings.init()
+
 
 
 
@@ -79,16 +80,15 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
         self.m_grid1.SetCellHighlightROPenWidth(0)
         self.pup_list()
 
-        plist = libs.settings.ustkl_config.sections()
         names = []
-        for name in plist:
+        for name in libs.settings.ustkl_config.sections():
             names.append(libs.settings.ustkl_config.get(name, 'name'))
         self.m_choice1.SetItems(names)
         self.m_choice1.SetSelection(0)
         self.m_choice1.Bind(wx.EVT_CHOICE, self.OnChoice1)
 
         version = 0
-        if libs.settings.ustkl_config.get(plist[0], 'type') == "git2":
+        if libs.settings.ustkl_config.get(libs.settings.ustkl_config.sections()[0], 'type') == "git2":
             if "STK2" in p_up_list:
                 version = 2
 
@@ -357,7 +357,6 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
     def goo( self, event ):
         self.m_button2.Disable()
         self.m_button6.Disable()
-        prefix = ""
         suffix = ""
         profile_answer = self.m_choice1.GetString( self.m_choice1.GetSelection() )
         num=0
@@ -365,20 +364,11 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             if libs.settings.ustkl_config.get(libs.settings.ustkl_config.sections()[i],"name") == profile_answer:
                 num=i
         profile_id = libs.settings.ustkl_config.sections()[num]
-        if libs.settings.ustkl_config.get(profile_id, 'type') == "sudo":
-            prefix = "sudo "
         if self.m_checkBox1.IsChecked():
             suffix = " --track-debug "
         if self.m_checkBox2.IsChecked():
             suffix = suffix + " --check-debug "
-        if prefix == "sudo " and self.m_choice3.GetString( self.m_choice3.GetSelection()) == "No terminal":
-            self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.RED))
-            self.m_textCtrl3.AppendText("\nYOU NEED TO LAUNCH FROM A TERMINAL WITH THIS PROFILE\n")
-            self.m_textCtrl3.AppendText("Because sudo.\n")
-            self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
-            self.m_button2.Enable()
-            self.m_button6.Disable()
-        elif self.m_choice2.IsEmpty():
+        if self.m_choice2.IsEmpty():
             self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.RED))
             self.m_textCtrl3.AppendText("\nYOU NEED TO CHOOSE A POWERUP\n")
             self.m_textCtrl3.AppendText("Try refreshing powerups.\n")
@@ -388,8 +378,13 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
         else:
             self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
             self.m_textCtrl3.AppendText("\n## Am gonna make your dreams come true...\n".upper())
-            self.m_textCtrl3.AppendText("\n## Replacing SFX/GFX/data files\n".upper())
+            self.m_textCtrl3.AppendText("\n## New data is in\n".upper())
             self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
+            libs.settings.data_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_id, 'data_path'))
+            self.m_textCtrl3.AppendText(libs.settings.data_relocation+"\n")
+            if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)]:
+                libs.settings.assets_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_id, 'svn_path'))
+                self.m_textCtrl3.AppendText(libs.settings.assets_relocation+"\n")
             os.chdir(libs.settings.orig_directory+"/my_files/")
             self.m_textCtrl3.AppendText("chdir "+ os.path.dirname( libs.settings.orig_directory+"/my_files/" )+"\n")
 
@@ -398,8 +393,8 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
 
             path = libs.settings.orig_directory+"/my_files/"
 
-            os.system("chmod o+r "+settings.orig_directory+"/my_files/*")
-            os.system("chmod o+r "+settings.orig_directory+"/tmp_files/*")
+            # os.system("chmod o+r "+settings.orig_directory+"/my_files/*")
+            # os.system("chmod o+r "+settings.orig_directory+"/tmp_files/*")
 
             for root, dirs, files in os.walk(libs.settings.orig_directory+"/my_files/"):
                 for file in files:
@@ -408,47 +403,8 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             filelist.remove(".placeholder")
 
             for name in filelist:
-                if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)]:
-                    if ( (name[0:name.find("/",1)].replace("/","") in issvn) ):
-                        commnd = prefix+"mv "+libs.settings.ustkl_config.get(profile_id, 'svn_path')+name+" "+libs.settings.ustkl_config.get(profile_id, 'svn_path')+name+"_old"
-                        sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-                        sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-                        self.m_textCtrl3.AppendText(commnd+"\n")
-                        if sw_out != "":
-                            self.m_textCtrl3.AppendText(sw_out+"\n")
-
-                        revert_list.append(prefix+"rm "+" "+libs.settings.ustkl_config.get(profile_id, 'svn_path')+name)
-                        revert_list.append(prefix+"mv "+libs.settings.ustkl_config.get(profile_id, 'svn_path')+name+"_old"+" "+libs.settings.ustkl_config.get(profile_id, 'svn_path')+name)
-
-                        commnd = prefix+"cp --parents "+name+" "+libs.settings.ustkl_config.get(profile_id, 'svn_path')
-                        sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-                        sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-                        self.m_textCtrl3.AppendText(commnd+"\n")
-                        if sw_out != "":
-                            self.m_textCtrl3.AppendText(sw_out+"\n")
-                    else:
-                        commnd = prefix+"mv "+libs.settings.ustkl_config.get(profile_id, 'data_path')+name+" "+libs.settings.ustkl_config.get(profile_id, 'data_path')+name+"_old"
-                        sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-                        sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-                        self.m_textCtrl3.AppendText(commnd+"\n")
-                        if sw_out != "":
-                            self.m_textCtrl3.AppendText(sw_out+"\n")
-
-                        revert_list.append(prefix+"rm "+" "+libs.settings.ustkl_config.get(profile_id, 'data_path')+name)
-                        revert_list.append(prefix+"mv "+libs.settings.ustkl_config.get(profile_id, 'data_path')+name+"_old"+" "+libs.settings.ustkl_config.get(profile_id, 'data_path')+name)
-
-                        commnd = prefix+"cp --parents "+name+" "+libs.settings.ustkl_config.get(profile_id, 'data_path')
-                        sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-                        sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-                        self.m_textCtrl3.AppendText(commnd+"\n")
-                        if sw_out != "":
-                            self.m_textCtrl3.AppendText(sw_out+"\n")
-                else:
-                    commnd = prefix+"mv "+libs.settings.ustkl_config.get(profile_id, 'data_path')+name+" "+libs.settings.ustkl_config.get(profile_id, 'data_path')+name+"_old"
+                if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)] and ( (name[0:name.find("/",1)].replace("/","") in issvn) ):
+                    commnd = "rm "+libs.settings.assets_relocation+"/"+name
                     sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
                     sw_out=sw.stdout.decode("utf-8").replace('\n','')
 
@@ -456,10 +412,23 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
                     if sw_out != "":
                         self.m_textCtrl3.AppendText(sw_out+"\n")
 
-                    revert_list.append(prefix+"rm "+" "+libs.settings.ustkl_config.get(profile_id, 'data_path')+name)
-                    revert_list.append(prefix+"mv "+libs.settings.ustkl_config.get(profile_id, 'data_path')+name+"_old"+" "+libs.settings.ustkl_config.get(profile_id, 'data_path')+name)
+                    commnd = "cp --parents "+name+" "+libs.settings.assets_relocation
+                    sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
+                    sw_out=sw.stdout.decode("utf-8").replace('\n','')
 
-                    commnd = prefix+"cp --parents "+name+" "+libs.settings.ustkl_config.get(profile_id, 'data_path')
+                    self.m_textCtrl3.AppendText(commnd+"\n")
+                    if sw_out != "":
+                        self.m_textCtrl3.AppendText(sw_out+"\n")
+                else:
+                    commnd = "rm "+libs.settings.data_relocation+"/"+name
+                    sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
+                    sw_out=sw.stdout.decode("utf-8").replace('\n','')
+
+                    self.m_textCtrl3.AppendText(commnd+"\n")
+                    if sw_out != "":
+                        self.m_textCtrl3.AppendText(sw_out+"\n")
+
+                    commnd = "cp --parents "+name+" "+libs.settings.data_relocation
                     sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
                     sw_out=sw.stdout.decode("utf-8").replace('\n','')
 
@@ -482,13 +451,13 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             else:
                 kfile = kart_file_name[0]+".xml"
 
-            os.chdir(libs.settings.ustkl_config.get(profile_id, 'data_path'))
-            self.m_textCtrl3.AppendText("chdir "+ os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'data_path')  )+"\n")
+            os.chdir(libs.settings.data_relocation)
+            self.m_textCtrl3.AppendText("chdir "+ libs.settings.data_relocation+"\n")
 
-            commnds = [prefix+"mv powerup.xml powerup.xml_old",
-                       prefix+"mv kart_characteristics.xml kart_characteristics.xml_old",
-                       prefix+"cp "+libs.settings.orig_directory+"/tmp_files/"+pfile+" powerup.xml",
-                       prefix+"cp "+libs.settings.orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml"]
+            commnds = ["rm powerup.xml",
+                       "rm kart_characteristics.xml",
+                       "cp "+libs.settings.orig_directory+"/tmp_files/"+pfile+" powerup.xml",
+                       "cp "+libs.settings.orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml"]
 
             for commnd in commnds:
                 sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
@@ -497,8 +466,6 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
                 self.m_textCtrl3.AppendText(commnd+"\n")
                 if sw_out != "":
                     self.m_textCtrl3.AppendText(sw_out+"\n")
-
-            revert_list.append(profile_id)
 
 
             self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
@@ -509,7 +476,14 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             self.m_textCtrl3.AppendText("chdir "+ os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'bin_path')  )+"\n")
             suffixbis = ""
             # suffixbis = " | tee -a "+libs.settings.orig_directory+"/logs/"+echo_file+".log"
-            commnd = ["."+libs.settings.ustkl_config.get(profile_id, 'bin_path').replace(os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'bin_path')  ),'') + suffix + suffixbis]
+            prefix = ""
+            if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)]:
+                prefix = prefix + 'export SUPERTUXKART_ASSETS_DIR="'+libs.settings.assets_relocation+'" ; '
+
+            prefix = prefix + 'export SUPERTUXKART_DATADIR="'+libs.settings.data_relocation[:-6]+'" ; '
+            if libs.settings.ustkl_config.get(profile_id, 'type') == "other":
+                prefix = prefix + "export SYSTEM_LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\";export LD_LIBRARY_PATH=\"$DIRNAME/lib:$LD_LIBRARY_PATH\" ; "
+            commnd = [prefix+"."+libs.settings.ustkl_config.get(profile_id, 'bin_path').replace(os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'bin_path')  ),'') + suffix + suffixbis]
             commnd.append(os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'bin_path') ))
             commnd.append(libs.settings.ustkl_config.get(profile_id, 'bin_path').replace(os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'bin_path')  ),''))
 
@@ -526,46 +500,23 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
 
 
 
-            worker = GearsThread(self,self.m_choice3.GetString( self.m_choice3.GetSelection()),commnd,revert_list)
+            worker = GearsThread(self,self.m_choice3.GetString( self.m_choice3.GetSelection()),commnd,[])
             worker.start()
 
     def OnGears(self, evt):
-        revert_list = evt.GetValue()
-        profile_id = revert_list.pop()
-        prefix = ""
-
-        if libs.settings.ustkl_config.get(profile_id, 'type') == "sudo":
-            prefix = "sudo "
 
         self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
-        self.m_textCtrl3.AppendText("\n## Reverting SFX/GFX/data files\n".upper())
+        self.m_textCtrl3.AppendText("\n## Removing tmp data files\n".upper())
         self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
 
-        self.m_textCtrl3.AppendText("chdir "+os.path.dirname( libs.settings.orig_directory+"/my_files/")+"\n")
-        os.chdir(libs.settings.orig_directory+"/my_files/")
+        self.m_textCtrl3.AppendText("rm -R "+libs.settings.data_relocation)
+        shutil.rmtree(libs.settings.data_relocation)
+        if libs.settings.assets_relocation != []:
+            self.m_textCtrl3.AppendText("rm -R "+libs.settings.assets_relocation)
+            shutil.rmtree(libs.settings.assets_relocation)
 
-        for commnd in revert_list:
-            sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-            sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-            self.m_textCtrl3.AppendText(commnd+"\n")
-            if sw_out != "":
-                self.m_textCtrl3.AppendText(sw_out+"\n")
-
-        self.m_textCtrl3.AppendText("chdir "+os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'data_path')  )+"\n")
-        os.chdir(libs.settings.ustkl_config.get(profile_id, 'data_path'))
-
-        commnds = [prefix+"mv powerup.xml_old powerup.xml",
-                   prefix+"mv kart_characteristics.xml_old kart_characteristics.xml"]
-
-        for commnd in commnds:
-            sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-            sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-            self.m_textCtrl3.AppendText(commnd+"\n")
-            if sw_out != "":
-                self.m_textCtrl3.AppendText(sw_out+"\n")
-
+        libs.settings.assets_relocation = ""
+        libs.settings.data_relocation = ""
         self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
         self.m_textCtrl3.AppendText("\n## Dooooone =D\n".upper())
         self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
@@ -576,6 +527,7 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
 
 
 if __name__ == "__main__":
+    libs.settings.init()
     app = wx.App(False)
     frame = LaunchApp(None)
     frame.m_statusBar1.SetStatusText("Version: "+__version__, 0)

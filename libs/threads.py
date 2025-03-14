@@ -100,7 +100,7 @@ class GearsThread(threading.Thread):
             process = subprocess.run("konsole --noclose -e "+self._the_command[0], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         elif self._method == "gnome-terminal":
             time.sleep(1)
-            process = subprocess.run("gnome-terminal -- bash -c 'export SYSTEM_LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\";export LD_LIBRARY_PATH=\"$DIRNAME/lib:$LD_LIBRARY_PATH\" ;"+self._the_command[0]+"; exec bash'", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            process = subprocess.run("gnome-terminal -- bash -c '"+self._the_command[0]+"; exec bash'", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         elif self._method == "yakuake":
             lal = subprocess.run("SESSION_ID=$(qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.addSession) ; echo $SESSION_ID ; TERMINAL_ID=$(qdbus org.kde.yakuake /yakuake/sessions org.kde.yakuake.terminalIdsForSessionId $SESSION_ID  ; echo $TERMINAL_ID)", shell =True, stdout=subprocess.PIPE)
             sess_id=lal.stdout.decode("utf-8").replace('\n','')
@@ -110,10 +110,9 @@ class GearsThread(threading.Thread):
             lcl = subprocess.run('qdbus org.kde.yakuake /yakuake/tabs  setTabTitle '+sess_id+' "SUPERTUXKART"', shell =True, stdout=subprocess.PIPE)
             ldl = subprocess.run('qdbus org.kde.yakuake /yakuake/sessions runCommandInTerminal '+term_id+' "chdir '+self._the_command[1]+'"', shell =True, stdout=subprocess.PIPE)
             lel = subprocess.run('qdbus org.kde.yakuake /yakuake/sessions runCommandInTerminal '+term_id+' "'+self._the_command[0]+'"', shell =True, stdout=subprocess.PIPE)
-        time.sleep(5)
+        time.sleep(3)
         running_stk = True
         while running_stk:
-            print("pidof "+self._the_command[2].replace("/",""))
             lfl = subprocess.run("pidof "+self._the_command[2].replace("/",""), shell =True, stdout=subprocess.PIPE)
             process_id=lfl.stdout.decode("utf-8").replace('\n','')
             if process_id == "":

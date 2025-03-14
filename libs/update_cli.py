@@ -1,4 +1,4 @@
-import style as style
+import libs.style_cli as style
 import csv
 import pandas as pd
 from lxml import etree
@@ -10,6 +10,7 @@ from configparser import ConfigParser
 import datetime
 import questionary
 from pathlib import Path
+import libs.settings
 
 def extra_files(assets_data):
     orig_directory = os.getcwd()

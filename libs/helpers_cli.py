@@ -1,17 +1,17 @@
 import os
 import datetime
-import style as style
+import libs.style_cli as style
 from configparser import ConfigParser
+import libs.settings
 
 def stk_speed(config):
     started_at = datetime.datetime.now()
     uecho_file = "INSTALL_STK_SPEED_"+started_at.strftime("%Y%m%d_%H%M%S")
 
-    orig_directory = os.getcwd()
-    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     title = "Where to clone repos? [Give absolute path of the directory to exec git clone]"
     style.output_title(title, 1)
@@ -19,12 +19,12 @@ def stk_speed(config):
     the_path = input('')
     if the_path[-1] != "/":
         the_path = the_path + "/"
-    os.system("sh "+orig_directory+"/libs/install_stk_speed.sh "+the_path + " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("sh "+libs.settings.orig_directory+"/libs/install_stk_speed.sh "+the_path + " | tee -a " + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     print()
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
@@ -34,18 +34,17 @@ def stk_speed(config):
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git_speed")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-speed/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
-    with open(orig_directory+"/magic_config.ini", 'w') as configfile:
+    with open(libs.settings.orig_directory+"/magic_config.ini", 'w') as configfile:
         config.write(configfile)
 
 def stk2(config):
     started_at = datetime.datetime.now()
     uecho_file = "INSTALL_STK_2_"+started_at.strftime("%Y%m%d_%H%M%S")
 
-    orig_directory = os.getcwd()
-    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     title = "Where to clone repos? [Give absolute path of the directory to exec git clone]"
     style.output_title(title, 1)
@@ -53,12 +52,12 @@ def stk2(config):
     the_path = input('')
     if the_path[-1] != "/":
         the_path = the_path + "/"
-    os.system("sh "+orig_directory+"/libs/install_stk2.sh "+the_path + " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("sh "+libs.settings.orig_directory+"/libs/install_stk2.sh "+the_path + " | tee -a " + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     print()
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
@@ -68,7 +67,7 @@ def stk2(config):
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git2")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-2/stk-code-alayan/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-2/stk-assets/")
-    with open(orig_directory+"/magic_config.ini", 'w') as configfile:
+    with open(libs.settings.orig_directory+"/magic_config.ini", 'w') as configfile:
         config.write(configfile)
 
 
@@ -76,11 +75,11 @@ def stk_git(config):
     started_at = datetime.datetime.now()
     uecho_file = "INSTALL_STK_GIT_MASTER_"+started_at.strftime("%Y%m%d_%H%M%S")
 
-    orig_directory = os.getcwd()
-    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     title = "Where to clone repos? [Give absolute path of the directory to exec git clone]"
     style.output_title(title, 1)
@@ -88,12 +87,12 @@ def stk_git(config):
     the_path = input('')
     if the_path[-1] != "/":
         the_path = the_path + "/"
-    os.system("sh "+orig_directory+"/libs/install_stk.sh "+the_path + " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("sh "+libs.settings.orig_directory+"/libs/install_stk.sh "+the_path + " | tee -a " + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     print()
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
@@ -103,7 +102,7 @@ def stk_git(config):
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
-    with open(orig_directory+"/magic_config.ini", 'w') as configfile:
+    with open(libs.settings.orig_directory+"/magic_config.ini", 'w') as configfile:
         config.write(configfile)
 
 
@@ -112,11 +111,11 @@ def stk_stable(config):
     started_at = datetime.datetime.now()
     uecho_file = "INSTALL_STK_STABLE_"+started_at.strftime("%Y%m%d_%H%M%S")
 
-    orig_directory = os.getcwd()
-    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     title = "Where to clone repos? [Give absolute path of the directory to exec git clone]"
     style.output_title(title, 1)
@@ -124,12 +123,12 @@ def stk_stable(config):
     the_path = input('')
     if the_path[-1] != "/":
         the_path = the_path + "/"
-    os.system("sh "+orig_directory+"/libs/install_stk_stable.sh "+the_path + " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("sh "+libs.settings.orig_directory+"/libs/install_stk_stable.sh "+the_path + " | tee -a " + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     print()
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
@@ -137,7 +136,7 @@ def stk_stable(config):
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"SuperTuxKart-1.4-linux-x86_64/bin/supertuxkart")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"SuperTuxKart-1.4-linux-x86_64/data/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "stable")
-    with open(orig_directory+"/magic_config.ini", 'w') as configfile:
+    with open(libs.settings.orig_directory+"/magic_config.ini", 'w') as configfile:
         config.write(configfile)
 
 
@@ -147,11 +146,11 @@ def stk_git_kimden(config):
     started_at = datetime.datetime.now()
     uecho_file = "INSTALL_STK_GIT_KIMDEN_"+started_at.strftime("%Y%m%d_%H%M%S")
 
-    orig_directory = os.getcwd()
-    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     title = "Where to clone repos? [Give absolute path of the directory to exec git clone]"
     style.output_title(title, 1)
@@ -159,12 +158,12 @@ def stk_git_kimden(config):
     the_path = input('')
     if the_path[-1] != "/":
         the_path = the_path + "/"
-    os.system("sh "+orig_directory+"/libs/install_stk_kimden.sh "+the_path + " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("sh "+libs.settings.orig_directory+"/libs/install_stk_kimden.sh "+the_path + " | tee -a " + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     print()
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
@@ -174,7 +173,7 @@ def stk_git_kimden(config):
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-kimden/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
-    with open(orig_directory+"/magic_config.ini", 'w') as configfile:
+    with open(libs.settings.orig_directory+"/magic_config.ini", 'w') as configfile:
         config.write(configfile)
 
 
@@ -184,11 +183,11 @@ def stk_git_kimden_client(config):
     started_at = datetime.datetime.now()
     uecho_file = "INSTALL_STK_GIT_KIMDEN_CLIENT_"+started_at.strftime("%Y%m%d_%H%M%S")
 
-    orig_directory = os.getcwd()
-    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     title = "Where to clone repos? [Give absolute path of the directory to exec git clone]"
     style.output_title(title, 1)
@@ -196,12 +195,12 @@ def stk_git_kimden_client(config):
     the_path = input('')
     if the_path[-1] != "/":
         the_path = the_path + "/"
-    os.system("sh "+orig_directory+"/libs/install_stk_kimden_client.sh "+the_path + " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("sh "+libs.settings.orig_directory+"/libs/install_stk_kimden_client.sh "+the_path + " | tee -a " + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     print()
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
@@ -211,7 +210,7 @@ def stk_git_kimden_client(config):
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-kimden-client/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
-    with open(orig_directory+"/magic_config.ini", 'w') as configfile:
+    with open(libs.settings.orig_directory+"/magic_config.ini", 'w') as configfile:
         config.write(configfile)
 
 
@@ -221,11 +220,11 @@ def stk_git_kimden_server(config):
     started_at = datetime.datetime.now()
     uecho_file = "INSTALL_STK_GIT_KIMDEN_SERVER_"+started_at.strftime("%Y%m%d_%H%M%S")
 
-    orig_directory = os.getcwd()
-    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     title = "Where to clone repos? [Give absolute path of the directory to exec git clone]"
     style.output_title(title, 1)
@@ -233,12 +232,12 @@ def stk_git_kimden_server(config):
     the_path = input('')
     if the_path[-1] != "/":
         the_path = the_path + "/"
-    os.system("sh "+orig_directory+"/libs/install_stk_kimden_server.sh "+the_path + " | tee -a " + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("sh "+libs.settings.orig_directory+"/libs/install_stk_kimden_server.sh "+the_path + " | tee -a " + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
     print()
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+uecho_file+".log")
 
 
     config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
@@ -248,5 +247,5 @@ def stk_git_kimden_server(config):
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-kimden-server/")
     config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
-    with open(orig_directory+"/magic_config.ini", 'w') as configfile:
+    with open(libs.settings.orig_directory+"/magic_config.ini", 'w') as configfile:
         config.write(configfile)

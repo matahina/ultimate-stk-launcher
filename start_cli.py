@@ -2,7 +2,7 @@
 
 import subprocess
 import os
-orig_directory = os.getcwd()
+
 import time
 from pathlib import Path
 import datetime
@@ -12,12 +12,12 @@ from configparser import ConfigParser
 import csv
 import pandas as pd
 import sys
-sys.path.append(orig_directory+"/libs")
-import update as update
-import style as style
-import helpers as helpers
+import libs.update_cli as update
+import libs.style_cli as style
+import libs.helpers_cli as helpers
 
-config = ConfigParser()
+import libs.settings
+import libs.common
 
 issvn = ["editor",
          "karts",
@@ -40,10 +40,10 @@ echo_file = started_at.strftime("%Y%m%d_%H%M%S")
 
 def goo():
     title = "Which profile do you want to use today?"
-    plist = config.sections()
+    plist = libs.settings.ustkl_config.sections()
     names = []
     for name in plist:
-        names.append(config.get(name, 'name'))
+        names.append(libs.settings.ustkl_config.get(name, 'name'))
     option = questionary.select(title, names).ask()
     index = names.index(option)
     print("")
@@ -54,7 +54,7 @@ def goo():
     p_up_list = list(dict.fromkeys(assets_data["id"]))
     p_up_list.remove("")
 
-    if config.get(profile_answer, 'type') == "git2":
+    if libs.settings.ustkl_config.get(profile_answer, 'type') == "git2":
         p_up_list = ["STK2"]
     else:
         p_up_list.remove("STK2")
@@ -63,10 +63,6 @@ def goo():
     index = p_up_list.index(option)
     print("")
     powerup_answer = option
-
-    prefix = ""
-    if config.get(profile_answer,"type") == "sudo":
-        prefix = "sudo "
 
     title = "Do you wanna debüg today?"
     options = [
@@ -90,37 +86,33 @@ def goo():
     style.output_title("Am gonna make your dreams come true...", 2)
     print("")
 
-    style.prompt("Replacing SFX/GFX/data files")
-    os.chdir(orig_directory+"/my_files/")
+    style.prompt("Copying SFX/GFX/data files into tmp files...")
+    libs.settings.data_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_answer, 'data_path'))
+    if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_answer)]:
+        libs.settings.assets_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_answer, 'svn_path'))
+        print("location [assets]: "+libs.settings.assets_relocation)
+    print("location [data]: "+libs.settings.data_relocation)
+    os.chdir(libs.settings.orig_directory+"/my_files/")
 
     filelist = []
-    revert_list = []
 
-    path = orig_directory+"/my_files/"
+    path = libs.settings.orig_directory+"/my_files/"
 
-    for root, dirs, files in os.walk(orig_directory+"/my_files/"):
+    for root, dirs, files in os.walk(libs.settings.orig_directory+"/my_files/"):
         for file in files:
             filelist.append(os.path.join(root,file).replace(path,""))
 
     filelist.remove(".placeholder")
 
     for name in filelist:
-        if 'svn_path' in [row[0] for row in config.items(profile_answer)]:
-            if ( (name[0:name.find("/",1)].replace("/","") in issvn) ):
-                os.system(prefix+"mv "+config.get(profile_answer, 'svn_path')+name+" "+config.get(profile_answer, 'svn_path')+name+"_old")
-                revert_list.append(prefix+"rm "+" "+config.get(profile_answer, 'svn_path')+name)
-                revert_list.append(prefix+"mv "+config.get(profile_answer, 'svn_path')+name+"_old"+" "+config.get(profile_answer, 'svn_path')+name)
-                os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'svn_path'))
-            else:
-                os.system(prefix+"mv "+config.get(profile_answer, 'data_path')+name+" "+config.get(profile_answer, 'data_path')+name+"_old")
-                revert_list.append(prefix+"rm "+" "+config.get(profile_answer, 'data_path')+name)
-                revert_list.append(prefix+"mv "+config.get(profile_answer, 'data_path')+name+"_old"+" "+config.get(profile_answer, 'data_path')+name)
-                os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
+        if ('svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_answer)]) and ( (name[0:name.find("/",1)].replace("/","") in issvn) ):
+            os.remove(libs.settings.assets_relocation+"/"+name)
+            print("cp --parents "+name+" "+libs.settings.assets_relocation)
+            os.system("cp --parents "+name+" "+libs.settings.assets_relocation)
         else:
-            os.system(prefix+"mv "+config.get(profile_answer, 'data_path')+name+" "+config.get(profile_answer, 'data_path')+name+"_old")
-            revert_list.append(prefix+"rm "+" "+config.get(profile_answer, 'data_path')+name)
-            revert_list.append(prefix+"mv "+config.get(profile_answer, 'data_path')+name+"_old"+" "+config.get(profile_answer, 'data_path')+name)
-            os.system(prefix+"cp --parents "+name+" "+config.get(profile_answer, 'data_path'))
+            os.remove(libs.settings.data_relocation+"/"+name)
+            print("cp --parents "+name+" "+libs.settings.data_relocation)
+            os.system("cp --parents "+name+" "+libs.settings.data_relocation)
 
     print("")
 
@@ -134,46 +126,50 @@ def goo():
     else:
         kfile = kart_file_name[0]+".xml"
 
-    os.chdir(config.get(profile_answer, 'data_path'))
+    os.chdir(libs.settings.data_relocation)
+    print("chdir "+libs.settings.data_relocation)
 
-    print(prefix+"cp "+orig_directory+"/tmp_files/"+pfile+" powerup.xml")
-    os.system(prefix+"mv powerup.xml powerup.xml_old")
-    os.system(prefix+"cp "+orig_directory+"/tmp_files/"+pfile+" powerup.xml")
-
-    print(prefix+"cp "+orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml")
-    os.system(prefix+"mv kart_characteristics.xml kart_characteristics.xml_old")
-    os.system(prefix+"cp "+orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml")
+    print("cp "+libs.settings.orig_directory+"/tmp_files/"+pfile+" powerup.xml")
+    print("cp "+libs.settings.orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml")
+    os.remove("powerup.xml")
+    os.remove("kart_characteristics.xml")
+    os.system("cp "+libs.settings.orig_directory+"/tmp_files/"+pfile+" powerup.xml")
+    os.system("cp "+libs.settings.orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml")
 
     print("")
 
-    os.chdir(os.path.dirname( config.get(profile_answer, 'bin_path')  ))
-    suffixbis = " | tee -a "+orig_directory+"/logs/"+echo_file+".log"
+    os.chdir(os.path.dirname( libs.settings.ustkl_config.get(profile_answer, 'bin_path')  ))
+    suffixbis = " | tee -a "+libs.settings.orig_directory+"/logs/"+echo_file+".log"
+    prefix = ""
+    if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_answer)]:
+        prefix = prefix + 'export SUPERTUXKART_ASSETS_DIR="'+libs.settings.assets_relocation+'" ; '
 
+    prefix = prefix + 'export SUPERTUXKART_DATADIR="'+libs.settings.data_relocation[:-6]+'" ; '
+    if libs.settings.ustkl_config.get(profile_answer, 'type') == "other":
+        prefix = prefix + "export SYSTEM_LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\";export LD_LIBRARY_PATH=\"$DIRNAME/lib:$LD_LIBRARY_PATH\" ; "
     style.prompt("running")
-    print("chdir "+ os.path.dirname( config.get(profile_answer, 'bin_path')  ))
-    print("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
-    os.system("echo '========================  '"+echo_file+"'  ========================' >>" + orig_directory+"/logs/"+echo_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
-    os.system("."+config.get(profile_answer, 'bin_path').replace(os.path.dirname( config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
-    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
-    os.system("echo '' >>" + orig_directory+"/logs/"+echo_file+".log")
+    print("chdir "+ os.path.dirname( libs.settings.ustkl_config.get(profile_answer, 'bin_path')  ))
+    print(prefix+"."+libs.settings.ustkl_config.get(profile_answer, 'bin_path').replace(os.path.dirname( libs.settings.ustkl_config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
+    os.system("echo '========================  '"+echo_file+"'  ========================' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
+    os.system(prefix+"."+libs.settings.ustkl_config.get(profile_answer, 'bin_path').replace(os.path.dirname( libs.settings.ustkl_config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
+    os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
     print("")
 
 
-    style.prompt("Reverting SFX/GFX/data files")
-    os.chdir(orig_directory+"/my_files/")
+    style.prompt("Removing tmp files")
+    print("rm -R "+libs.settings.data_relocation)
+    os.system("rm -R "+libs.settings.data_relocation)
+    if ('svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_answer)]):
+        print("rm -R "+libs.settings.assets_relocation)
+        os.system("rm -R "+libs.settings.assets_relocation)
 
-    for cmd in revert_list:
-        os.system(cmd)
-
-    os.chdir(config.get(profile_answer, 'data_path'))
-
-    os.system(prefix+"mv powerup.xml_old powerup.xml")
-    os.system(prefix+"mv kart_characteristics.xml_old kart_characteristics.xml")
-
+    libs.settings.assets_relocation = ""
+    libs.settings.data_relocation = ""
     print("")
 
 
@@ -191,7 +187,7 @@ def initialize():
         print("")
         print("")
         style.prompt("Do it yourself :p",True)
-        style.prompt("Have fun at: "+orig_directory+"/magic_config.ini",True)
+        style.prompt("Have fun at: "+libs.settings.orig_directory+"/magic_config.ini",True)
         print("")
         print("")
         quit()
@@ -200,7 +196,8 @@ def initialize():
         main()
 
 def main():
-    os.chdir(orig_directory)
+    libs.settings.init()
+    os.chdir(libs.settings.orig_directory)
     setproctitle.setproctitle('ult_STK_launch')
     print("")
     print("")
@@ -215,15 +212,15 @@ def main():
     print("")
     input("Press Enter to continue...")
 
-    if (not(os.path.exists(orig_directory+"/magic_config.ini")) or os.stat(orig_directory+"/magic_config.ini").st_size == 0):
+    if (not(os.path.exists(libs.settings.orig_directory+"/magic_config.ini")) or os.stat(libs.settings.orig_directory+"/magic_config.ini").st_size == 0):
         initialize()
 
     style.output_title("Let's Go!", 1)
     print("")
-    config.read(orig_directory+"/magic_config.ini")
+    libs.settings.ustkl_config.read(libs.settings.orig_directory+"/magic_libs.settings.ustkl_config.ini")
     update.extra_files(assets_data)
     update.addons()
-    os.chdir(orig_directory)
+    os.chdir(libs.settings.orig_directory)
 
 
     title = "What do you want to do today?".upper()
@@ -242,18 +239,18 @@ def main():
         quit()
     elif index == 1:
         title = "Which profile do you want to update today?"
-        options = config.sections()
+        options = libs.settings.ustkl_config.sections()
         # options.remove("General")
         idx = []
         for i,prof in enumerate(options):
-            if config.get(prof, 'type') == "git" or config.get(prof, 'type') == "git2" or config.get(prof, 'type') == "git-kimden" or config.get(prof, 'type') == "git-kimden-server" :
+            if libs.settings.ustkl_config.get(prof, 'type') == "git" or libs.settings.ustkl_config.get(prof, 'type') == "git2" or libs.settings.ustkl_config.get(prof, 'type') == "git-kimden" or libs.settings.ustkl_config.get(prof, 'type') == "git-kimden-server" :
                 idx.append(i)
 
         if idx != []:
             plist = [options[i] for i in idx]
             names = []
             for name in plist:
-                names.append(config.get(name, 'name'))
+                names.append(libs.settings.ustkl_config.get(name, 'name'))
             option = questionary.select(title, names).ask()
             index = names.index(option)
             print("")
@@ -269,7 +266,7 @@ def main():
         print("")
         print("")
         style.prompt("Do it yourself :p",True)
-        style.prompt("Have fun at: "+orig_directory+"/magic_config.ini",True)
+        style.prompt("Have fun at: "+libs.settings.orig_directory+"/magic_libs.settings.ustkl_config.ini",True)
         print("")
         print("")
     elif index == 3:
