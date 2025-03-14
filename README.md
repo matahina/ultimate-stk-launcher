@@ -1,6 +1,6 @@
 # Ultimate STK Launcher
 
-**Version 24.06**
+**Version 25.03ALPHA!!**
 
 > [!NOTE] 
 > This program is designed to work on Linux 64bit.
@@ -13,10 +13,16 @@
 ```
 sudo apt install python3-questionary python3-lxml python3-setproctitle python3-pandas cowsay lolcat
 ```
+```
+sudo apt install --no-install-suggest wxpython-tools python3-pandas # for GUI
+```
 
 - On Arch/Manjaro:
 ```
 sudo pacman -S python3-lxml python3-setproctitle python3-pandas cowsay lolcat
+```
+```
+sudo pacman -S python-wxpython # for GUI
 ```
 ```
 yay -S python3-questionary
