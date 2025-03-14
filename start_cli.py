@@ -19,6 +19,8 @@ import libs.helpers_cli as helpers
 import libs.settings
 import libs.common
 
+
+
 issvn = ["editor",
          "karts",
         "library",
@@ -31,8 +33,7 @@ issvn = ["editor",
         "wip-library",
         "wip-tracks"]
 
-assets_data = pd.read_csv('libs/sources.csv')
-assets_data = assets_data.fillna("")
+
 
 started_at = datetime.datetime.now()
 echo_file = started_at.strftime("%Y%m%d_%H%M%S")
@@ -51,7 +52,7 @@ def goo():
 
 
 
-    p_up_list = list(dict.fromkeys(assets_data["id"]))
+    p_up_list = list(dict.fromkeys(libs.settings.assets_data["id"]))
     p_up_list.remove("")
 
     if libs.settings.ustkl_config.get(profile_answer, 'type') == "git2":
@@ -118,9 +119,9 @@ def goo():
 
 
     style.prompt("Using the choosen powerup file")
-    p_up_file_name = list(assets_data['name'].where(assets_data['id'] == powerup_answer).where(assets_data['type'] == "powerup").dropna())
+    p_up_file_name = list(libs.settings.assets_data['name'].where(libs.settings.assets_data['id'] == powerup_answer).where(libs.settings.assets_data['type'] == "powerup").dropna())
     pfile = p_up_file_name[0]+".xml"
-    kart_file_name = list(assets_data['name'].where(assets_data['id'] == powerup_answer).where(assets_data['type'] == "kart").dropna())
+    kart_file_name = list(libs.settings.assets_data['name'].where(libs.settings.assets_data['id'] == powerup_answer).where(libs.settings.assets_data['type'] == "kart").dropna())
     if kart_file_name == []:
         kfile="kart_characteristics_orig.xml"
     else:
@@ -218,7 +219,8 @@ def main():
     style.output_title("Let's Go!", 1)
     print("")
     libs.settings.ustkl_config.read(libs.settings.orig_directory+"/magic_libs.settings.ustkl_config.ini")
-    update.extra_files(assets_data)
+    update.extra_files(libs.settings.assets_data)
+
     update.addons()
     os.chdir(libs.settings.orig_directory)
 
