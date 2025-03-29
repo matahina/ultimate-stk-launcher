@@ -95,25 +95,12 @@ def goo():
     print("location [data]: "+libs.settings.data_relocation)
     os.chdir(libs.settings.orig_directory+"/my_files/")
 
-    filelist = []
 
-    path = libs.settings.orig_directory+"/my_files/"
 
-    for root, dirs, files in os.walk(libs.settings.orig_directory+"/my_files/"):
-        for file in files:
-            filelist.append(os.path.join(root,file).replace(path,""))
+    the_verb = libs.common.temperella(profile_answer)
 
-    filelist.remove(".placeholder")
-
-    for name in filelist:
-        if ('svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_answer)]) and ( (name[0:name.find("/",1)].replace("/","") in issvn) ):
-            os.remove(libs.settings.assets_relocation+"/"+name)
-            print("cp --parents "+name+" "+libs.settings.assets_relocation)
-            os.system("cp --parents "+name+" "+libs.settings.assets_relocation)
-        else:
-            os.remove(libs.settings.data_relocation+"/"+name)
-            print("cp --parents "+name+" "+libs.settings.data_relocation)
-            os.system("cp --parents "+name+" "+libs.settings.data_relocation)
+    for elem in the_verb:
+        print(elem)
 
     print("")
 

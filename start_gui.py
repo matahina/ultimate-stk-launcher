@@ -28,6 +28,7 @@ import libs.settings
 import libs.helpers
 import libs.common
 
+import shutil
 
 
 
@@ -386,55 +387,15 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
                 libs.settings.assets_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_id, 'svn_path'))
                 self.m_textCtrl3.AppendText(libs.settings.assets_relocation+"\n")
             os.chdir(libs.settings.orig_directory+"/my_files/")
+            self.m_textCtrl3.AppendText("\n")
             self.m_textCtrl3.AppendText("chdir "+ os.path.dirname( libs.settings.orig_directory+"/my_files/" )+"\n")
 
-            filelist = []
-            revert_list = []
 
-            path = libs.settings.orig_directory+"/my_files/"
 
-            # os.system("chmod o+r "+settings.orig_directory+"/my_files/*")
-            # os.system("chmod o+r "+settings.orig_directory+"/tmp_files/*")
+            the_verb = libs.common.temperella(profile_id)
 
-            for root, dirs, files in os.walk(libs.settings.orig_directory+"/my_files/"):
-                for file in files:
-                    filelist.append(os.path.join(root,file).replace(path,""))
-
-            filelist.remove(".placeholder")
-
-            for name in filelist:
-                if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)] and ( (name[0:name.find("/",1)].replace("/","") in issvn) ):
-                    commnd = "rm "+libs.settings.assets_relocation+"/"+name
-                    sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-                    sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-                    self.m_textCtrl3.AppendText(commnd+"\n")
-                    if sw_out != "":
-                        self.m_textCtrl3.AppendText(sw_out+"\n")
-
-                    commnd = "cp --parents "+name+" "+libs.settings.assets_relocation
-                    sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-                    sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-                    self.m_textCtrl3.AppendText(commnd+"\n")
-                    if sw_out != "":
-                        self.m_textCtrl3.AppendText(sw_out+"\n")
-                else:
-                    commnd = "rm "+libs.settings.data_relocation+"/"+name
-                    sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-                    sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-                    self.m_textCtrl3.AppendText(commnd+"\n")
-                    if sw_out != "":
-                        self.m_textCtrl3.AppendText(sw_out+"\n")
-
-                    commnd = "cp --parents "+name+" "+libs.settings.data_relocation
-                    sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-                    sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-                    self.m_textCtrl3.AppendText(commnd+"\n")
-                    if sw_out != "":
-                        self.m_textCtrl3.AppendText(sw_out+"\n")
+            for elem in the_verb:
+                self.m_textCtrl3.AppendText(elem+"\n")
 
 
             self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
@@ -509,10 +470,10 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
         self.m_textCtrl3.AppendText("\n## Removing tmp data files\n".upper())
         self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
 
-        self.m_textCtrl3.AppendText("rm -R "+libs.settings.data_relocation)
+        self.m_textCtrl3.AppendText("rm -R "+libs.settings.data_relocation+"\n")
         shutil.rmtree(libs.settings.data_relocation)
-        if libs.settings.assets_relocation != []:
-            self.m_textCtrl3.AppendText("rm -R "+libs.settings.assets_relocation)
+        if libs.settings.assets_relocation != "":
+            self.m_textCtrl3.AppendText("rm -R "+libs.settings.assets_relocation+"\n")
             shutil.rmtree(libs.settings.assets_relocation)
 
         libs.settings.assets_relocation = ""

@@ -10,6 +10,8 @@ import shutil
 import zipfile
 import libs.helpers
 
+import subprocess
+
 def relocate_data(the_data_path):
     safe_place = tempfile.TemporaryDirectory(delete=False)
     scanerella(the_data_path,safe_place.name)
@@ -28,6 +30,57 @@ def scanerella(data_path,new_place,depth=0):
             scanerella(file,new_place,depth+1)
         else:
             Path(new_place+file).symlink_to(file)
+
+
+def temperella(profile_id):
+
+    dalog = []
+    filelist = []
+
+    path = libs.settings.orig_directory+"/my_files/"
+
+    for root, dirs, files in os.walk(libs.settings.orig_directory+"/my_files/"):
+        for file in files:
+            filelist.append(os.path.join(root,file).replace(path,""))
+
+    filelist.remove(".placeholder")
+
+    for name in filelist:
+        if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)] and ( (name[0:name.find("/",1)].replace("/","") in issvn) ):
+            commnd = "rm "+libs.settings.assets_relocation+"/"+name
+            sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
+            sw_out=sw.stdout.decode("utf-8").replace('\n','')
+
+            dalog.append(commnd)
+            if sw_out != "":
+                dalog.append(sw_out)
+
+            commnd = "cp --parents "+name+" "+libs.settings.assets_relocation
+            sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
+            sw_out=sw.stdout.decode("utf-8").replace('\n','')
+
+            dalog.append(commnd)
+            if sw_out != "":
+                dalog.append(sw_out)
+        else:
+            commnd = "rm "+libs.settings.data_relocation+"/"+name
+            sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
+            sw_out=sw.stdout.decode("utf-8").replace('\n','')
+
+            dalog.append(commnd)
+            if sw_out != "":
+                dalog.append(sw_out)
+
+            commnd = "cp --parents "+name+" "+libs.settings.data_relocation
+            sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
+            sw_out=sw.stdout.decode("utf-8").replace('\n','')
+
+            dalog.append(commnd)
+            if sw_out != "":
+                dalog.append(sw_out)
+
+    return dalog
+
 
 def update_addon_database():
     uplog = []
