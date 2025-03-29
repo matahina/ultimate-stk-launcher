@@ -12,22 +12,6 @@ import questionary
 from pathlib import Path
 import libs.settings
 
-def extra_files(assets_data):
-    style.output_title("Downloading powerup files in ",2)
-    print(style.color.CYAN + libs.settings.orig_directory+"/tmp_files/" + style.color.END)
-
-
-    for index,row in assets_data[["url","name"]].iterrows():
-        print("")
-        style.prompt(row["name"])
-        try:
-            request.urlretrieve(row["url"], libs.settings.orig_directory+"/tmp_files/"+row["name"]+".xml")
-        except:
-            print(style.color.RED + "Could not retrieve " + row["url"] + style.color.END)
-        else:
-            print("OK " + row["url"])
-
-    print("")
 
 def addons():
 

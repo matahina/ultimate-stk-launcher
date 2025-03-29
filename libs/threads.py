@@ -4,6 +4,7 @@ import os
 from urllib import request
 import subprocess
 import libs.settings
+import libs.common
 from lxml import etree
 import xml.etree.ElementTree as ET
 import time
@@ -38,19 +39,13 @@ class UpdateFilesThread(threading.Thread):
         self._parent = parent
         self._name = name
         self._url = url
-        self._answer = ""
+        self._answer = []
 
     def run(self):
         """Overrides Thread.run. Don't call this directly its called internally
         when you call Thread.start().
         """
-        self._answer = self._answer + "\n# " + self._name
-        try:
-            request.urlretrieve(self._url, libs.settings.orig_directory+"/tmp_files/"+self._name+".xml")
-        except:
-            self._answer = self._answer + "\n" + "Could not retrieve " + self._url + "\n"
-        else:
-            self._answer = self._answer + "\n" + "OK " + self._url + "\n"
+        self._answer = libs.common.dl_file(self._url,self._name)
         evt = UpdateFilesEvent(myEVT_UPDATE_FILES, -1, value=self._answer)
         wx.PostEvent(self._parent, evt)
 

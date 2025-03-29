@@ -206,7 +206,17 @@ def main():
     style.output_title("Let's Go!", 1)
     print("")
     libs.settings.ustkl_config.read(libs.settings.orig_directory+"/magic_libs.settings.ustkl_config.ini")
-    update.extra_files(libs.settings.assets_data)
+
+    style.output_title("Downloading powerup files in ",2)
+    print(style.color.CYAN + libs.settings.orig_directory+"/tmp_files/" + style.color.END)
+
+
+    for index,row in libs.settings.assets_data[["url","name"]].iterrows():
+        res = libs.common.dl_file(row["url"],row["name"])
+        for elem in res:
+            print(elem)
+
+    print("")
 
     update.addons()
     os.chdir(libs.settings.orig_directory)

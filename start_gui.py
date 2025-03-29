@@ -314,10 +314,10 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             worker.start()
 
     def OnUpdateFiles(self, evt):
-        if "Could not retrieve" in evt.GetValue():
-            self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.RED))
-        self.m_textCtrl3.AppendText(evt.GetValue())
-        if "Could not retrieve" in evt.GetValue():
+        for elem in evt.GetValue():
+            if "Could not retrieve" in elem:
+                self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.RED))
+            self.m_textCtrl3.AppendText(elem+"\n")
             self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
         self.m_button4.Enable()
         self.OnChoice1(evt)

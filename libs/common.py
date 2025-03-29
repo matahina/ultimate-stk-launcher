@@ -31,6 +31,16 @@ def scanerella(data_path,new_place,depth=0):
         else:
             Path(new_place+file).symlink_to(file)
 
+def dl_file(the_url,the_name):
+    the_answer = []
+    the_answer.append("\n# "+the_name)
+    try:
+        request.urlretrieve(the_url, libs.settings.orig_directory+"/tmp_files/"+the_name+".xml")
+    except:
+        the_answer.append("Could not retrieve " + the_url)
+    else:
+        the_answer.append("OK " + the_url)
+    return the_answer
 
 def temperella(profile_id):
 
