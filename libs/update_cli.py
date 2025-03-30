@@ -11,21 +11,15 @@ import datetime
 import questionary
 from pathlib import Path
 import libs.settings
+import libs.helpers
 
 
 def addons():
 
-    style.output_title("Checking for addons",2)
-
-
     update_log = libs.common.update_addon_database()
 
 
-    for elem in update_log:
-        if "not retrieve" in elem:
-            print(style.color.RED + elem + style.color.END)
-        else:
-            print(elem)
+    libs.helpers.message_cli(update_log)
 
 
     if libs.settings.addon_lib.upd_track != []:
@@ -44,11 +38,7 @@ def addons():
         if index == 0:
             for i in libs.settings.addon_lib.upd_track:
                 log = libs.common.get_addon(i,"track","update")
-                for elem in log:
-                    if "Error" in elem:
-                        print(style.color.RED + elem + style.color.END)
-                    else:
-                        print(elem)
+                libs.helpers.message_cli(log)
 
     if libs.settings.addon_lib.to_inst_track != []:
         options = []
@@ -65,11 +55,7 @@ def addons():
                 sel_tracks.append(new_tracks[options.index(i)])
             for j,i in enumerate(sel_tracks):
                 log = libs.common.get_addon(i,"track","install")
-                for elem in log:
-                    if "Error" in elem:
-                        print(style.color.RED + elem + style.color.END)
-                    else:
-                        print(elem)
+                libs.helpers.message_cli(log)
 
 
     if libs.settings.addon_lib.upd_arena != []:
@@ -88,11 +74,7 @@ def addons():
         if index == 0:
             for i in libs.settings.addon_lib.upd_arena:
                 log = libs.common.get_addon(i,"arena","update")
-                for elem in log:
-                    if "Error" in elem:
-                        print(style.color.RED + elem + style.color.END)
-                    else:
-                        print(elem)
+                libs.helpers.message_cli(log)
 
 
 
@@ -111,11 +93,7 @@ def addons():
                 sel_arenas.append(new_arenas[options.index(i)])
             for j,i in enumerate(sel_arenas):
                 log = libs.common.get_addon(i,"arena","install")
-                for elem in log:
-                    if "Error" in elem:
-                        print(style.color.RED + elem + style.color.END)
-                    else:
-                        print(elem)
+                libs.helpers.message_cli(log)
 
 
     print("")

@@ -40,17 +40,7 @@ from os import listdir
 from os.path import isfile, join
 
 
-issvn = ["editor",
-         "karts",
-        "library",
-        "models",
-        "music",
-        "sfx",
-        "textures",
-        "tracks",
-        "wip-karts",
-        "wip-library",
-        "wip-tracks"]
+
 
 
 
@@ -126,6 +116,18 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
 
         self.RefreshAddons()
 
+    def message_gui(self, text):
+        for elem in text:
+            if "##" in elem:
+                self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
+                self.m_textCtrl3.AppendText("\n"+elem.upper()+"\n")
+                self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
+            else:
+                if "Could not retrieve" in elem or "Error" in elem:
+                    self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.RED))
+                self.m_textCtrl3.AppendText(elem+"\n")
+                self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
+
     def RefreshAddons(self):
 
 
@@ -141,35 +143,19 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
         worker.start()
 
     def OnAddonupd(self, evt):
-        for elem in evt.GetValue():
-            if "Could not retrieve" in elem or "Error" in elem:
-                self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.RED))
-            self.m_textCtrl3.AppendText(elem)
-            if "Could not retrieve" in elem or "Error" in elem:
-                self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
-            self.m_textCtrl3.AppendText("\n")
+        self.message_gui(evt.GetValue())
         if libs.settings.lock > 1:
             self.m_textCtrl3.AppendText('...\n')
         libs.settings.lock = libs.settings.lock -1
 
     def OnAddonery(self, evt):
         self.m_button2.Enable()
-        self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
-        self.m_textCtrl3.AppendText("\n## Downloading addon list in ".upper())
-        self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
-        self.m_textCtrl3.AppendText(libs.settings.orig_directory+"/tmp_files/\n")
-        for elem in evt.GetValue():
-            if "Could not retrieve" in elem:
-                self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.RED))
-            self.m_textCtrl3.AppendText(elem)
-            if "Could not retrieve" in elem:
-                self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
-            self.m_textCtrl3.AppendText("\n")
-            while self.m_grid1.GetNumberRows()>0:
-                self.m_grid1.DeleteRows(0)
-            while self.m_grid1.GetNumberCols()>0:
-                self.m_grid1.DeleteCols(0)
-            self.m_button6.Enable()
+        self.message_gui(evt.GetValue())
+        while self.m_grid1.GetNumberRows()>0:
+            self.m_grid1.DeleteRows(0)
+        while self.m_grid1.GetNumberCols()>0:
+            self.m_grid1.DeleteCols(0)
+        self.m_button6.Enable()
         if libs.settings.addon_lib.upd_track != [] or libs.settings.addon_lib.to_inst_track != [] or libs.settings.addon_lib.upd_arena != [] or libs.settings.addon_lib.to_inst_arena != []:
             self.m_button6.SetLabel("Apply changes")
             self.m_grid1.AppendCols(7)
@@ -314,11 +300,7 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             worker.start()
 
     def OnUpdateFiles(self, evt):
-        for elem in evt.GetValue():
-            if "Could not retrieve" in elem:
-                self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.RED))
-            self.m_textCtrl3.AppendText(elem+"\n")
-            self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
+        self.message_gui(evt.GetValue())
         self.m_button4.Enable()
         self.OnChoice1(evt)
 
@@ -377,73 +359,13 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             self.m_button2.Enable()
             self.m_button6.Disable()
         else:
-            self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
-            self.m_textCtrl3.AppendText("\n## Am gonna make your dreams come true...\n".upper())
-            self.m_textCtrl3.AppendText("\n## New data is in\n".upper())
-            self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
-            libs.settings.data_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_id, 'data_path'))
-            self.m_textCtrl3.AppendText(libs.settings.data_relocation+"\n")
-            if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)]:
-                libs.settings.assets_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_id, 'svn_path'))
-                self.m_textCtrl3.AppendText(libs.settings.assets_relocation+"\n")
-            os.chdir(libs.settings.orig_directory+"/my_files/")
-            self.m_textCtrl3.AppendText("\n")
-            self.m_textCtrl3.AppendText("chdir "+ os.path.dirname( libs.settings.orig_directory+"/my_files/" )+"\n")
-
-
-
-            the_verb = libs.common.temperella(profile_id)
-
-            for elem in the_verb:
-                self.m_textCtrl3.AppendText(elem+"\n")
-
-
-            self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
-            self.m_textCtrl3.AppendText("\n## Using the choosen powerup file\n".upper())
-            self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
-
             powerup_id = self.m_choice2.GetString( self.m_choice2.GetSelection())
-
-            p_up_file_name = list(libs.settings.assets_data['name'].where(libs.settings.assets_data['id'] == powerup_id).where(libs.settings.assets_data['type'] == "powerup").dropna())
-            pfile = p_up_file_name[0]+".xml"
-            kart_file_name = list(libs.settings.assets_data['name'].where(libs.settings.assets_data['id'] == powerup_id).where(libs.settings.assets_data['type'] == "kart").dropna())
-            if kart_file_name == []:
-                kfile="kart_characteristics_orig.xml"
-            else:
-                kfile = kart_file_name[0]+".xml"
-
-            os.chdir(libs.settings.data_relocation)
-            self.m_textCtrl3.AppendText("chdir "+ libs.settings.data_relocation+"\n")
-
-            commnds = ["rm powerup.xml",
-                       "rm kart_characteristics.xml",
-                       "cp "+libs.settings.orig_directory+"/tmp_files/"+pfile+" powerup.xml",
-                       "cp "+libs.settings.orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml"]
-
-            for commnd in commnds:
-                sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-                sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-                self.m_textCtrl3.AppendText(commnd+"\n")
-                if sw_out != "":
-                    self.m_textCtrl3.AppendText(sw_out+"\n")
-
-
-            self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
-            self.m_textCtrl3.AppendText("\n## Running\n".upper())
-            self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
-
-            os.chdir(os.path.dirname(libs.settings.ustkl_config.get(profile_id, 'bin_path')  ))
-            self.m_textCtrl3.AppendText("chdir "+ os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'bin_path')  )+"\n")
-            suffixbis = ""
-            # suffixbis = " | tee -a "+libs.settings.orig_directory+"/logs/"+echo_file+".log"
             prefix = ""
-            if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)]:
-                prefix = prefix + 'export SUPERTUXKART_ASSETS_DIR="'+libs.settings.assets_relocation+'" ; '
+            suffixbis = ""
+            the_verb, prefix = libs.common.starterella(profile_id, powerup_id)
 
-            prefix = prefix + 'export SUPERTUXKART_DATADIR="'+libs.settings.data_relocation[:-6]+'" ; '
-            if libs.settings.ustkl_config.get(profile_id, 'type') == "other":
-                prefix = prefix + "export SYSTEM_LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\";export LD_LIBRARY_PATH=\"$DIRNAME/lib:$LD_LIBRARY_PATH\" ; "
+            self.message_gui(the_verb)
+
             commnd = [prefix+"."+libs.settings.ustkl_config.get(profile_id, 'bin_path').replace(os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'bin_path')  ),'') + suffix + suffixbis]
             commnd.append(os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'bin_path') ))
             commnd.append(libs.settings.ustkl_config.get(profile_id, 'bin_path').replace(os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'bin_path')  ),''))

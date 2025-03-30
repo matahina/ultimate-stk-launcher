@@ -12,6 +12,18 @@ import libs.helpers
 
 import subprocess
 
+issvn = ["editor",
+         "karts",
+        "library",
+        "models",
+        "music",
+        "sfx",
+        "textures",
+        "tracks",
+        "wip-karts",
+        "wip-library",
+        "wip-tracks"]
+
 def relocate_data(the_data_path):
     safe_place = tempfile.TemporaryDirectory(delete=False)
     scanerella(the_data_path,safe_place.name)
@@ -31,20 +43,25 @@ def scanerella(data_path,new_place,depth=0):
         else:
             Path(new_place+file).symlink_to(file)
 
-def dl_file(the_url,the_name):
-    the_answer = []
-    the_answer.append("\n# "+the_name)
-    try:
-        request.urlretrieve(the_url, libs.settings.orig_directory+"/tmp_files/"+the_name+".xml")
-    except:
-        the_answer.append("Could not retrieve " + the_url)
-    else:
-        the_answer.append("OK " + the_url)
-    return the_answer
-
-def temperella(profile_id):
+def starterella(profile_id,powerup_id):
 
     dalog = []
+
+    dalog.append("## Am gonna make your dreams come true...")
+    dalog.append("# Data will be in...")
+
+    libs.settings.data_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_id, 'data_path'))
+    if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)]:
+        libs.settings.assets_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_id, 'svn_path'))
+        dalog.append("location [assets]: "+libs.settings.assets_relocation)
+    dalog.append("location [data]: "+libs.settings.data_relocation)
+    dalog.append("")
+
+    dalog.append("# Copying SFX/GFX/data files into tmp files...")
+    os.chdir(libs.settings.orig_directory+"/my_files/")
+    dalog.append("chdir "+ os.path.dirname( libs.settings.orig_directory+"/my_files/" ))
+
+
     filelist = []
 
     path = libs.settings.orig_directory+"/my_files/"
@@ -55,52 +72,90 @@ def temperella(profile_id):
 
     filelist.remove(".placeholder")
 
+    commnds = []
+
     for name in filelist:
         if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)] and ( (name[0:name.find("/",1)].replace("/","") in issvn) ):
-            commnd = "rm "+libs.settings.assets_relocation+"/"+name
-            sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-            sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-            dalog.append(commnd)
-            if sw_out != "":
-                dalog.append(sw_out)
-
-            commnd = "cp --parents "+name+" "+libs.settings.assets_relocation
-            sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-            sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-            dalog.append(commnd)
-            if sw_out != "":
-                dalog.append(sw_out)
+            commnds.append("rm "+libs.settings.assets_relocation+"/"+name)
+            commnds.append("cp --parents "+name+" "+libs.settings.assets_relocation)
         else:
-            commnd = "rm "+libs.settings.data_relocation+"/"+name
-            sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-            sw_out=sw.stdout.decode("utf-8").replace('\n','')
+            commnds.append("rm "+libs.settings.data_relocation+"/"+name)
+            commnds.append("cp --parents "+name+" "+libs.settings.data_relocation)
 
-            dalog.append(commnd)
-            if sw_out != "":
-                dalog.append(sw_out)
+    for commnd in commnds:
+        sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
+        sw_out=sw.stdout.decode("utf-8").replace('\n','')
 
-            commnd = "cp --parents "+name+" "+libs.settings.data_relocation
-            sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-            sw_out=sw.stdout.decode("utf-8").replace('\n','')
+        dalog.append(commnd)
+        if sw_out != "":
+            dalog.append(sw_out)
 
-            dalog.append(commnd)
-            if sw_out != "":
-                dalog.append(sw_out)
+    dalog.append("")
 
-    return dalog
+    dalog.append("# Using the choosen powerup file")
+
+    p_up_file_name = list(libs.settings.assets_data['name'].where(libs.settings.assets_data['id'] == powerup_id).where(libs.settings.assets_data['type'] == "powerup").dropna())
+    pfile = p_up_file_name[0]+".xml"
+    kart_file_name = list(libs.settings.assets_data['name'].where(libs.settings.assets_data['id'] == powerup_id).where(libs.settings.assets_data['type'] == "kart").dropna())
+    if kart_file_name == []:
+        kfile="kart_characteristics_orig.xml"
+    else:
+        kfile = kart_file_name[0]+".xml"
+
+    os.chdir(libs.settings.data_relocation)
+
+    dalog.append("chdir "+ libs.settings.data_relocation)
+
+    commnds = ["rm powerup.xml",
+               "rm kart_characteristics.xml",
+               "cp "+libs.settings.orig_directory+"/tmp_files/"+pfile+" powerup.xml",
+               "cp "+libs.settings.orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml"]
+
+    for commnd in commnds:
+        sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
+        sw_out=sw.stdout.decode("utf-8").replace('\n','')
+
+        dalog.append(commnd)
+        if sw_out != "":
+            dalog.append(sw_out)
+
+    dalog.append("## Running")
+    os.chdir(os.path.dirname(libs.settings.ustkl_config.get(profile_id, 'bin_path')  ))
+    dalog.append("chdir "+ os.path.dirname( libs.settings.ustkl_config.get(profile_id, 'bin_path')  ))
+
+    prefix = ""
+    if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_id)]:
+        prefix = prefix + 'export SUPERTUXKART_ASSETS_DIR="'+libs.settings.assets_relocation+'" ; '
+
+    prefix = prefix + 'export SUPERTUXKART_DATADIR="'+libs.settings.data_relocation[:-6]+'" ; '
+    if libs.settings.ustkl_config.get(profile_id, 'type') == "other":
+        prefix = prefix + "export SYSTEM_LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\";export LD_LIBRARY_PATH=\"$DIRNAME/lib:$LD_LIBRARY_PATH\" ; "
+
+    return dalog, prefix
+
+def dl_file(the_url,the_name):
+    the_answer = []
+    the_answer.append("\n# "+the_name)
+    try:
+        request.urlretrieve(the_url, libs.settings.orig_directory+"/tmp_files/"+the_name+".xml")
+    except:
+        the_answer.append("[Could not retrieve] " + the_url)
+    else:
+        the_answer.append("[OK] " + the_url)
+    return the_answer
 
 
 def update_addon_database():
     uplog = []
+    uplog.append("## Checking for addons")
+    uplog.append("Download list in "+libs.settings.orig_directory+"/tmp_files/")
     the_url = "https://online.supertuxkart.net/downloads/xml/online_assets.xml"
     try:
         request.urlretrieve(the_url, libs.settings.orig_directory+"/tmp_files/online_assets.xml")
     except:
-        uplog.append("Could not retrieve " + the_url + "\n")
+        uplog.append("[Could not retrieve] " + the_url + "\n")
     else:
-        uplog.append("OK " + the_url + "\n")
+        uplog.append("[OK] " + the_url + "\n")
 
         libs.settings.addon_lib.init_stk_tree()
         libs.settings.addon_lib.init_mytree()
@@ -212,9 +267,9 @@ def get_addon(the_index,the_type,the_method):
         try:
             request.urlretrieve(libs.settings.addon_lib.avail_tracks[the_index][2], libs.settings.orig_directory+"/tmp_files/"+libs.settings.addon_lib.avail_tracks[the_index][3]+".zip")
         except:
-            getlog.append("Could not retrieve " + libs.settings.addon_lib.avail_tracks[the_index][2])
+            getlog.append("[Could not retrieve] " + libs.settings.addon_lib.avail_tracks[the_index][2])
         else:
-            getlog.append("OK " + libs.settings.addon_lib.avail_tracks[the_index][2])
+            getlog.append("[OK] " + libs.settings.addon_lib.avail_tracks[the_index][2])
             try:
                 if os.path.isdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+libs.settings.addon_lib.avail_tracks[the_index][0]):
                     shutil.rmtree(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+libs.settings.addon_lib.avail_tracks[the_index][0])
@@ -289,9 +344,9 @@ def get_addon(the_index,the_type,the_method):
         try:
             request.urlretrieve(libs.settings.addon_lib.avail_arenas[the_index][2], libs.settings.orig_directory+"/tmp_files/"+libs.settings.addon_lib.avail_arenas[the_index][3]+".zip")
         except:
-            getlog.append("Could not retrieve " + libs.settings.addon_lib.avail_arenas[the_index][2])
+            getlog.append("[Could not retrieve] " + libs.settings.addon_lib.avail_arenas[the_index][2])
         else:
-            getlog.append("OK " + libs.settings.addon_lib.avail_arenas[the_index][2])
+            getlog.append("[OK] " + libs.settings.addon_lib.avail_arenas[the_index][2])
             try:
                 if os.path.isdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+libs.settings.addon_lib.avail_arenas[the_index][0]):
                     shutil.rmtree(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+libs.settings.addon_lib.avail_arenas[the_index][0])

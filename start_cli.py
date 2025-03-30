@@ -16,22 +16,12 @@ import libs.update_cli as update
 import libs.style_cli as style
 import libs.helpers_cli as helpers
 
+import libs.helpers
 import libs.settings
 import libs.common
 
 
 
-issvn = ["editor",
-         "karts",
-        "library",
-        "models",
-        "music",
-        "sfx",
-        "textures",
-        "tracks",
-        "wip-karts",
-        "wip-library",
-        "wip-tracks"]
 
 
 
@@ -84,81 +74,37 @@ def goo():
     if index == 3:
         suffix = " --check-debug --track-debug "
 
-    style.output_title("Am gonna make your dreams come true...", 2)
-    print("")
-
-    style.prompt("Copying SFX/GFX/data files into tmp files...")
-    libs.settings.data_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_answer, 'data_path'))
-    if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_answer)]:
-        libs.settings.assets_relocation = libs.common.relocate_data(libs.settings.ustkl_config.get(profile_answer, 'svn_path'))
-        print("location [assets]: "+libs.settings.assets_relocation)
-    print("location [data]: "+libs.settings.data_relocation)
-    os.chdir(libs.settings.orig_directory+"/my_files/")
-
-
-
-    the_verb = libs.common.temperella(profile_answer)
-
-    for elem in the_verb:
-        print(elem)
-
-    print("")
-
-
-    style.prompt("Using the choosen powerup file")
-    p_up_file_name = list(libs.settings.assets_data['name'].where(libs.settings.assets_data['id'] == powerup_answer).where(libs.settings.assets_data['type'] == "powerup").dropna())
-    pfile = p_up_file_name[0]+".xml"
-    kart_file_name = list(libs.settings.assets_data['name'].where(libs.settings.assets_data['id'] == powerup_answer).where(libs.settings.assets_data['type'] == "kart").dropna())
-    if kart_file_name == []:
-        kfile="kart_characteristics_orig.xml"
-    else:
-        kfile = kart_file_name[0]+".xml"
-
-    os.chdir(libs.settings.data_relocation)
-    print("chdir "+libs.settings.data_relocation)
-
-    print("cp "+libs.settings.orig_directory+"/tmp_files/"+pfile+" powerup.xml")
-    print("cp "+libs.settings.orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml")
-    os.remove("powerup.xml")
-    os.remove("kart_characteristics.xml")
-    os.system("cp "+libs.settings.orig_directory+"/tmp_files/"+pfile+" powerup.xml")
-    os.system("cp "+libs.settings.orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml")
-
-    print("")
-
-    os.chdir(os.path.dirname( libs.settings.ustkl_config.get(profile_answer, 'bin_path')  ))
-    suffixbis = " | tee -a "+libs.settings.orig_directory+"/logs/"+echo_file+".log"
     prefix = ""
-    if 'svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_answer)]:
-        prefix = prefix + 'export SUPERTUXKART_ASSETS_DIR="'+libs.settings.assets_relocation+'" ; '
+    suffixbis = ""
+    the_verb, prefix = libs.common.starterella(profile_answer,powerup_answer)
 
-    prefix = prefix + 'export SUPERTUXKART_DATADIR="'+libs.settings.data_relocation[:-6]+'" ; '
-    if libs.settings.ustkl_config.get(profile_answer, 'type') == "other":
-        prefix = prefix + "export SYSTEM_LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\";export LD_LIBRARY_PATH=\"$DIRNAME/lib:$LD_LIBRARY_PATH\" ; "
-    style.prompt("running")
-    print("chdir "+ os.path.dirname( libs.settings.ustkl_config.get(profile_answer, 'bin_path')  ))
-    print(prefix+"."+libs.settings.ustkl_config.get(profile_answer, 'bin_path').replace(os.path.dirname( libs.settings.ustkl_config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
+    libs.helpers.message_cli(the_verb)
+
+    suffixbis = " | tee -a "+libs.settings.orig_directory+"/logs/"+echo_file+".log"
+    command = prefix+"."+libs.settings.ustkl_config.get(profile_answer, 'bin_path').replace(os.path.dirname( libs.settings.ustkl_config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis
+    print(command+"\n")
+
     os.system("echo '========================  '"+echo_file+"'  ========================' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
     os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
     os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
     os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
-    os.system(prefix+"."+libs.settings.ustkl_config.get(profile_answer, 'bin_path').replace(os.path.dirname( libs.settings.ustkl_config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis)
+    os.system(command)
     os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
     os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
     os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
-    print("")
 
-
-    style.prompt("Removing tmp files")
-    print("rm -R "+libs.settings.data_relocation)
+    message = []
+    message.append("")
+    message.append("# Removing tmp files")
+    message.append("rm -R "+libs.settings.data_relocation)
     os.system("rm -R "+libs.settings.data_relocation)
     if ('svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_answer)]):
-        print("rm -R "+libs.settings.assets_relocation)
+        message.append("rm -R "+libs.settings.assets_relocation)
         os.system("rm -R "+libs.settings.assets_relocation)
 
+    libs.helpers.message_cli(message)
     libs.settings.assets_relocation = ""
     libs.settings.data_relocation = ""
-    print("")
 
 
 def initialize():
@@ -171,7 +117,7 @@ def initialize():
     print("")
 
     if index == 0:
-        style.output_title("Empty config file",2)
+        libs.helpers.message_cli(["## Empty config file"])
         print("")
         print("")
         style.prompt("Do it yourself :p",True)
@@ -180,7 +126,7 @@ def initialize():
         print("")
         quit()
     elif index == 1:
-        helpers.stk_stable(config)
+        helpers_cli.stk_stable(config)
         main()
 
 def main():
@@ -203,18 +149,15 @@ def main():
     if (not(os.path.exists(libs.settings.orig_directory+"/magic_config.ini")) or os.stat(libs.settings.orig_directory+"/magic_config.ini").st_size == 0):
         initialize()
 
-    style.output_title("Let's Go!", 1)
-    print("")
+    libs.helpers.message_cli(["## Let's Go!"])
     libs.settings.ustkl_config.read(libs.settings.orig_directory+"/magic_libs.settings.ustkl_config.ini")
 
-    style.output_title("Downloading powerup files in ",2)
-    print(style.color.CYAN + libs.settings.orig_directory+"/tmp_files/" + style.color.END)
+    libs.helpers.message_cli(["## Downloading powerup files in ",libs.settings.orig_directory+"/tmp_files/"])
 
 
     for index,row in libs.settings.assets_data[["url","name"]].iterrows():
         res = libs.common.dl_file(row["url"],row["name"])
-        for elem in res:
-            print(elem)
+        libs.helpers.message_cli(res)
 
     print("")
 
@@ -256,12 +199,12 @@ def main():
             profile_answer = plist[index]
             update.stk_profile(profile_answer, config)
         else:
-            style.output_title(title, 2)
+            libs.helpers.message_cli(["## "+title])
             style.prompt("Sorry, not any git installs found in config",True)
             print()
         main()
     elif index == 2:
-        style.output_title("Profiles Tuning",2)
+        libs.helpers.message_cli(["## Profiles Tuning"])
         print("")
         print("")
         style.prompt("Do it yourself :p",True)
@@ -281,19 +224,19 @@ def main():
         sp_index = options.index(option)
         print("")
         if sp_index == 0:
-            helpers.stk_git(config)
+            helpers_cli.stk_git(config)
         if sp_index == 1:
-            helpers.stk_stable(config)
+            helpers_cli.stk_stable(config)
         if sp_index == 2:
-            helpers.stk_git_kimden_client(config)
+            helpers_cli.stk_git_kimden_client(config)
         if sp_index == 3:
-            helpers.stk_git_kimden(config)
+            helpers_cli.stk_git_kimden(config)
         if sp_index == 4:
-            helpers.stk_git_kimden_server(config)
+            helpers_cli.stk_git_kimden_server(config)
         if sp_index == 5:
-            helpers.stk_speed(config)
+            helpers_cli.stk_speed(config)
         if sp_index == 6:
-            helpers.stk2(config)
+            helpers_cli.stk2(config)
         main()
     elif index == 4:
         print()

@@ -16,7 +16,7 @@ def output_title(text, level):
     if level == 1:
         print(color.PURPLE + color.BOLD + text.upper() + color.END)
     if level == 2:
-        print(color.CYAN + text.upper() + color.END)
+        print(color.GREEN + text.upper() + color.END)
 
 def prompt(text, important = False):
     if important:
