@@ -93,18 +93,10 @@ def goo():
     os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
     os.system("echo '' >>" + libs.settings.orig_directory+"/logs/"+echo_file+".log")
 
-    message = []
-    message.append("")
-    message.append("# Removing tmp files")
-    message.append("rm -R "+libs.settings.data_relocation)
-    os.system("rm -R "+libs.settings.data_relocation)
-    if ('svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_answer)]):
-        message.append("rm -R "+libs.settings.assets_relocation)
-        os.system("rm -R "+libs.settings.assets_relocation)
 
-    libs.helpers.message_cli(message)
-    libs.settings.assets_relocation = ""
-    libs.settings.data_relocation = ""
+    the_verb = libs.common.enderella()
+
+    libs.helpers.message_cli(the_verb)
 
 
 def initialize():
@@ -137,12 +129,13 @@ def main():
     print("")
     print("")
     print("")
-    lala = os.system('echo "WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜" | lolcat ')
-    lala = os.system('echo "" | cowsay -f hellokitty | lolcat')
+    # lala = os.system('echo "WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜💜" | lolcat ')
+    # lala = os.system('echo "" | cowsay -f hellokitty | lolcat')
+    #
+    # if lala != 0:
+    #     print("You need to install" + style.color.BOLD + " cowsay " + style.color.END + "and" + style.color.BOLD + " lolcat " + style.color.END + "in order to get the welcome message displayed. So sorry!")
 
-    if lala != 0:
-        print("You need to install" + style.color.BOLD + " cowsay " + style.color.END + "and" + style.color.BOLD + " lolcat " + style.color.END + "in order to get the welcome message displayed. So sorry!")
-
+    print("      /\\_)o<        💜💜💜💜💜💜💜💜💜 WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜\n     |      \\\n     | O . O|\n      \\_____/\n")
     print("")
     input("Press Enter to continue...")
 

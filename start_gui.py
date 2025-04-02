@@ -388,21 +388,9 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
 
     def OnGears(self, evt):
 
-        self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
-        self.m_textCtrl3.AppendText("\n## Removing tmp data files\n".upper())
-        self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
+        the_verb = libs.common.enderella()
 
-        self.m_textCtrl3.AppendText("rm -R "+libs.settings.data_relocation+"\n")
-        shutil.rmtree(libs.settings.data_relocation)
-        if libs.settings.assets_relocation != "":
-            self.m_textCtrl3.AppendText("rm -R "+libs.settings.assets_relocation+"\n")
-            shutil.rmtree(libs.settings.assets_relocation)
-
-        libs.settings.assets_relocation = ""
-        libs.settings.data_relocation = ""
-        self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
-        self.m_textCtrl3.AppendText("\n## Dooooone =D\n".upper())
-        self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
+        self.message_gui(the_verb)
 
         self.m_button2.Enable()
 

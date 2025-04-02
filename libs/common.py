@@ -133,6 +133,23 @@ def starterella(profile_id,powerup_id):
 
     return dalog, prefix
 
+
+def enderella():
+    dalog = []
+    dalog.append("")
+    dalog.append("# Removing tmp files")
+    dalog.append("rm -R "+libs.settings.data_relocation)
+    shutil.rmtree(libs.settings.data_relocation)
+    if ('svn_path' in [row[0] for row in libs.settings.ustkl_config.items(profile_answer)]):
+        dalog.append("rm -R "+libs.settings.assets_relocation)
+        shutil.rmtree(libs.settings.assets_relocation)
+    dalog.append("## Dooooone =D")
+    libs.settings.assets_relocation = ""
+    libs.settings.data_relocation = ""
+
+    return dalog
+
+
 def dl_file(the_url,the_name):
     the_answer = []
     the_answer.append("\n# "+the_name)
