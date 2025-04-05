@@ -52,7 +52,7 @@ def addons():
         if selected != []:
             sel_tracks = []
             for i in selected:
-                sel_tracks.append(new_tracks[options.index(i)])
+                sel_tracks.append(libs.settings.addon_lib.to_inst_track[options.index(i)])
             for j,i in enumerate(sel_tracks):
                 log = libs.common.get_addon(i,"track","install")
                 libs.helpers.message_cli(log)
@@ -90,7 +90,7 @@ def addons():
         if selected != []:
             sel_arenas = []
             for i in selected:
-                sel_arenas.append(new_arenas[options.index(i)])
+                sel_arenas.append(libs.settings.addon_lib.to_inst_arena[options.index(i)])
             for j,i in enumerate(sel_arenas):
                 log = libs.common.get_addon(i,"arena","install")
                 libs.helpers.message_cli(log)

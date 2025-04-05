@@ -323,23 +323,19 @@ def get_addon(the_index,the_type,the_method):
                                 else:
                                     getlog.append("Success updating "+libs.settings.addon_lib.avail_tracks[the_index][0])
                                     try:
+                                        replacement = '<track name="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][1])+'" id="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][0])+'" designer="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][5])+'" date="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][3])+'" installed="true" installed-revision="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][7])+'" size="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][8])+'"/>\n'
+                                        #open file1 in reading mode
+                                        file1 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml', 'r')
+                                        #open file2 in writing mode
+                                        file2 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2','w')
+
                                         if the_method == "install":
-                                            replacement = '<track name="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][1])+'" id="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][0])+'" designer="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][5])+'" date="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][3])+'" installed="true" installed-revision="'+libs.helpers.settings.orig_directorypers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][7])+'" size="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][8])+'"/>\n'
-                                            #open file1 in reading mode
-                                            file1 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml', 'r')
-                                            #open file2 in writing mode
-                                            file2 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2','w')
                                             #read from file1 and write to file2
                                             for line in file1:
                                                 if "</addons>" in line:
                                                     file2.write(replacement)
                                                 file2.write(line)
                                         else: #update
-                                            replacement = '<track name="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][1])+'" id="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][0])+'" designer="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][5])+'" date="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][3])+'" installed="true" installed-revision="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][7])+'" size="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_tracks[the_index][8])+'"/>\n'
-                                            #open file1 in reading mode
-                                            file1 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml', 'r')
-                                            #open file2 in writing mode
-                                            file2 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2','w')
                                             #read from file1 and write to file2
                                             for line in file1:
                                                 if "track" in line and libs.settings.addon_lib.avail_tracks[the_index][0] in line:
@@ -400,23 +396,19 @@ def get_addon(the_index,the_type,the_method):
                                 else:
                                     getlog.append("Success updating "+libs.settings.addon_lib.avail_arenas[the_index][0])
                                     try:
+                                        replacement = '<arena name="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][1])+'" id="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][0])+'" designer="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][5])+'" date="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][3])+'" installed="true" installed-revision="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][7])+'" size="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][8])+'"/>\n'
+                                        #open file1 in reading mode
+                                        file1 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml', 'r')
+                                        #open file2 in writing mode
+                                        file2 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2','w')
+
                                         if the_method == "install":
-                                            replacement = '<arena name="'+libs.helpers.parser_of_the_year(lthe_indexibs.settings.addon_lib.avail_arenas[the_index][1])+'" id="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][0])+'" designer="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][5])+'" date="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][3])+'" installed="true" installed-revision="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][7])+'" size="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][8])+'"/>\n'
-                                            #open file1 in reading mode
-                                            file1 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml', 'r')
-                                            #open file2 in writing mode
-                                            file2 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2','w')
                                             #read from file1 and write to file2
                                             for line in file1:
                                                 if "</addons>" in line:
                                                     file2.write(replacement)
                                                 file2.write(line)
                                         else: #update
-                                            replacement = '<arena name="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][1])+'" id="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][0])+'" designer="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][5])+'" date="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][3])+'" installed="true" installed-revision="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][7])+'" size="'+libs.helpers.parser_of_the_year(libs.settings.addon_lib.avail_arenas[the_index][8])+'"/>'
-                                            #open file1 in reading mode
-                                            file1 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml', 'r')
-                                            #open file2 in writing mode
-                                            file2 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2','w')
                                             #read from file1 and write to file2
                                             for line in file1:
                                                 if "arena" in line and libs.settings.addon_lib.avail_arenas[the_index][0] in line:
