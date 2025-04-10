@@ -9,8 +9,8 @@ cake (matahina) v2,2,powerup,powerup_cake2,https://raw.githubusercontent.com/mat
 cake (matahina) v1,1,powerup,powerup_cake1,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/matahina_powerups/powerup_cake_v1.xml
 cake (matahina) v0,0,powerup,powerup_cake0,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/matahina_powerups/powerup_cake_v0.xml
 gums (matahina) v1,1,powerup,powerup_gums1,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/matahina_powerups/powerup_gums_v1.xml
-YEET (Iluvatyr),1,powerup,powerup_yeet,https://stk.iluvatyr.com/download/powerup.xml
-YEET (Iluvatyr),1,kart,kart_characteristics_yeet,https://stk.iluvatyr.com/download/kart_characteristics.xml
+YEET (Iluvatyr),1,powerup,powerup_yeet,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/refs/heads/main/luva_rowdy_yeet/powerup_yeet.xml
+YEET (Iluvatyr),1,kart,kart_characteristics_yeet,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/refs/heads/main/luva_rowdy_yeet/kart_characteristics_yeet.xml
 FF April Fools 2023,1,powerup,powerup_aprfool23,https://stk.kimden.online/public/powerup_mimiz.xml
 FF April Fools 2023,1,kart,kart_characteristics_aprfool23,https://stk.kimden.online/public/230401.xml
 FF April Fools 2022,1,powerup,powerup_aprfool22,https://stk.kimden.online/public/0104.xml
