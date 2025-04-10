@@ -1,62 +1,240 @@
 # -*- coding: utf-8 -*-
 
-class color:
-   PURPLE = '\033[95m'
-   CYAN = '\033[96m'
-   DARKCYAN = '\033[36m'
-   BLUE = '\033[94m'
-   GREEN = '\033[92m'
-   YELLOW = '\033[93m'
-   RED = '\033[91m'
-   BOLD = '\033[1m'
-   UNDERLINE = '\033[4m'
-   END = '\033[0m'
+# For building/updating profiles
 
-def message_cli(text):
-    for elem in text:
-        if "##" in elem:
-            print("\n"+color.GREEN + elem.upper() + color.END)
-        else:
-            if "Could not retrieve" in elem or "Error" in elem:
-                print(color.RED + elem + color.END)
-            else:
-                print(elem)
+import os
+import datetime
+import libs.common
+import libs.variables
 
-def break_line(long_string,cut_length):
-    trigger_a = False
-    trigger_b = False
-    if len(long_string)>cut_length:
-        while not trigger_b:
-            if not trigger_a:
-                pos = long_string.find(" ", cut_length)
-                long_string = long_string[0:pos]+"\n"+long_string[pos+1:]
-                trigger_a=True
-            else:
-                pos = long_string.rfind("\n")
-                if len(long_string)-pos > cut_length:
-                    pos2 = long_string.find(" ", pos+cut_length)
-                    long_string = long_string[0:pos2]+"\n"+long_string[pos2+1:]
-                else:
-                    trigger_b=True
-    return long_string
+def stk_speed():
+    started_at = datetime.datetime.now()
+    uecho_file = "INSTALL_STK_SPEED_"+started_at.strftime("%Y%m%d_%H%M%S")
 
-def quantity(number, action):
-    if number == 0:
-        result = "No addon to "+action
-    else:
-        result = str(number)+" addon to "+action
-    if action == "install":
-        result = result.replace("addon","new addon")
-    if number>1:
-        result = result.replace("addon","addons")
-    return result+" "
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
 
-def parser_of_the_year(my_string):
-    not_illegal='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_,".@()[]{{|}}*+'
-    new_good_string = ""
-    for char in my_string:
-        if char in not_illegal:
-            new_good_string+=char
-        else:
-            new_good_string+="&#x"+hex(ord((char)))[2:].upper()+";"
-    return new_good_string
+    libs.cli.message(["## Where to clone repos? [Give absolute path of the directory to exec git clone]"])
+    the_path = ""
+    the_path = input('')
+    if the_path[-1] != "/":
+        the_path = the_path + "/"
+    os.system("sh "+libs.variables.orig_directory+"/libs/install_stk_speed.sh "+the_path + " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    print()
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+
+    libs.variables.ustkl_config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK speed')
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code-speed/cmake_build/bin/supertuxkart")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code-speed/data/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git_speed")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-speed/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
+    libs.common.save_config()
+
+def stk2():
+    started_at = datetime.datetime.now()
+    uecho_file = "INSTALL_STK_2_"+started_at.strftime("%Y%m%d_%H%M%S")
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    libs.cli.message(["## Where to clone repos? [Give absolute path of the directory to exec git clone]"])
+    the_path = ""
+    the_path = input('')
+    if the_path[-1] != "/":
+        the_path = the_path + "/"
+    os.system("sh "+libs.variables.orig_directory+"/libs/install_stk2.sh "+the_path + " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    print()
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+
+    libs.variables.ustkl_config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK 2')
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-2/stk-code-alayan/cmake_build/bin/supertuxkart")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-2/stk-code-alayan/data/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git2")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-2/stk-code-alayan/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-2/stk-assets/")
+    libs.common.save_config()
+
+
+def stk_git():
+    started_at = datetime.datetime.now()
+    uecho_file = "INSTALL_STK_GIT_MASTER_"+started_at.strftime("%Y%m%d_%H%M%S")
+
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    libs.cli.message(["## Where to clone repos? [Give absolute path of the directory to exec git clone]"])
+    the_path = ""
+    the_path = input('')
+    if the_path[-1] != "/":
+        the_path = the_path + "/"
+    os.system("sh "+libs.variables.orig_directory+"/libs/install_stk.sh "+the_path + " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    print()
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+
+    libs.variables.ustkl_config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT')
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code/cmake_build/bin/supertuxkart")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code/data/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
+    libs.common.save_config()
+
+
+
+def stk_stable():
+    started_at = datetime.datetime.now()
+    uecho_file = "INSTALL_STK_STABLE_"+started_at.strftime("%Y%m%d_%H%M%S")
+
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    libs.cli.message(["## Where to clone repos? [Give absolute path of the directory to exec git clone]"])
+    the_path = ""
+    the_path = input('')
+    if the_path[-1] != "/":
+        the_path = the_path + "/"
+    os.system("sh "+libs.variables.orig_directory+"/libs/install_stk_stable.sh "+the_path + " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    print()
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+
+    libs.variables.ustkl_config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK Stable')
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"SuperTuxKart-1.4-linux-x86_64/bin/supertuxkart")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"SuperTuxKart-1.4-linux-x86_64/data/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "stable")
+    libs.common.save_config()
+
+
+
+
+def stk_git_kimden():
+    started_at = datetime.datetime.now()
+    uecho_file = "INSTALL_STK_GIT_KIMDEN_"+started_at.strftime("%Y%m%d_%H%M%S")
+
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    libs.cli.message(["## Where to clone repos? [Give absolute path of the directory to exec git clone]"])
+    the_path = ""
+    the_path = input('')
+    if the_path[-1] != "/":
+        the_path = the_path + "/"
+    os.system("sh "+libs.variables.orig_directory+"/libs/install_stk_kimden.sh "+the_path + " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    print()
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+
+    libs.variables.ustkl_config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT KIMDEN')
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code-kimden/cmake_build/bin/supertuxkart")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code-kimden/data/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-kimden/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
+    libs.common.save_config()
+
+
+
+
+def stk_git_kimden_client():
+    started_at = datetime.datetime.now()
+    uecho_file = "INSTALL_STK_GIT_KIMDEN_CLIENT_"+started_at.strftime("%Y%m%d_%H%M%S")
+
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    libs.cli.message(["## Where to clone repos? [Give absolute path of the directory to exec git clone]"])
+    the_path = ""
+    the_path = input('')
+    if the_path[-1] != "/":
+        the_path = the_path + "/"
+    os.system("sh "+libs.variables.orig_directory+"/libs/install_stk_kimden_client.sh "+the_path + " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    print()
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+
+    libs.variables.ustkl_config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT KIMDEN CLIENT')
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code-kimden-client/cmake_build/bin/supertuxkart")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code-kimden-client/data/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-kimden-client/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
+    libs.common.save_config()
+
+
+
+
+def stk_git_kimden_server():
+    started_at = datetime.datetime.now()
+    uecho_file = "INSTALL_STK_GIT_KIMDEN_SERVER_"+started_at.strftime("%Y%m%d_%H%M%S")
+
+
+    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    libs.cli.message(["## Where to clone repos? [Give absolute path of the directory to exec git clone]"])
+    the_path = ""
+    the_path = input('')
+    if the_path[-1] != "/":
+        the_path = the_path + "/"
+    os.system("sh "+libs.variables.orig_directory+"/libs/install_stk_kimden_server.sh "+the_path + " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+    print()
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+
+
+    libs.variables.ustkl_config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT KIMDEN SERVER')
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code-kimden-server/cmake_build/bin/supertuxkart")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-code-kimden-server/data/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-code-kimden-server/")
+    libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-assets/")
+    libs.common.save_config()

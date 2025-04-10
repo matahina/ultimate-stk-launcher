@@ -158,7 +158,7 @@ class MainFrame ( wx.Frame ):
         self.m_panel1.SetSizer( bSizer3 )
         self.m_panel1.Layout()
         bSizer3.Fit( self.m_panel1 )
-        self.m_notebook6.AddPage( self.m_panel1, _(u"Welcome"), True )
+        self.m_notebook6.AddPage( self.m_panel1, _(u"Welcome"), False )
         self.m_panel2 = wx.Panel( self.m_notebook6, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         bSizer71 = wx.BoxSizer( wx.VERTICAL )
 
@@ -168,6 +168,7 @@ class MainFrame ( wx.Frame ):
         self.m_grid1.CreateGrid( 0, 0 )
         self.m_grid1.EnableEditing( True )
         self.m_grid1.EnableGridLines( True )
+        self.m_grid1.SetGridLineColour( wx.SystemSettings.GetColour( wx.SYS_COLOUR_BTNSHADOW ) )
         self.m_grid1.EnableDragGridSize( False )
         self.m_grid1.SetMargins( 0, 0 )
 
@@ -197,7 +198,19 @@ class MainFrame ( wx.Frame ):
         self.m_panel3 = wx.Panel( self.m_notebook6, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
         self.m_notebook6.AddPage( self.m_panel3, _(u"Profile Manager"), False )
         self.m_panel4 = wx.Panel( self.m_notebook6, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        self.m_notebook6.AddPage( self.m_panel4, _(u"a page"), False )
+        bSizer82 = wx.BoxSizer( wx.VERTICAL )
+
+        self.m_treeCtrl1 = wx.TreeCtrl( self.m_panel4, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_DEFAULT_STYLE )
+        bSizer82.Add( self.m_treeCtrl1, 1, wx.ALL|wx.EXPAND, 5 )
+
+        self.m_button7 = wx.Button( self.m_panel4, wx.ID_ANY, _(u"Refresh"), wx.DefaultPosition, wx.DefaultSize, 0 )
+        bSizer82.Add( self.m_button7, 0, wx.ALL|wx.EXPAND, 5 )
+
+
+        self.m_panel4.SetSizer( bSizer82 )
+        self.m_panel4.Layout()
+        bSizer82.Fit( self.m_panel4 )
+        self.m_notebook6.AddPage( self.m_panel4, _(u"Who's online?"), True )
 
         bSizer2.Add( self.m_notebook6, 1, wx.EXPAND |wx.ALL, 5 )
 
@@ -214,15 +227,6 @@ class MainFrame ( wx.Frame ):
         self.SetSizer( bSizer2 )
         self.Layout()
         self.m_statusBar1 = self.CreateStatusBar( 1, wx.STB_SIZEGRIP, wx.ID_ANY )
-        self.m_menubar1 = wx.MenuBar( 0 )
-        self.m_menu1 = wx.Menu()
-        self.m_menubar1.Append( self.m_menu1, _(u"MyMenu") )
-
-        self.m_menu2 = wx.Menu()
-        self.m_menubar1.Append( self.m_menu2, _(u"MyMenu") )
-
-        self.SetMenuBar( self.m_menubar1 )
-
 
         self.Centre( wx.BOTH )
 
@@ -233,6 +237,7 @@ class MainFrame ( wx.Frame ):
         self.m_button4.Bind( wx.EVT_BUTTON, self.pup_refresh )
         self.m_button5.Bind( wx.EVT_BUTTON, self.go_tab_profiles )
         self.m_button6.Bind( wx.EVT_BUTTON, self.updatery )
+        self.m_button7.Bind( wx.EVT_BUTTON, self.uponline )
 
     def __del__( self ):
         pass
@@ -253,6 +258,9 @@ class MainFrame ( wx.Frame ):
         event.Skip()
 
     def updatery( self, event ):
+        event.Skip()
+
+    def uponline( self, event ):
         event.Skip()
 
 

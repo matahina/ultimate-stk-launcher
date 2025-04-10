@@ -1,12 +1,12 @@
+# -*- coding: utf-8 -*-
+
+# gui threads
+
 import wx
 import threading
-import os
-from urllib import request
 import subprocess
-import libs.settings
 import libs.common
-from lxml import etree
-import xml.etree.ElementTree as ET
+import libs.variables
 import time
 
 myEVT_UPDATE_FILES = wx.NewEventType()
@@ -152,7 +152,7 @@ class AddoneryThread(threading.Thread):
         """Overrides Thread.run. Don't call this directly its called internally
         when you call Thread.start().
         """
-        while libs.settings.lock > 0:
+        while libs.variables.lock > 0:
             pass
 
         self._answer=libs.common.update_addon_database()
@@ -163,7 +163,44 @@ class AddoneryThread(threading.Thread):
 
 
 
+myEVT_ONLINERY = wx.NewEventType()
+EVT_ONLINERY = wx.PyEventBinder(myEVT_ONLINERY, 1)
+class OnlineryEvent(wx.PyCommandEvent):
+    """Event to signal that a count value is ready"""
+    def __init__(self, etype, eid, value):
+        """Creates the event object"""
+        wx.PyCommandEvent.__init__(self, etype, eid)
+        self._value = value
 
+    def GetValue(self):
+        """Returns the value from the event.
+        @return: the value of this event
+
+        """
+        return self._value
+
+
+class OnlineryThread(threading.Thread):
+    def __init__(self, parent):
+        """
+        @param parent: The gui object that should recieve the value
+        @param value: value to 'calculate' to
+        """
+        threading.Thread.__init__(self)
+        self._parent = parent
+        self._answer = []
+
+    def run(self):
+        """Overrides Thread.run. Don't call this directly its called internally
+        when you call Thread.start().
+        """
+        while libs.variables.lock > 0:
+            pass
+
+        self._answer=libs.common.update_online_database()
+
+        evt = OnlineryEvent(myEVT_ONLINERY, -1, value=self._answer)
+        wx.PostEvent(self._parent, evt)
 
 
 
@@ -209,6 +246,6 @@ class AddonupdThread(threading.Thread):
         evt = AddonupdEvent(myEVT_ADDONUPD, -1, value=self._answer)
         wx.PostEvent(self._parent, evt)
 
-        # libs.settings.lock = libs.settings.lock -1
+        # libs.variables.lock = libs.variables.lock -1
 
 
