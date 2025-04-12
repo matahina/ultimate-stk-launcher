@@ -427,6 +427,10 @@ def dl_file(the_url,the_name, the_ext = ".xml"):
     messengerella.append("\n# "+the_name)
     try:
         Path.unlink(libs.variables.orig_directory+"/tmp_files/"+the_name+the_ext)
+    except:
+        pass
+
+    try:
         request.urlretrieve(the_url, libs.variables.orig_directory+"/tmp_files/"+the_name+the_ext)
     except:
         messengerella.append("[Could not retrieve] " + the_url)

@@ -143,8 +143,13 @@ def main():
 
     libs.cli.addons()
     os.chdir(libs.variables.orig_directory)
+    menu()
 
+def menu():
 
+    print("")
+
+    print("")
     title = "What do you want to do today?".upper()
     options = ['STÖÖÖÖRT STK',
                 'Update STK from git and svn',
@@ -159,7 +164,7 @@ def main():
 
     if index == 0:
         goo()
-        quit()
+        menu()
     elif index == 1:
         title = "Which profile do you want to update today?"
         options = libs.variables.ustkl_config.sections()
@@ -178,14 +183,14 @@ def main():
             index = names.index(option)
             print("")
             profile_answer = plist[index]
-            libs.cli.update_profile(profile_answer)
+            libs.helpers.manage_profile("update",profile_answer)
         else:
             messengerella = []
             messengerella.append("## "+title)
             messengerella.append("Sorry, not any git installs found in config")
             libs.cli.message(messengerella)
             print()
-        main()
+        menu()
     elif index == 2:
         messengerella = []
         messengerella.append("## Profiles Tuning")
@@ -205,20 +210,20 @@ def main():
         sp_index = options.index(option)
         print("")
         if sp_index == 0:
-            libs.helpers.stk_git()
+            libs.helpers.manage_profile("stk_git")
         if sp_index == 1:
-            libs.helpers.stk_stable()
+            libs.helpers.manage_profile("stk_stable")
         if sp_index == 2:
-            libs.helpers.stk_git_kimden_client()
+            libs.helpers.manage_profile("stk_git_kimden_client")
         if sp_index == 3:
-            libs.helpers.stk_git_kimden()
+            libs.helpers.manage_profile("stk_git_kimden")
         if sp_index == 4:
-            libs.helpers.stk_git_kimden_server()
+            libs.helpers.manage_profile("stk_git_kimden_server")
         if sp_index == 5:
-            libs.helpers.stk_speed()
+            libs.helpers.manage_profile("stk_speed")
         if sp_index == 6:
-            libs.helpers.stk2()
-        main()
+            libs.helpers.manage_profile("stk2")
+        menu()
     elif index == 4:
         print()
         libs.cli.message(libs.common.update_online_database())
@@ -234,7 +239,7 @@ def main():
             for pelem in libs.variables.online_db.players[elem]:
                 messengerella.append("      "+pelem)
         libs.cli.message(messengerella)
-        main()
+        menu()
     elif index == 5:
         print()
         quit()

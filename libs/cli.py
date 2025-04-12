@@ -114,27 +114,3 @@ def addons():
     print("")
     print("")
 
-
-def update_profile(profile_answer):
-
-    started_at = datetime.datetime.now()
-    uecho_file = "UPDATE_"+profile_answer+"_"+started_at.strftime("%Y%m%d_%H%M%S")
-
-    os.system("echo '========================  '"+uecho_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
-
-    message(["## Updating "+profile_answer + " " + libs.variables.ustkl_config.get(profile_answer, 'name')])
-
-    if libs.variables.ustkl_config.get(profile_answer, 'type') == "git2":
-        os.system("sh "+libs.variables.orig_directory+"/libs/update_stk_git2.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
-    elif libs.variables.ustkl_config.get(profile_answer, 'type') == "git-kimden-server":
-        os.system("sh "+libs.variables.orig_directory+"/libs/update_stk_kimden_server.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
-    else:
-        os.system("sh "+libs.variables.orig_directory+"/libs/update_stk_git.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
-
-    print()
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")

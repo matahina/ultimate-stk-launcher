@@ -8,6 +8,7 @@ import subprocess
 import libs.common
 import libs.variables
 import time
+import psutil, os
 
 myEVT_UPDATE_FILES = wx.NewEventType()
 
@@ -105,11 +106,21 @@ class GearsThread(threading.Thread):
         time.sleep(3)
         running_stk = True
         while running_stk:
-            lfl = subprocess.run("pidof "+self._the_command[2].replace("/",""), shell =True, stdout=subprocess.PIPE)
-            process_id=lfl.stdout.decode("utf-8").replace('\n','')
-            if process_id == "":
+            try:
                 running_stk = False
-            time.sleep(0.01)
+                process = [proc.pid for proc in psutil.process_iter() if proc.name() == self._the_command[2].replace("/","")]
+                print (process)
+                print (self._the_command[2].replace("/",""))
+                for elem in process:
+                    time.sleep(0.25)
+                    try:
+                        print(elem)
+                        os.kill(elem,0)
+                        running_stk = True
+                    except:
+                        pass
+            except:
+                pass
 
         evt = GearsEvent(myEVT_GEARS, -1, value=self._revert_list)
         wx.PostEvent(self._parent, evt)
