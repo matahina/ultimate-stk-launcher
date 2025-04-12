@@ -90,7 +90,7 @@ class GearsThread(threading.Thread):
         if self._method == "No terminal":
             process = subprocess.run(self._the_command[0], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         elif self._method == "konsole":
-            process = subprocess.run("konsole --noclose -e "+self._the_command[0], stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            process = subprocess.run('konsole --noclose -e /bin/bash --rcfile <(echo "'+self._the_command[0]+'")', stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         elif self._method == "gnome-terminal":
             time.sleep(1)
             process = subprocess.run("gnome-terminal -- bash -c '"+self._the_command[0]+"; exec bash'", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -109,12 +109,9 @@ class GearsThread(threading.Thread):
             try:
                 running_stk = False
                 process = [proc.pid for proc in psutil.process_iter() if proc.name() == self._the_command[2].replace("/","")]
-                print (process)
-                print (self._the_command[2].replace("/",""))
                 for elem in process:
                     time.sleep(0.25)
                     try:
-                        print(elem)
                         os.kill(elem,0)
                         running_stk = True
                     except:

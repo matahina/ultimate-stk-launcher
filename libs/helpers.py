@@ -19,20 +19,20 @@ def manage_profile(the_type,profile_answer=""):
     os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
 
     if the_type == "update":
-        libs.cli.message(["## Updating "+profile_answer + " " + libs.variables.ustkl_config.get(profile_answer, 'name')])
+        libs.cli.cli.message(["## Updating "+profile_answer + " " + libs.variables.ustkl_config.get(profile_answer, 'name')])
         if libs.variables.ustkl_config.get(profile_answer, 'type') == "git2":
-            os.system("sh "+libs.variables.orig_directory+"/libs/update_stk_git2.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+            os.system("sh "+libs.variables.orig_directory+"/libs/recipes/update_stk_git2.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
         elif libs.variables.ustkl_config.get(profile_answer, 'type') == "git-kimden-server":
-            os.system("sh "+libs.variables.orig_directory+"/libs/update_stk_kimden_server.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+            os.system("sh "+libs.variables.orig_directory+"/libs/recipes/update_stk_kimden_server.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
         else:
-            os.system("sh "+libs.variables.orig_directory+"/libs/update_stk_git.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+            os.system("sh "+libs.variables.orig_directory+"/libs/recipes/update_stk_git.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
     else:
-        libs.cli.message(["## Where to clone repos? [Give absolute path of the directory to exec git clone]"])
+        libs.cli.cli.message(["## Where to clone repos? [Give absolute path of the directory to exec git clone]"])
         the_path = ""
         the_path = input('')
         if the_path[-1] != "/":
             the_path = the_path + "/"
-        os.system("sh "+libs.variables.orig_directory+"/libs/install_"+the_type+".sh "+the_path + " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+        os.system("sh "+libs.variables.orig_directory+"/libs/recipes/install_"+the_type+".sh "+the_path + " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
         libs.variables.ustkl_config.add_section("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"))
 
         if the_type == "stk_speed":

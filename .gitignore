@@ -7,3 +7,5 @@ libs/__pycache__
 !/my_files/.placeholder
 !/tmp_files/.placeholder
 /libs/ui/__pycache__/uSTKl_gui.cpython-313.pyc
+/libs/cli/__pycache_*
+/libs/ui/__pycache_*
