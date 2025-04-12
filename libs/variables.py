@@ -45,4 +45,4 @@ def init():
         "wip-karts",
         "wip-library",
         "wip-tracks"]
-    version = "2025.03.alpha3"
+    version = "2025.04.beta1"

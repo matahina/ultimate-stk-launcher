@@ -1,17 +1,19 @@
 # Ultimate STK Launcher
 
-**Version 25.03ALPHA!!**
+**Version 25.04BETA**
 
 > [!NOTE] 
 > This program is designed to work on Linux 64bit.
 >
 > STK2 is now compatible!
+>
+> Some informations on this page might not have been updated yet
 
 ## Requirements
 
 - On Ubuntu:
 ```
-sudo apt install python3-questionary python3-lxml python3-setproctitle python3-pandas cowsay lolcat
+sudo apt install python3-questionary python3-lxml python3-setproctitle python3-pandas
 ```
 ```
 sudo apt install --no-install-suggest wxpython-tools python3-pandas # for GUI
@@ -19,7 +21,7 @@ sudo apt install --no-install-suggest wxpython-tools python3-pandas # for GUI
 
 - On Arch/Manjaro:
 ```
-sudo pacman -S python3-lxml python3-setproctitle python3-pandas cowsay lolcat
+sudo pacman -S python3-lxml python3-setproctitle python3-pandas
 ```
 ```
 sudo pacman -S python-wxpython # for GUI
