@@ -281,10 +281,8 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             if libs.variables.ustkl_config.get(libs.variables.ustkl_config.sections()[i],"name") == profile_answer:
                 num=i
 
-        if libs.variables.ustkl_config.get(libs.variables.ustkl_config.sections()[num], 'type') == "git2":
-            self.m_choice2.SetItems(libs.common.powerup_list(2))
-        else:
-            self.m_choice2.SetItems(libs.common.powerup_list(0))
+
+        self.m_choice2.SetItems(libs.common.powerup_list(libs.variables.ustkl_config.get(libs.variables.ustkl_config.sections()[num], 'type')))
 
         self.m_choice2.SetSelection(0)
 

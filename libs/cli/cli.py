@@ -63,7 +63,7 @@ def menu():
         # options.remove("General")
         idx = []
         for i,prof in enumerate(options):
-            if libs.variables.ustkl_config.get(prof, 'type') == "git" or libs.variables.ustkl_config.get(prof, 'type') == "git2" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden-server" :
+            if libs.variables.ustkl_config.get(prof, 'type') == "git" or libs.variables.ustkl_config.get(prof, 'type') == "git2" or libs.variables.ustkl_config.get(prof, 'type') == "git2_tme" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden-server" :
                 idx.append(i)
 
         if idx != []:
@@ -97,7 +97,8 @@ def menu():
                    'STK GIT Kimden (command-manager-prototype)',
                    'STK GIT Kimden Server mode (command-manager-prototype)',
                    'STK SPEED',
-                    'STK 2']
+                    'STK 2',
+                    'STK 2 TME (nomagno)']
         option = questionary.select(title, options).ask()
         sp_index = options.index(option)
         print("")
@@ -115,6 +116,8 @@ def menu():
             libs.helpers.manage_profile("stk_speed")
         if sp_index == 6:
             libs.helpers.manage_profile("stk2")
+        if sp_index == 7:
+            libs.helpers.manage_profile("stk2_tme")
         menu()
     elif index == 5:
         print()
@@ -270,10 +273,8 @@ def goo():
 
 
 
-    if libs.variables.ustkl_config.get(profile_answer, 'type') == "git2":
-        p_up_list = libs.common.powerup_list(2)
-    else:
-        p_up_list = libs.common.powerup_list(0)
+
+    p_up_list = libs.common.powerup_list(libs.variables.ustkl_config.get(profile_answer, 'type'))
     title = "Which powerup file do you want to use today?"
     option = questionary.select(title, p_up_list).ask()
     index = p_up_list.index(option)

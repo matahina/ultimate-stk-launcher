@@ -267,32 +267,38 @@ class OnlineDatabase:
 
 
 def powerup_list(version):
-    if version == 2:
-        return ["STK2"]
-    else:
-        onlyfiles = [f for f in os.listdir(libs.common.libs.variables.orig_directory+"/tmp_files/") if os.path.isfile(os.path.join(libs.common.libs.variables.orig_directory+"/tmp_files/", f))]
+    stk_version = 1
+    if "git2" in version:
+        stk_version = 2
 
-        pos = 0
-        for elem in libs.common.libs.variables.assets_data["name"]:
-            if elem+".xml" in onlyfiles:
-                libs.common.libs.variables.assets_data.loc[pos, "downloaded"] = "Y"
-            pos = pos+1
+    onlyfiles = [f for f in os.listdir(libs.variables.orig_directory+"/tmp_files/") if os.path.isfile(os.path.join(libs.variables.orig_directory+"/tmp_files/", f))]
 
-        powerups = list(set(libs.common.libs.variables.assets_data["id"]))
-        powerups.remove("")
+    pos = 0
+    for elem in libs.variables.assets_data["name"]:
+        if elem+".xml" in onlyfiles:
+            libs.variables.assets_data.loc[pos, "downloaded"] = "Y"
+        pos = pos+1
 
-        for elem in powerups:
-            if "" in list(libs.common.libs.variables.assets_data.where(libs.common.libs.variables.assets_data["id"] == elem).dropna()["downloaded"]):
-                for i in list(libs.common.libs.variables.assets_data.where(libs.common.libs.variables.assets_data["id"] == elem).dropna()["downloaded"].index):
-                    libs.common.libs.variables.assets_data.loc[i, "downloaded"] = ""
+    powerups = list(set(libs.variables.assets_data["id"]))
+    powerups.remove("")
 
-        a2 = libs.common.libs.variables.assets_data.where(libs.common.libs.variables.assets_data["downloaded"] == "Y")
-        a2 = a2.fillna("")
+    for elem in powerups:
+        if "" in list(libs.variables.assets_data.where(libs.variables.assets_data["id"] == elem).dropna()["downloaded"]):
+            for i in list(libs.variables.assets_data.where(libs.variables.assets_data["id"] == elem).dropna()["downloaded"].index):
+                libs.variables.assets_data.loc[i, "downloaded"] = ""
 
-        p_up_list = list(dict.fromkeys(a2["id"]))
+    a1 = libs.variables.assets_data.where(libs.variables.assets_data["downloaded"] == "Y")
+    a1 = a1.fillna("")
+    a2 = a1.where(a1["stk_version"] == stk_version)
+    a2 = a2.fillna("")
+
+    p_up_list = list(dict.fromkeys(a2["id"]))
+    try:
         p_up_list.remove("")
-        p_up_list.remove("STK2")
-        return p_up_list
+    except:
+        pass
+
+    return p_up_list
 
 def relocate_data(the_data_path):
     safe_place = tempfile.TemporaryDirectory(delete=False)

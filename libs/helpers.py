@@ -22,6 +22,8 @@ def manage_profile(the_type,profile_answer=""):
         libs.cli.cli.message(["## Updating "+profile_answer + " " + libs.variables.ustkl_config.get(profile_answer, 'name')])
         if libs.variables.ustkl_config.get(profile_answer, 'type') == "git2":
             os.system("sh "+libs.variables.orig_directory+"/libs/recipes/update_stk_git2.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
+        elif libs.variables.ustkl_config.get(profile_answer, 'type') == "git2_tme":
+            os.system("sh "+libs.variables.orig_directory+"/libs/recipes/update_stk2_tme.sh "+libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
         elif libs.variables.ustkl_config.get(profile_answer, 'type') == "git-kimden-server":
             os.system("sh "+libs.variables.orig_directory+"/libs/recipes/update_stk_kimden_server.sh "+libs.variables.ustkl_config.get(profile_answer, 'svn_path')+ " " +libs.variables.ustkl_config.get(profile_answer, 'git_path')+ " | tee -a " + libs.variables.orig_directory+"/logs/"+uecho_file+".log")
         else:
@@ -49,6 +51,13 @@ def manage_profile(the_type,profile_answer=""):
             libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git2")
             libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-2/stk-code-alayan/")
             libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-2/stk-assets/")
+        elif the_type == "stk2_tme":
+            libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK 2 TME')
+            libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-2-tme/stk-code/cmake_build/bin/supertuxkart")
+            libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'data_path', the_path+"stk-2-tme/stk-code/data/")
+            libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'type', "git2_tme")
+            libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'git_path', the_path+"stk-2-tme/stk-code/")
+            libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'svn_path', the_path+"stk-2-tme/stk-assets/")
         elif the_type == "stk_git":
             libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'name', 'STK GIT')
             libs.variables.ustkl_config.set("Profile_"+started_at.strftime("%Y%m%d_%H%M%S"), 'bin_path', the_path+"stk-code/cmake_build/bin/supertuxkart")
