@@ -2,6 +2,9 @@
 
 **Version 24.06**
 
+> [!IMPORTANT]
+> You might want to test the `2025.04` branch with GUI and enhancements!
+
 > [!NOTE] 
 > This program is designed to work on Linux 64bit.
 >
