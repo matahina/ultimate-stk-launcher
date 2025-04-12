@@ -90,34 +90,7 @@ def menu():
         messengerella.append("Have fun at: "+libs.variables.orig_directory+"/magic_libs.variables.ustkl_config.ini")
         message(messengerella)
     elif index == 4:
-        title = "Which version?".upper()
-        options = ['STK GIT (master)',
-                   'STK STABLE (1.4)',
-                   'STK GIT Kimden Client (local-client)',
-                   'STK GIT Kimden (command-manager-prototype)',
-                   'STK GIT Kimden Server mode (command-manager-prototype)',
-                   'STK SPEED',
-                    'STK 2',
-                    'STK 2 TME (nomagno)']
-        option = questionary.select(title, options).ask()
-        sp_index = options.index(option)
-        print("")
-        if sp_index == 0:
-            libs.helpers.manage_profile("stk_git")
-        if sp_index == 1:
-            libs.helpers.manage_profile("stk_stable")
-        if sp_index == 2:
-            libs.helpers.manage_profile("stk_git_kimden_client")
-        if sp_index == 3:
-            libs.helpers.manage_profile("stk_git_kimden")
-        if sp_index == 4:
-            libs.helpers.manage_profile("stk_git_kimden_server")
-        if sp_index == 5:
-            libs.helpers.manage_profile("stk_speed")
-        if sp_index == 6:
-            libs.helpers.manage_profile("stk2")
-        if sp_index == 7:
-            libs.helpers.manage_profile("stk2_tme")
+        installerella()
         menu()
     elif index == 5:
         print()
@@ -139,27 +112,41 @@ def menu():
         print()
         quit()
 
+def installerella():
+    title = "Which version?".upper()
+    options = ['STK GIT (master)',
+               'STK STABLE (1.4)',
+               'STK GIT Kimden Client (local-client)',
+               'STK GIT Kimden (command-manager-prototype)',
+               'STK GIT Kimden Server mode (command-manager-prototype)',
+               'STK SPEED',
+                'STK 2',
+                'STK 2 TME (nomagno)']
+    option = questionary.select(title, options).ask()
+    sp_index = options.index(option)
+    print("")
+    if sp_index == 0:
+        libs.helpers.manage_profile("stk_git")
+    if sp_index == 1:
+        libs.helpers.manage_profile("stk_stable")
+    if sp_index == 2:
+        libs.helpers.manage_profile("stk_git_kimden_client")
+    if sp_index == 3:
+        libs.helpers.manage_profile("stk_git_kimden")
+    if sp_index == 4:
+        libs.helpers.manage_profile("stk_git_kimden_server")
+    if sp_index == 5:
+        libs.helpers.manage_profile("stk_speed")
+    if sp_index == 6:
+        libs.helpers.manage_profile("stk2")
+    if sp_index == 7:
+        libs.helpers.manage_profile("stk2_tme")
 
 
 def initialize():
-    title = "What to do?".upper()
-    options = ['Config existing install',
-                'Install last stable version (1.4)'
-                ]
-    option = questionary.select(title, options).ask()
-    index = options.index(option)
-    print("")
-
-    if index == 0:
-        messengerella = []
-        messengerella.append("## Empty config file")
-        messengerella.append("# Do it yourself :p")
-        messengerella.append("Have fun at: "+libs.variables.orig_directory+"/magic_config.ini")
-        message(messengerella)
-        quit()
-    elif index == 1:
-        libs.helpers.stk_stable()
-        main()
+    message(["## You should at least install a new profile!",""])
+    installerella()
+    menu()
 
 
 def powerup_update():

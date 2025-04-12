@@ -7,6 +7,8 @@ cd stk-code-speed
 git checkout 42d4eaa
 wget https://github.com/matahina/Miscellanous-STK-files/raw/main/stk_speed_anonymouse_coder/src.zip
 unzip -o src.zip
+wget https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/refs/heads/main/stk_speed_anonymouse_coder/0001-patcherella.patch
+git apply 0001-patcherella.patch
 mkdir cmake_build
 cd cmake_build
 cmake ..
