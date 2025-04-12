@@ -301,10 +301,10 @@ def powerup_list(version):
     return p_up_list
 
 def relocate_data(the_data_path):
-    safe_place = tempfile.TemporaryDirectory(delete=False)
-    scanerella(the_data_path,safe_place.name)
+    safe_place = tempfile.mkdtemp()
+    scanerella(the_data_path,safe_place)
 
-    return safe_place.name+the_data_path
+    return safe_place+the_data_path
 
 def scanerella(data_path,new_place,depth=0):
     """
@@ -317,7 +317,7 @@ def scanerella(data_path,new_place,depth=0):
         if os.path.isdir(file):
             scanerella(file,new_place,depth+1)
         else:
-            Path(new_place+file).symlink_to(file)
+            Path(new_place+file).symlink_to(Path(file))
 
 def starterella(profile_id,powerup_id):
 
