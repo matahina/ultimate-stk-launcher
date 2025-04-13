@@ -317,7 +317,8 @@ def scanerella(data_path,new_place,depth=0):
         if os.path.isdir(file):
             scanerella(file,new_place,depth+1)
         else:
-            Path(new_place+file).symlink_to(Path(file))
+            # Path(new_place+file).symlink_to(Path(file))
+            shutil.copyfile(Path(file), Path(new_place+file))
 
 def starterella(profile_id,powerup_id):
 
