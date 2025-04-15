@@ -13,13 +13,18 @@ if __name__ == "__main__":
     libs.variables.init()
     os.chdir(libs.variables.orig_directory)
     setproctitle.setproctitle('ult_STK_launch')
-    print("")
-    print("")
-    print("")
-    print("")
+    messengerella = []
+    messengerella.append("")
+    messengerella.append("")
+    messengerella.append("")
+    messengerella.append("")
 
-    print("      /\\_)o<        💜💜💜💜💜💜💜💜💜 WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜\n     |      \\\n     | O . O|"+"                                  Version: "+libs.variables.version+"\n      \\_____/\n")
-    print("")
+    messengerella.append("      /\\_)o<        💜💜💜💜💜💜💜💜💜 WELCOME TO THE Ultimate STK Launcher 💜💜💜💜💜💜💜💜💜")
+    messengerella.append("     |      \\")
+    messengerella.append("     | O . O|"+"                                  Version: "+libs.variables.version)
+    messengerella.append("      \\_____/")
+    messengerella.append("")
+    libs.cli.cli.message(messengerella)
     input("Press Enter to continue...")
 
     if (not(os.path.exists(libs.variables.orig_directory+"/magic_config.ini")) or os.stat(libs.variables.orig_directory+"/magic_config.ini").st_size == 0):

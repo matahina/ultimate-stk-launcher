@@ -23,6 +23,7 @@ class color:
 
 def message(text):
     for elem in text:
+        libs.variables.mylog.info(elem.replace("\n",""))
         if "##" in elem:
             print("\n"+color.GREEN + elem.upper() + color.END)
         else:
