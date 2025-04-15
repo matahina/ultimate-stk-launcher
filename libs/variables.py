@@ -6,6 +6,8 @@ from configparser import ConfigParser
 import pandas as pd
 import libs.common
 import os
+import logging
+import datetime
 
 
 
@@ -21,6 +23,8 @@ def init():
     global online_db
     global issvn
     global version
+    global mylog
+    global mylogfile
 
     ustkl_config = ConfigParser()
     ustkl_config.read("magic_config.ini")
@@ -46,3 +50,6 @@ def init():
         "wip-library",
         "wip-tracks"]
     version = "2025.04.beta1"
+    mylog = logging.getLogger("ustkl")
+    mylogfile = libs.variables.orig_directory+"/logs/"+datetime.datetime.now().strftime("%Y%m%d_%H%M%S")+'.log'
+    logging.basicConfig(filename=mylogfile, encoding='utf-8', level=logging.DEBUG)

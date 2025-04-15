@@ -65,6 +65,7 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
 
     def message_gui(self, text):
         for elem in text:
+            libs.variables.mylog.info(elem.replace("\n",""))
             if "##" in elem:
                 self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
                 self.m_textCtrl3.AppendText("\n"+elem.upper()+"\n")
