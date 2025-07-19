@@ -1,13 +1,14 @@
 #! /bin/sh
 
 cd $1
-git clone https://github.com/kimden/stk-code.git stk-code-kimden-client
-svn co https://svn.code.sf.net/p/supertuxkart/code/stk-assets stk-assets
-cd stk-code-kimden-client
-git checkout local-client
+svn revert --recursive .
+svn up
+
+cd $2
+git reset --hard
+git pull
 wget https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/refs/heads/main/patch_the_kimden_local_client/0001-the_commit.patch
 git apply 0001-the_commit.patch
-mkdir cmake_build
 cd cmake_build
 cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
 make -j`if [ $(( $(nproc) - 1 )) -eq 0 ]; then echo 1; else echo $(( $(nproc) - 1 )) ; fi`

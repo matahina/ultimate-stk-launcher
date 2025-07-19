@@ -403,11 +403,16 @@ def starterella(profile_id,powerup_id):
 
     prefix = ""
     if 'svn_path' in [row[0] for row in libs.variables.ustkl_config.items(profile_id)]:
-        prefix = prefix + 'export SUPERTUXKART_ASSETS_DIR="'+libs.variables.assets_relocation+'" ; '
+        # prefix = prefix + 'export SUPERTUXKART_ASSETS_DIR="'+libs.variables.assets_relocation+'"  '
+        os.environ['SUPERTUXKART_ASSETS_DIR']=libs.variables.assets_relocation
 
-    prefix = prefix + 'export SUPERTUXKART_DATADIR="'+libs.variables.data_relocation[:-6]+'" ; '
-    if libs.variables.ustkl_config.get(profile_id, 'type') == "other":
-        prefix = prefix + "export SYSTEM_LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\";export LD_LIBRARY_PATH=\"$DIRNAME/lib:$LD_LIBRARY_PATH\" ; "
+    # prefix = prefix + 'export SUPERTUXKART_DATADIR="'+libs.variables.data_relocation[:-6]+'"  '
+    os.environ['SUPERTUXKART_DATADIR']=libs.variables.data_relocation[:-6]
+
+    if libs.variables.ustkl_config.get(profile_id, 'type') == "stable":
+        # prefix = prefix + "export SYSTEM_LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\" export LD_LIBRARY_PATH=\"$DIRNAME/lib:$LD_LIBRARY_PATH\"  "
+        os.environ['SYSTEM_LD_LIBRARY_PATH']=libs.variables.assets_relocation
+        os.environ['LD_LIBRARY_PATH']=os.path.dirname( libs.variables.ustkl_config.get(profile_id, 'bin_path')  ).replace("bin","")+"lib/"
 
     return messengerella, prefix
 
@@ -471,6 +476,9 @@ def update_addon_database():
 
 
 def get_addon(the_index,the_type,the_method):
+    the_word = "updating"
+    if the_method == "install":
+        the_word = "installing"
     messengerella = []
     messengerella = messengerella + dl_file(libs.variables.addon_lib.getavail_by_type(the_type,the_index,2),libs.variables.addon_lib.getavail_by_type(the_type,the_index,0),".zip")
     if not any(["[Could not retrieve]" in element for element in messengerella]):
@@ -508,7 +516,7 @@ def get_addon(the_index,the_type,the_method):
                             except:
                                 messengerella.append("Error removing temporary zip file")
                             else:
-                                messengerella.append("Success updating "+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))
+                                messengerella.append("Success "+the_word+" "+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))
                                 try:
                                     replacement = '<'+the_type+' name="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,1))+'" id="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))+'" designer="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,5))+'" date="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,3))+'" installed="true" installed-revision="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,7))+'" size="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,8))+'"/>\n'
                                     #open file1 in reading mode

@@ -5,6 +5,7 @@ random (mimiz),1,powerup,powerup_random,1,https://stk.kimden.online/public/power
 rebalanced (mimiz) v3,3,powerup,powerup_rebalanced3,1,https://stk.kimden.online/public/rebalanced.xml
 rebalanced (mimiz) v2,2,powerup,powerup_rebalanced2,1,https://stk.kimden.online/public/rebalanced_previous.xml
 rebalanced (mimiz) v1,1,powerup,powerup_rebalanced1,1,https://stk.kimden.online/public/rebalanced_previous2.xml
+plungers (matahina) v0,0,powerup,powerup_plungers0,1,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/matahina_powerups/powerup_plungers.xml
 cake (matahina) v2,2,powerup,powerup_cake2,1,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/matahina_powerups/powerup_cake_v2.xml
 cake (matahina) v1,1,powerup,powerup_cake1,1,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/matahina_powerups/powerup_cake_v1.xml
 cake (matahina) v0,0,powerup,powerup_cake0,1,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/matahina_powerups/powerup_cake_v0.xml

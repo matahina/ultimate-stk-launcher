@@ -8,6 +8,7 @@ import libs.common
 import libs.variables
 import libs.helpers
 import datetime
+import subprocess
 
 class color:
    PURPLE = '\033[95m'
@@ -21,13 +22,13 @@ class color:
    UNDERLINE = '\033[4m'
    END = '\033[0m'
 
-def message(text):
+def message(text, err = False):
     for elem in text:
         libs.variables.mylog.info(elem.replace("\n",""))
         if "##" in elem:
             print("\n"+color.GREEN + elem.upper() + color.END)
         else:
-            if "Could not retrieve" in elem or "Error" in elem:
+            if "Could not retrieve" in elem or "Error" in elem or err:
                 print(color.RED + elem + color.END)
             else:
                 print(elem)
@@ -64,7 +65,7 @@ def menu():
         # options.remove("General")
         idx = []
         for i,prof in enumerate(options):
-            if libs.variables.ustkl_config.get(prof, 'type') == "git" or libs.variables.ustkl_config.get(prof, 'type') == "git2" or libs.variables.ustkl_config.get(prof, 'type') == "git2_tme" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden-server" :
+            if libs.variables.ustkl_config.get(prof, 'type') == "git" or libs.variables.ustkl_config.get(prof, 'type') == "git2" or libs.variables.ustkl_config.get(prof, 'type') == "git2_tme" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden-client" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden-server" :
                 idx.append(i)
 
         if idx != []:
@@ -294,21 +295,39 @@ def goo():
 
     message(messengerella)
 
-    started_at = datetime.datetime.now()
-    echo_file = started_at.strftime("%Y%m%d_%H%M%S")
+    # started_at = datetime.datetime.now()
+    # echo_file = started_at.strftime("%Y%m%d_%H%M%S")
 
-    suffixbis = " | tee -a "+libs.variables.orig_directory+"/logs/"+echo_file+".log"
-    command = prefix+"."+libs.variables.ustkl_config.get(profile_answer, 'bin_path').replace(os.path.dirname( libs.variables.ustkl_config.get(profile_answer, 'bin_path')  ),'') + suffix + suffixbis
+    # suffixbis = " | tee -a "+libs.variables.orig_directory+"/logs/"+echo_file+".log"
+    command = prefix+"."+libs.variables.ustkl_config.get(profile_answer, 'bin_path').replace(os.path.dirname( libs.variables.ustkl_config.get(profile_answer, 'bin_path')  ),'') + suffix
     print(command+"\n")
 
-    os.system("echo '========================  '"+echo_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    os.system(command)
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
+    # with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as proc:
+    #     for line in proc.stderr:
+    #         message([line],True)
+    #     for line in proc.stdout:
+    #         message([line])
+
+    # invoke process
+    process = subprocess.Popen(command,shell=False,stdout=subprocess.PIPE)
+
+    # Poll process.stdout to show stdout live
+    while True:
+      output = process.stdout.readline().decode('utf-8')
+      if process.poll() is not None:
+        break
+      if output:
+        message([str(output.strip())])
+    # rc = process.poll()
+
+    # os.system("echo '========================  '"+echo_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
+    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
+    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
+    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
+    # os.system(command)
+    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
+    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
+    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
 
 
     messengerella = libs.common.enderella()
