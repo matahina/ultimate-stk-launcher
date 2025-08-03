@@ -24,5 +24,5 @@ FF Special 2023-01-21,1,powerup,powerup_2301,1,https://stk.kimden.online/public/
 STK2,2,powerup,powerup_STK2,2,https://raw.githubusercontent.com/Alayan-stk-2/stk-code/BalanceSTK2/data/powerup.xml
 STK2,2,kart,kart_characteristics_STK2,2,https://raw.githubusercontent.com/Alayan-stk-2/stk-code/BalanceSTK2/data/kart_characteristics.xml
 STK2_TME,2,powerup,powerup_STK2_TME,2,https://raw.githubusercontent.com/Nomagno/stk-code/refs/heads/tyre2X/data/powerup.xml
-STK2_TME,2,kart,kart_characteristics_STK2_TME,2,https://raw.githubusercontent.com/Nomagno/stk-code/refs/heads/tyre2X/data/kart_characteristics.xml
+STK2_TME,2,kart,kart_characteristics_STK2_TME,2,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/FIXING_TME/kart_characteristics_STK2_TME_fixed.xml
 ,1.4,emoji,emoji_used,1,https://raw.githubusercontent.com/supertuxkart/stk-code/refs/tags/1.4/data/emoji_used.txt
