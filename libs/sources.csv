@@ -23,6 +23,8 @@ FF Special Poll 2022-12-18,1,powerup,powerup_poll2212,1,https://stk.kimden.onlin
 FF Special 2023-01-21,1,powerup,powerup_2301,1,https://stk.kimden.online/public/230121.xml
 STK2,2,powerup,powerup_STK2,2,https://raw.githubusercontent.com/Alayan-stk-2/stk-code/BalanceSTK2/data/powerup.xml
 STK2,2,kart,kart_characteristics_STK2,2,https://raw.githubusercontent.com/Alayan-stk-2/stk-code/BalanceSTK2/data/kart_characteristics.xml
-STK2_TME,2,powerup,powerup_STK2_TME,2,https://raw.githubusercontent.com/Nomagno/stk-code/refs/heads/tyre2X/data/powerup.xml
-STK2_TME,2,kart,kart_characteristics_STK2_TME,2,https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/main/FIXING_TME/kart_characteristics_STK2_TME_fixed.xml
+STK2_EMT,2,powerup,powerup_STK2_EMT,3,https://raw.githubusercontent.com/matahina/stk-code-emt-fixed/refs/heads/tyre2x-fixed/data/powerup.xml
+STK2_EMT,2,kart,kart_characteristics_STK2_EMT,3,https://raw.githubusercontent.com/matahina/stk-code-emt-fixed/refs/heads/tyre2x-fixed/data/kart_characteristics.xml
+STK2_EMT_EXP,2,powerup,powerup_STK2_EMT_EXP,3,https://raw.githubusercontent.com/matahina/stk-code-emt-fixed/refs/heads/tyre2x-fixed/data/powerup.xml
+STK2_EMT_EXP,2,kart,kart_characteristics_STK2_EMT_EXP,3,https://matahina.ddns.net/kart_EXP.xml
 ,1.4,emoji,emoji_used,1,https://raw.githubusercontent.com/supertuxkart/stk-code/refs/tags/1.4/data/emoji_used.txt

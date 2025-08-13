@@ -65,7 +65,7 @@ def menu():
         # options.remove("General")
         idx = []
         for i,prof in enumerate(options):
-            if libs.variables.ustkl_config.get(prof, 'type') == "git" or libs.variables.ustkl_config.get(prof, 'type') == "git2" or libs.variables.ustkl_config.get(prof, 'type') == "git2_tme" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden-client" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden-server" :
+            if libs.variables.ustkl_config.get(prof, 'type') == "git" or libs.variables.ustkl_config.get(prof, 'type') == "git2" or libs.variables.ustkl_config.get(prof, 'type') == "git2_emt" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden-client" or libs.variables.ustkl_config.get(prof, 'type') == "git-kimden-server" :
                 idx.append(i)
 
         if idx != []:
@@ -123,7 +123,7 @@ def installerella():
                'STK GIT Kimden Server mode (command-manager-prototype)',
                'STK SPEED',
                 'STK 2',
-                'STK 2 TME (nomagno)']
+                'STK 2 Eat My Tyre (nomagno)']
     option = questionary.select(title, options).ask()
     sp_index = options.index(option)
     print("")
@@ -142,7 +142,7 @@ def installerella():
     if sp_index == 6:
         libs.helpers.manage_profile("stk2")
     if sp_index == 7:
-        libs.helpers.manage_profile("stk2_tme")
+        libs.helpers.manage_profile("stk2_emt")
 
 
 def initialize():

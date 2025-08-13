@@ -270,6 +270,8 @@ def powerup_list(version):
     stk_version = 1
     if "git2" in version:
         stk_version = 2
+        if "emt" in version:
+            stk_version = 3
 
     onlyfiles = [f for f in os.listdir(libs.variables.orig_directory+"/tmp_files/") if os.path.isfile(os.path.join(libs.variables.orig_directory+"/tmp_files/", f))]
 
