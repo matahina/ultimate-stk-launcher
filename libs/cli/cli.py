@@ -119,8 +119,8 @@ def installerella():
     options = ['STK GIT (master)',
                'STK STABLE (1.4)',
                'STK GIT Kimden Client (local-client)',
-               'STK GIT Kimden (command-manager-prototype)',
-               'STK GIT Kimden Server mode (command-manager-prototype)',
+               'STK GIT Kimden (master)',
+               'STK GIT Kimden Server mode (master)',
                'STK SPEED',
                 'STK 2',
                 'STK 2 Eat My Tyre (nomagno)']
