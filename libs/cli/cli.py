@@ -9,6 +9,8 @@ import libs.variables
 import libs.helpers
 import datetime
 import subprocess
+import csv
+import re
 
 class color:
    PURPLE = '\033[95m'
@@ -91,6 +93,7 @@ def menu():
         messengerella.append("Do it yourself :p")
         messengerella.append("Have fun at: "+libs.variables.orig_directory+"/magic_libs.variables.ustkl_config.ini")
         message(messengerella)
+        menu()
     elif index == 4:
         installerella()
         menu()
@@ -112,7 +115,7 @@ def menu():
         menu()
     elif index == 6:
         print()
-        quit()
+        exit()
 
 def installerella():
     title = "Which version?".upper()
@@ -153,13 +156,33 @@ def initialize():
 
 def powerup_update():
 
-    message(["## Downloading powerup files in ",libs.variables.orig_directory+"/tmp_files/"])
+    message(["## Downloading powerup files in ",libs.variables.orig_directory+"/assets/"])
 
 
-    for index,row in libs.variables.assets_data[["url","name"]].iterrows():
-        res = libs.common.dl_file(row["url"],row["name"])
-        message(res)
+    message(libs.variables.assets_data.reset())
 
+    try:
+        with open(libs.variables.orig_directory+'/assets/sources.csv') as csvfile:
+            spamreader = csv.reader(csvfile)
+            for row in spamreader:
+                if row[0] != "id":
+                    messagerella = []
+                    messagea = []
+                    messageb = []
+                    if row[4] != "standard":
+                        messagea = libs.common.dl_file(row[4],"powerup_"+row[2])
+                        messagerella = messagerella + messagea
+                    if row[5] != "standard":
+                        messageb = libs.common.dl_file(row[5],"kart_"+row[2])
+                        messagerella = messagerella + messageb
+                    if ("Could not retrieve" not in " ".join(messagea) and "Could not retrieve" not in " ".join(messageb)):
+                        if row[0] == "standard" :
+                            libs.variables.assets_data.add_standard(row[2],row[3],row[4],row[5])
+                        else:
+                            libs.variables.assets_data.add_asset(row[0],row[2],row[3],row[4],row[5])
+                    message(messagerella)
+    except:
+        message(["No asset sources!"])
     print("")
 
 
@@ -263,7 +286,8 @@ def goo():
 
 
 
-    p_up_list = libs.common.powerup_list(libs.variables.ustkl_config.get(profile_answer, 'type'))
+
+    p_up_list = libs.variables.assets_data.list_assets(libs.variables.ustkl_config.get(profile_answer, 'version'))
     title = "Which powerup file do you want to use today?"
     option = questionary.select(title, p_up_list).ask()
     index = p_up_list.index(option)
@@ -275,61 +299,47 @@ def goo():
         "NÖ (default)",
         "Checklines",
         "Drivelines",
-        "CHecklines AND Drivelines"
+        "CHecklines AND Drivelines",
+        "🠜 Back to main menu"
         ]
     option = questionary.select(title, options).ask()
     index = options.index(option)
     print("")
 
-    suffix = ""
+    suffix = []
     if index == 1:
-        suffix = " --check-debug "
+        suffix.append("--check-debug")
     if index == 2:
-        suffix = " --track-debug "
+        suffix.append("--track-debug")
     if index == 3:
-        suffix = " --check-debug --track-debug "
+        suffix.append("--check-debug")
+        suffix.append("--track-debug")
+    if index == 4:
+        menu()
+    else:
+        prefix = ""
+        suffixbis = ""
+        messengerella, prefix = libs.common.starterella(profile_answer,libs.variables.assets_data.get_assets(powerup_answer,libs.variables.ustkl_config.get(profile_answer, 'version')))
 
-    prefix = ""
-    suffixbis = ""
-    messengerella, prefix = libs.common.starterella(profile_answer,powerup_answer)
+        message(messengerella)
+        command = prefix+"."+libs.variables.ustkl_config.get(profile_answer, 'bin_path').replace(os.path.dirname( libs.variables.ustkl_config.get(profile_answer, 'bin_path')  ),'')
+        print(command + " ".join(suffix) +"\n")
 
-    message(messengerella)
+        # invoke process
+        process = subprocess.Popen([command]+suffix,shell=False,stdout=subprocess.PIPE)
 
-    # started_at = datetime.datetime.now()
-    # echo_file = started_at.strftime("%Y%m%d_%H%M%S")
-
-    # suffixbis = " | tee -a "+libs.variables.orig_directory+"/logs/"+echo_file+".log"
-    command = prefix+"."+libs.variables.ustkl_config.get(profile_answer, 'bin_path').replace(os.path.dirname( libs.variables.ustkl_config.get(profile_answer, 'bin_path')  ),'') + suffix
-    print(command+"\n")
-
-    # with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as proc:
-    #     for line in proc.stderr:
-    #         message([line],True)
-    #     for line in proc.stdout:
-    #         message([line])
-
-    # invoke process
-    process = subprocess.Popen(command,shell=False,stdout=subprocess.PIPE)
-
-    # Poll process.stdout to show stdout live
-    while True:
-      output = process.stdout.readline().decode('utf-8')
-      if process.poll() is not None:
-        break
-      if output:
-        message([str(output.strip())])
-    # rc = process.poll()
-
-    # os.system("echo '========================  '"+echo_file+"'  ========================' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    # os.system(command)
-    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
-    # os.system("echo '' >>" + libs.variables.orig_directory+"/logs/"+echo_file+".log")
+        # Poll process.stdout to show stdout live
+        while True:
+          output = process.stdout.readline().decode('utf-8')
+          if process.poll() is not None:
+            break
+          if output:
+            message([
+                re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])').sub('',
+                                                                         str(output.strip()))
+                                                ])
 
 
-    messengerella = libs.common.enderella()
+        messengerella = libs.common.enderella()
 
-    message(messengerella)
+        message(messengerella)

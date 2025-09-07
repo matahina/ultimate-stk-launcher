@@ -10,7 +10,6 @@ from urllib import request
 import shutil
 import zipfile
 from configparser import ConfigParser
-import pandas as pd
 from lxml import etree
 import xml.etree.ElementTree as ET
 import ipaddress
@@ -322,7 +321,7 @@ def scanerella(data_path,new_place,depth=0):
             # Path(new_place+file).symlink_to(Path(file))
             shutil.copyfile(Path(file), Path(new_place+file))
 
-def starterella(profile_id,powerup_id):
+def starterella(profile_id,pupkart_list):
 
     messengerella = []
 
@@ -375,13 +374,8 @@ def starterella(profile_id,powerup_id):
 
     messengerella.append("# Using the choosen powerup file")
 
-    p_up_file_name = list(libs.variables.assets_data['name'].where(libs.variables.assets_data['id'] == powerup_id).where(libs.variables.assets_data['type'] == "powerup").dropna())
-    pfile = p_up_file_name[0]+".xml"
-    kart_file_name = list(libs.variables.assets_data['name'].where(libs.variables.assets_data['id'] == powerup_id).where(libs.variables.assets_data['type'] == "kart").dropna())
-    if kart_file_name == []:
-        kfile="kart_characteristics_orig.xml"
-    else:
-        kfile = kart_file_name[0]+".xml"
+    pfile = pupkart_list[0]
+    kfile = pupkart_list[1]
 
     os.chdir(libs.variables.data_relocation)
 
@@ -389,8 +383,8 @@ def starterella(profile_id,powerup_id):
 
     commnds = ["rm powerup.xml",
                "rm kart_characteristics.xml",
-               "cp "+libs.variables.orig_directory+"/tmp_files/"+pfile+" powerup.xml",
-               "cp "+libs.variables.orig_directory+"/tmp_files/"+kfile+" kart_characteristics.xml"]
+               "cp "+libs.variables.orig_directory+"/assets/"+pfile+".xml powerup.xml",
+               "cp "+libs.variables.orig_directory+"/assets/"+kfile+".xml kart_characteristics.xml"]
 
     for commnd in commnds:
         sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
@@ -416,6 +410,9 @@ def starterella(profile_id,powerup_id):
         # prefix = prefix + "export SYSTEM_LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\" export LD_LIBRARY_PATH=\"$DIRNAME/lib:$LD_LIBRARY_PATH\"  "
         os.environ['SYSTEM_LD_LIBRARY_PATH']=libs.variables.assets_relocation
         os.environ['LD_LIBRARY_PATH']=os.path.dirname( libs.variables.ustkl_config.get(profile_id, 'bin_path')  ).replace("bin","")+"lib/"
+    else:
+        os.environ['SYSTEM_LD_LIBRARY_PATH']=""
+        os.environ['LD_LIBRARY_PATH']=""
 
     return messengerella, prefix
 
@@ -440,12 +437,12 @@ def dl_file(the_url,the_name, the_ext = ".xml"):
     messengerella = []
     messengerella.append("\n# "+the_name)
     try:
-        Path.unlink(libs.variables.orig_directory+"/tmp_files/"+the_name+the_ext)
+        Path.unlink(libs.variables.orig_directory+"/assets/"+the_name+the_ext)
     except:
         pass
 
     try:
-        request.urlretrieve(the_url, libs.variables.orig_directory+"/tmp_files/"+the_name+the_ext)
+        request.urlretrieve(the_url, libs.variables.orig_directory+"/assets/"+the_name+the_ext)
     except:
         messengerella.append("[Could not retrieve] " + the_url)
     else:

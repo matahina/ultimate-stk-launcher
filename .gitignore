@@ -9,3 +9,5 @@ libs/__pycache__
 /libs/ui/__pycache__/uSTKl_gui.cpython-313.pyc
 /libs/cli/__pycache_*
 /libs/ui/__pycache_*
+/assets/*.xml
+/assets/*.csv
