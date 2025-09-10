@@ -157,8 +157,8 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1, 0, ">> Track Updates".upper())
             for elem in libs.variables.addon_lib.upd_track:
                 self.m_grid1.AppendRows(1)
-                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,0,libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][1],80)+"\n\n"+libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][6],80))
-                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,1,libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][4],40))
+                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,0,libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][1].replace("\r"," ").replace("\n",""),80)+"\n\n"+libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][6].replace("\r"," ").replace("\n",""),80))
+                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,1,libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][4].replace("\r"," ").replace("\n",""),40))
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,2,str(round(int(libs.variables.addon_lib.avail_tracks[elem][8])/(1024*1024),1)) + "MB")
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,4,str(elem))
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,5,"track")
@@ -169,8 +169,8 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1, 0, ">> New Tracks".upper())
             for elem in libs.variables.addon_lib.to_inst_track:
                 self.m_grid1.AppendRows(1)
-                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,0,libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][1],80)+"\n\n"+libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][6],80))
-                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,1,libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][4],40))
+                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,0,libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][1].replace("\r"," ").replace("\n",""),80)+"\n\n"+libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][6].replace("\r"," ").replace("\n",""),80))
+                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,1,libs.common.break_line(libs.variables.addon_lib.avail_tracks[elem][4].replace("\r"," ").replace("\n",""),40))
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,2,str(round(int(libs.variables.addon_lib.avail_tracks[elem][8])/(1024*1024),1)) + "MB")
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,4,str(elem))
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,5,"track")
@@ -181,8 +181,8 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1, 0, ">> Arena Updates".upper())
             for elem in libs.variables.addon_lib.upd_arena:
                 self.m_grid1.AppendRows(1)
-                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,0,libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][1],80)+"\n\n"+libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][6],80))
-                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,1,libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][4],40))
+                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,0,libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][1].replace("\r"," ").replace("\n",""),80)+"\n\n"+libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][6].replace("\r"," ").replace("\n",""),80))
+                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,1,libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][4].replace("\r"," ").replace("\n",""),40))
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,2,str(round(int(libs.variables.addon_lib.avail_arenas[elem][8])/(1024*1024),1)) + "MB")
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,4,str(elem))
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,5,"arena")
@@ -193,8 +193,8 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1, 0, ">> New Arenas".upper())
             for elem in libs.variables.addon_lib.to_inst_arena:
                 self.m_grid1.AppendRows(1)
-                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,0,libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][1],80)+"\n\n"+libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][6],80))
-                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,1,libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][4],40))
+                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,0,libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][1].replace("\r"," ").replace("\n",""),80)+"\n\n"+libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][6].replace("\r"," ").replace("\n",""),80))
+                self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,1,libs.common.break_line(libs.variables.addon_lib.avail_arenas[elem][4].replace("\r"," ").replace("\n",""),40))
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,2,str(round(int(libs.variables.addon_lib.avail_arenas[elem][8])/(1024*1024),1)) + "MB")
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,4,str(elem))
                 self.m_grid1.SetCellValue(self.m_grid1.GetNumberRows()-1,5,"arena")
