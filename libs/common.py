@@ -4,7 +4,7 @@
 
 import glob
 from pathlib import Path
-import os
+from os import environ as envvar
 import tempfile
 from urllib import request
 import shutil
@@ -18,10 +18,10 @@ import subprocess
 import libs.variables
 
 def save_config():
-    with open(libs.variables.orig_directory+"/magic_config.ini", 'w') as configfile:
+    with open(pathery(["magic_config.ini"]), 'w') as configfile:
         libs.variables.ustkl_config.write(configfile)
     libs.variables.ustkl_config = ConfigParser()
-    libs.variables.ustkl_config.read("magic_config.ini")
+    libs.variables.ustkl_config.read(pathery(["magic_config.ini"]))
 
 
 class AddonLibrary:
@@ -39,13 +39,13 @@ class AddonLibrary:
 
     def init_mytree(self):
         try:
-            self.mytree = ET.parse(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
+            self.mytree = ET.parse(pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml',False]))
         except:
             self.mytree = []
 
     def init_stk_tree(self):
         try:
-            self.stk_tree = etree.parse(libs.variables.orig_directory+"/tmp_files/online_assets.xml")
+            self.stk_tree = etree.parse(pathery(["assets","online_assets.xml"]))
         except:
             self.stk_tree = []
 
@@ -202,7 +202,7 @@ class OnlineDatabase:
         self.players = []
         self.total_players = 0
         try:
-            self.the_tree = etree.parse(libs.variables.orig_directory+"/tmp_files/online_now.xml")
+            self.the_tree = etree.parse(pathery(["assets","online_now.xml"]))
             for elem in self.the_tree.xpath("/get-all/servers/server/server-info"):
                 if elem.get("current_players") != "0":
                     self.players.append([])
@@ -263,63 +263,32 @@ class OnlineDatabase:
         except:
             pass
 
+def scanerella(the_path,go_depth=True,only_dirs=False):
+    scan_list = []
+    for entry in Path(the_path).iterdir():
+        if not(not(entry.is_dir()) and only_dirs):
+            scan_list.append(str(entry))
+        if entry.is_dir() and go_depth:
+            if not ".svn" in str(entry) and not ".git" in str(entry):
+                second_list = scanerella(str(entry))
+                scan_list = scan_list + second_list
+    return scan_list
 
-
-def powerup_list(version):
-    stk_version = 1
-    if "git2" in version:
-        stk_version = 2
-        if "emt" in version:
-            stk_version = 3
-
-    onlyfiles = [f for f in os.listdir(libs.variables.orig_directory+"/tmp_files/") if os.path.isfile(os.path.join(libs.variables.orig_directory+"/tmp_files/", f))]
-
-    pos = 0
-    for elem in libs.variables.assets_data["name"]:
-        if elem+".xml" in onlyfiles:
-            libs.variables.assets_data.loc[pos, "downloaded"] = "Y"
-        pos = pos+1
-
-    powerups = list(set(libs.variables.assets_data["id"]))
-    powerups.remove("")
-
-    for elem in powerups:
-        if "" in list(libs.variables.assets_data.where(libs.variables.assets_data["id"] == elem).dropna()["downloaded"]):
-            for i in list(libs.variables.assets_data.where(libs.variables.assets_data["id"] == elem).dropna()["downloaded"].index):
-                libs.variables.assets_data.loc[i, "downloaded"] = ""
-
-    a1 = libs.variables.assets_data.where(libs.variables.assets_data["downloaded"] == "Y")
-    a1 = a1.fillna("")
-    a2 = a1.where(a1["stk_version"] == stk_version)
-    a2 = a2.fillna("")
-
-    p_up_list = list(dict.fromkeys(a2["id"]))
-    try:
-        p_up_list.remove("")
-    except:
-        pass
-
-    return p_up_list
-
-def relocate_data(the_data_path):
-    safe_place = tempfile.mkdtemp()
-    scanerella(the_data_path,safe_place)
-
-    return safe_place+the_data_path
-
-def scanerella(data_path,new_place,depth=0):
-    """
-    scans the dir
-    symlink files
-    do recursive if another dir
-    """
-    Path(new_place+data_path).mkdir(parents=True, exist_ok=True)
-    for file in glob.iglob(data_path+"/*", recursive=True):
-        if os.path.isdir(file):
-            scanerella(file,new_place,depth+1)
+def copyrella(data_source, new_place = "", is_data = False):
+    if new_place == "":
+        new_place = tempfile.mkdtemp()
+        if is_data:
+            Path(new_place,"data").mkdir(parents=True, exist_ok=True)
+            new_place = pathery([new_place,"data"])
+    prefix = "/".join(data_source[0].split("/")[:-1])
+    for elem in data_source:
+        if Path(elem).is_dir():
+            Path(new_place+elem.replace(prefix,"")).mkdir(parents=True, exist_ok=True)
         else:
-            # Path(new_place+file).symlink_to(Path(file))
-            shutil.copyfile(Path(file), Path(new_place+file))
+            # Path(new_place+elem.replace(prefix,"")).symlink_to(Path(elem))
+            shutil.copyfile(Path(elem), Path(new_place+elem.replace(prefix,"")))
+
+    return new_place
 
 def starterella(profile_id,pupkart_list):
 
@@ -328,101 +297,75 @@ def starterella(profile_id,pupkart_list):
     messengerella.append("## Am gonna make your dreams come true...")
     messengerella.append("# Data will be in...")
 
-    libs.variables.data_relocation = relocate_data(libs.variables.ustkl_config.get(profile_id, 'data_path'))
-    if 'svn_path' in [row[0] for row in libs.variables.ustkl_config.items(profile_id)]:
-        libs.variables.assets_relocation = relocate_data(libs.variables.ustkl_config.get(profile_id, 'svn_path'))
+    libs.variables.data_relocation = copyrella(scanerella(libs.variables.ustkl_config.get(profile_id, 'data_path')),is_data=True)
+
+    if 'assets_path' in [row[0] for row in libs.variables.ustkl_config.items(profile_id)]:
+        libs.variables.assets_relocation = copyrella(scanerella(libs.variables.ustkl_config.get(profile_id, 'assets_path')))
         messengerella.append("location [assets]: "+libs.variables.assets_relocation)
     else:
         libs.variables.assets_relocation = ""
     messengerella.append("location [data]: "+libs.variables.data_relocation)
     messengerella.append("")
 
+
+
     messengerella.append("# Copying SFX/GFX/data files into tmp files...")
-    os.chdir(libs.variables.orig_directory+"/my_files/")
-    messengerella.append("chdir "+ os.path.dirname( libs.variables.orig_directory+"/my_files/" ))
+    customfiles_list = scanerella(Path(libs.variables.orig_directory,"my_files"))
+    customfiles_list_assets = []
+    if 'assets_path' in [row[0] for row in libs.variables.ustkl_config.items(profile_id)]:
+        for elem in customfiles_list:
+            for subelem in elem.split("/"):
+                if subelem in libs.variables.is_asset:
+                    customfiles_list_assets.append(elem)
+    customfiles_list_data = [x for x in customfiles_list if x not in customfiles_list_assets]
 
+    copyrella(customfiles_list_data,libs.variables.data_relocation)
+    if customfiles_list_assets != []:
+        copyrella(customfiles_list_assets,libs.variables.assets_relocation)
 
-    filelist = []
+    if pupkart_list != []:
+        messengerella.append("")
 
-    path = libs.variables.orig_directory+"/my_files/"
+        messengerella.append("# Using the choosen powerup file")
 
-    for root, dirs, files in os.walk(libs.variables.orig_directory+"/my_files/"):
-        for file in files:
-            filelist.append(os.path.join(root,file).replace(path,""))
+        pfile = pupkart_list[0]
+        kfile = pupkart_list[1]
 
-    filelist.remove(".placeholder")
+        file_list = []
+        file_list.append(pathery(["assets",pfile+".xml"]))
+        file_list.append(pathery(["assets",kfile+".xml"]))
 
-    commnds = []
+        copyrella(file_list,libs.variables.data_relocation)
 
-    for name in filelist:
-        if 'svn_path' in [row[0] for row in libs.variables.ustkl_config.items(profile_id)] and ( (name[0:name.find("/",1)].replace("/","") in libs.variables.issvn) ):
-            commnds.append("rm "+libs.variables.assets_relocation+"/"+name)
-            commnds.append("cp --parents "+name+" "+libs.variables.assets_relocation)
-        else:
-            commnds.append("rm "+libs.variables.data_relocation+"/"+name)
-            commnds.append("cp --parents "+name+" "+libs.variables.data_relocation)
-
-    for commnd in commnds:
-        sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-        sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-        messengerella.append(commnd)
-        if sw_out != "":
-            messengerella.append(sw_out)
-
-    messengerella.append("")
-
-    messengerella.append("# Using the choosen powerup file")
-
-    pfile = pupkart_list[0]
-    kfile = pupkart_list[1]
-
-    os.chdir(libs.variables.data_relocation)
-
-    messengerella.append("chdir "+ libs.variables.data_relocation)
-
-    commnds = ["rm powerup.xml",
-               "rm kart_characteristics.xml",
-               "cp "+libs.variables.orig_directory+"/assets/"+pfile+".xml powerup.xml",
-               "cp "+libs.variables.orig_directory+"/assets/"+kfile+".xml kart_characteristics.xml"]
-
-    for commnd in commnds:
-        sw = subprocess.run(commnd, shell =True, stdout=subprocess.PIPE)
-        sw_out=sw.stdout.decode("utf-8").replace('\n','')
-
-        messengerella.append(commnd)
-        if sw_out != "":
-            messengerella.append(sw_out)
+        shutil.move(Path(libs.variables.data_relocation,pfile+".xml"),
+                    Path(libs.variables.data_relocation,"powerup.xml"))
+        shutil.move(Path(libs.variables.data_relocation,kfile+".xml"),
+                    Path(libs.variables.data_relocation,"kart_characteristics.xml"))
 
     messengerella.append("## Running")
-    os.chdir(os.path.dirname(libs.variables.ustkl_config.get(profile_id, 'bin_path')  ))
-    messengerella.append("chdir "+ os.path.dirname( libs.variables.ustkl_config.get(profile_id, 'bin_path')  ))
 
     prefix = ""
-    if 'svn_path' in [row[0] for row in libs.variables.ustkl_config.items(profile_id)]:
-        # prefix = prefix + 'export SUPERTUXKART_ASSETS_DIR="'+libs.variables.assets_relocation+'"  '
-        os.environ['SUPERTUXKART_ASSETS_DIR']=libs.variables.assets_relocation
+    if 'assets_path' in [row[0] for row in libs.variables.ustkl_config.items(profile_id)]:
+        envvar['SUPERTUXKART_ASSETS_DIR']=libs.variables.assets_relocation
 
-    # prefix = prefix + 'export SUPERTUXKART_DATADIR="'+libs.variables.data_relocation[:-6]+'"  '
-    os.environ['SUPERTUXKART_DATADIR']=libs.variables.data_relocation[:-6]
+    envvar['SUPERTUXKART_DATADIR']="/".join(pathery([libs.variables.data_relocation]).split("/")[:-1])
 
-    if libs.variables.ustkl_config.get(profile_id, 'type') == "stable":
-        # prefix = prefix + "export SYSTEM_LD_LIBRARY_PATH=\"$LD_LIBRARY_PATH\" export LD_LIBRARY_PATH=\"$DIRNAME/lib:$LD_LIBRARY_PATH\"  "
-        os.environ['SYSTEM_LD_LIBRARY_PATH']=libs.variables.assets_relocation
-        os.environ['LD_LIBRARY_PATH']=os.path.dirname( libs.variables.ustkl_config.get(profile_id, 'bin_path')  ).replace("bin","")+"lib/"
+    if "stable" in libs.variables.ustkl_config.get(profile_id, 'type'):
+        envvar['SYSTEM_LD_LIBRARY_PATH']=libs.variables.assets_relocation
+        envvar['LD_LIBRARY_PATH']=pathery(["/".join(libs.variables.ustkl_config.get(profile_id, 'bin_path').split("/")[:-2]),"lib"],False)
     else:
-        os.environ['SYSTEM_LD_LIBRARY_PATH']=""
-        os.environ['LD_LIBRARY_PATH']=""
+        envvar['SYSTEM_LD_LIBRARY_PATH']=""
+        envvar['LD_LIBRARY_PATH']=""
 
-    return messengerella, prefix
+    return messengerella
 
 
 def enderella():
     messengerella = []
     messengerella.append("")
     messengerella.append("# Removing tmp files")
-    messengerella.append("rm -R "+libs.variables.data_relocation)
-    shutil.rmtree(libs.variables.data_relocation)
+    messengerella.append("rm -R "+"/".join(pathery([libs.variables.data_relocation]).split("/")[:-1]))
+    shutil.rmtree("/".join(pathery([libs.variables.data_relocation]).split("/")[:-1]))
     if libs.variables.assets_relocation != "":
         messengerella.append("rm -R "+libs.variables.assets_relocation)
         shutil.rmtree(libs.variables.assets_relocation)
@@ -433,22 +376,21 @@ def enderella():
     return messengerella
 
 
-def dl_file(the_url,the_name, the_ext = ".xml"):
+def dl_file(the_url,the_name, the_ext = ".xml",the_dir = ""):
     messengerella = []
     messengerella.append("\n# "+the_name)
     try:
-        Path.unlink(libs.variables.orig_directory+"/assets/"+the_name+the_ext)
+        Path.unlink(Path(libs.variables.orig_directory,"assets",the_name+the_ext).expanduser())
     except:
         pass
 
     try:
-        request.urlretrieve(the_url, libs.variables.orig_directory+"/assets/"+the_name+the_ext)
+        request.urlretrieve(the_url, pathery(["assets",the_dir,the_name+the_ext]))
     except:
         messengerella.append("[Could not retrieve] " + the_url)
     else:
         messengerella.append("[OK] " + the_url)
     return messengerella
-
 
 
 def update_online_database():
@@ -467,7 +409,7 @@ def update_addon_database():
     messengerella = []
     messengerella.append("## Checking for addons")
 
-    messengerella = messengerella + dl_file("https://online.supertuxkart.net/downloads/xml/online_assets.xml","online_assets")
+    messengerella = messengerella + dl_file("https://online.supertuxkart.net/dl/xml/online_assets.xml","online_assets")
 
     libs.variables.addon_lib.update_db()
 
@@ -480,39 +422,46 @@ def get_addon(the_index,the_type,the_method):
     if the_method == "install":
         the_word = "installing"
     messengerella = []
-    messengerella = messengerella + dl_file(libs.variables.addon_lib.getavail_by_type(the_type,the_index,2),libs.variables.addon_lib.getavail_by_type(the_type,the_index,0),".zip")
+    messengerella = messengerella + dl_file(libs.variables.addon_lib.getavail_by_type(the_type,the_index,2),libs.variables.addon_lib.getavail_by_type(the_type,the_index,0),".zip","tmp_files")
     if not any(["[Could not retrieve]" in element for element in messengerella]):
         try:
-            if os.path.isdir(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)):
-                shutil.rmtree(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))
+            if Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser().isdir():
+                shutil.rmtree(str(
+                    Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser()
+                    ))
         except:
-            messengerella.append("Error at rm -R "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))
+            messengerella.append("Error at rm -R "+str(
+                    Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser())
+            )
         else:
-            messengerella.append("rm -R "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/'+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))
+            messengerella.append("rm -R "+str(
+                    Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser())
+            )
             try:
-                zip_ref = zipfile.ZipFile(libs.variables.orig_directory+"/tmp_files/"+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip","r")
+                zip_ref = zipfile.ZipFile(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip"]),"r")
             except:
                 messengerella.append("Error can't open zip file!")
             else:
                 try:
-                    os.makedirs(libs.variables.orig_directory+"/tmp_files/"+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0), exist_ok=True)
+                    Path(libs.variables.orig_directory,"assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).mkdir(parents=True, exist_ok=True)
                 except:
                     messengerella.append("Error can't create target dir!")
                 else:
-                    messengerella.append("Will extract in "+libs.variables.orig_directory+"/tmp_files/"+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))
+                    messengerella.append("Will extract in "+
+                                         pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]))
                     try:
-                        zip_ref.extractall(libs.variables.orig_directory+"/tmp_files/"+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))
+                        zip_ref.extractall(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]))
                     except:
                         messengerella.append("Error can't extract zip!")
                     else:
                         try:
-                            brrr=shutil.move(libs.variables.orig_directory+"/tmp_files/"+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0), os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
+                            brrr=shutil.move(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]), pathery(['~','.local','share','supertuxkart','addons","tracks'],False))
                         except:
-                            messengerella.append("Error in mv "+libs.variables.orig_directory+"/tmp_files/"+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+" "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
+                            messengerella.append("Error in mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons","tracks'],False))
                         else:
-                            messengerella.append("Done mv "+libs.variables.orig_directory+"/tmp_files/"+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+" "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/tracks/')
+                            messengerella.append("Done mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons","tracks'],False))
                             try:
-                                Path.unlink(libs.variables.orig_directory+"/tmp_files/"+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip")
+                                Path.unlink(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip"]))
                             except:
                                 messengerella.append("Error removing temporary zip file")
                             else:
@@ -520,9 +469,9 @@ def get_addon(the_index,the_type,the_method):
                                 try:
                                     replacement = '<'+the_type+' name="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,1))+'" id="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))+'" designer="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,5))+'" date="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,3))+'" installed="true" installed-revision="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,7))+'" size="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,8))+'"/>\n'
                                     #open file1 in reading mode
-                                    file1 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml', 'r')
+                                    file1 = open(pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False), 'r')
                                     #open file2 in writing mode
-                                    file2 = open(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2','w')
+                                    file2 = open(pathery(['~','.local','share','supertuxkart','addons','addons_installed2.xml'],False),'w')
 
                                     if the_method == "install":
                                         #read from file1 and write to file2
@@ -540,12 +489,17 @@ def get_addon(the_index,the_type,the_method):
                                     #close file1 and file2
                                     file1.close()
                                     file2.close()
-                                    Path.unlink(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
-                                    shutil.move(os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml2', os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
+                                    Path.unlink(
+                                        pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False)
+                                        )
+                                    shutil.move(
+                                        pathery(['~','.local','share','supertuxkart','addons','addons_installed2.xml'],False),
+                                        pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False)
+                                        )
                                 except:
-                                    messengerella.append("Error updating "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
+                                    messengerella.append("Error updating "+pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False))
                                 else:
-                                    messengerella.append("Success updating "+os.path.expanduser('~')+'/.local/share/supertuxkart/addons/addons_installed.xml')
+                                    messengerella.append("Success updating "+pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False))
 
     return messengerella
 
@@ -587,3 +541,9 @@ def parser_of_the_year(my_string):
         else:
             new_good_string+="&#x"+hex(ord((char)))[2:].upper()+";"
     return new_good_string
+
+def pathery(the_args,start_from_there=True):
+    if start_from_there:
+        return str(Path(libs.variables.orig_directory,*the_args).expanduser())
+    else:
+        return str(Path(*the_args).expanduser())

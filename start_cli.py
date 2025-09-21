@@ -4,14 +4,16 @@
 # python start_cli.py
 # to launch the cli version
 
-import os
 import setproctitle
 import libs.cli.cli
+import libs.common
 import libs.variables
+from pathlib import Path
 
 if __name__ == "__main__":
     libs.variables.init()
-    os.chdir(libs.variables.orig_directory)
+    libs.cli.variables.init()
+
     setproctitle.setproctitle('ult_STK_launch')
     messengerella = []
     messengerella.append("")
@@ -27,13 +29,14 @@ if __name__ == "__main__":
     libs.cli.cli.message(messengerella)
     input("Press Enter to continue...")
 
-    if (not(os.path.exists(libs.variables.orig_directory+"/magic_config.ini")) or os.stat(libs.variables.orig_directory+"/magic_config.ini").st_size == 0):
+    libs.cli.cli.powerup_update()
+    libs.cli.cli.recipes()
+    libs.cli.cli.addons()
+
+    if (not(Path(libs.variables.orig_directory,"magic_config.ini").exists()) or Path(libs.variables.orig_directory,"magic_config.ini").stat().st_size == 0):
         libs.cli.cli.initialize()
 
     libs.cli.cli.message(["## Let's Go!"])
-    libs.variables.ustkl_config.read(libs.variables.orig_directory+"/magic_libs.variables.ustkl_config.ini")
+    libs.variables.ustkl_config.read(libs.common.pathery(["magic_libs.variables.ustkl_config.ini"]))
 
-    libs.cli.cli.powerup_update()
-    libs.cli.cli.addons()
-    os.chdir(libs.variables.orig_directory)
     libs.cli.cli.menu()

@@ -4,11 +4,11 @@ import libs.common
 
 class AssetDict:
     def __init__(self):
-        self.reset()
+        self.asset_dict = {}
 
     def reset(self):
         self.asset_dict = {}
-        messagerella = libs.common.dl_file("https://raw.githubusercontent.com/matahina/Miscellanous-STK-files/refs/heads/main/ustkl_assets/sources.csv","sources",".csv")
+        messagerella = libs.common.dl_file("https://raw.githubusercontent.com/matahina/Miscellaneous-STK-files/refs/heads/main/ustkl_assets/sources.csv","sources",".csv")
         return messagerella
 
     def add_asset(self,da_id,da_name,da_version,da_powerup,da_kartchar="standard"):
@@ -39,3 +39,35 @@ class AssetDict:
             else:
                 da_list.append("kart_"+self.asset_dict[da_id][0])
         return(da_list)
+
+
+
+
+class RecipeDict:
+    def __init__(self):
+        self.recipe_dict = {}
+
+    def reset(self):
+        self.recipe_dict = {}
+        messagerella = libs.common.dl_file("https://api.github.com/repos/matahina/Miscellaneous-STK-files/contents/ustkl_assets/recipes","recipes",".json","tmp_files")
+        return messagerella
+
+    def add_recipe(self,da_id,da_name,da_version,da_upgradable):
+        self.recipe_dict |= { da_id:(da_name,da_version,da_upgradable) }
+
+    def list_recipes(self):
+        da_list_dict = {}
+        for da_id in self.recipe_dict.keys():
+            if "fficial" in self.recipe_dict[da_id][0]:
+                da_list_dict |= { da_id:self.recipe_dict[da_id][0] }
+        for da_id in self.recipe_dict.keys():
+            if not "fficial" in self.recipe_dict[da_id][0]:
+                da_list_dict |= { da_id:self.recipe_dict[da_id][0] }
+        return(da_list_dict)
+
+    def list_updatable_recipes(self):
+        da_list_dict = {}
+        for da_id in self.recipe_dict.keys():
+            if self.recipe_dict[da_id][2]:
+                da_list_dict |= { da_id:self.recipe_dict[da_id][0] }
+        return(da_list_dict)
