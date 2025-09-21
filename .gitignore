@@ -11,3 +11,5 @@ libs/__pycache__
 /libs/ui/__pycache_*
 /assets/*.xml
 /assets/*.csv
+/assets/tmp_files/*
+/assets/recipes/*
