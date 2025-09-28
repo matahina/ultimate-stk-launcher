@@ -39,7 +39,7 @@ class AddonLibrary:
 
     def init_mytree(self):
         try:
-            self.mytree = ET.parse(pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml',False]))
+            self.mytree = ET.parse(pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False))
         except:
             self.mytree = []
 
