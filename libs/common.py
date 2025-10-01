@@ -425,10 +425,10 @@ def get_addon(the_index,the_type,the_method):
     messengerella = messengerella + dl_file(libs.variables.addon_lib.getavail_by_type(the_type,the_index,2),libs.variables.addon_lib.getavail_by_type(the_type,the_index,0),".zip","tmp_files")
     if not any(["[Could not retrieve]" in element for element in messengerella]):
         try:
-            if Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser().isdir():
-                shutil.rmtree(str(
-                    Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser()
-                    ))
+            # if Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser().is_dir():
+            shutil.rmtree(str(
+                Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser()
+                ))
         except:
             messengerella.append("Error at rm -R "+str(
                     Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser())
