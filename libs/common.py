@@ -497,24 +497,28 @@ def update_addon_database(the_filter=True):
 
 def get_addon(the_index,the_type,the_method):
     the_word = "updating"
+    the_place = "tracks"
     if the_method == "install":
         the_word = "installing"
+    if the_type = "kart":
+        the_place = "karts"
+
     messengerella = []
     messengerella = messengerella + dl_file(libs.variables.addon_lib.getavail_by_type(the_type,the_index,2),libs.variables.addon_lib.getavail_by_type(the_type,the_index,0),".zip","tmp_files")
     if not any(["[Could not retrieve]" in element for element in messengerella]):
         try:
             ##########################!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser().is_dir():
+            if Path('~','.local','share','supertuxkart','addons',the_place,libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser().is_dir():
                 shutil.rmtree(str(
-                    Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser()
+                    Path('~','.local','share','supertuxkart','addons',the_place,libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser()
                     ))
         except:
             messengerella.append("Error at rm -R "+str(
-                    Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser())
+                    Path('~','.local','share','supertuxkart','addons',the_place,libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser())
             )
         else:
             messengerella.append("rm -R "+str(
-                    Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser())
+                    Path('~','.local','share','supertuxkart','addons',the_place,libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser())
             )
             try:
                 zip_ref = zipfile.ZipFile(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip"]),"r")
@@ -534,11 +538,11 @@ def get_addon(the_index,the_type,the_method):
                         messengerella.append("Error can't extract zip!")
                     else:
                         try:
-                            brrr=shutil.move(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]), pathery(['~','.local','share','supertuxkart','addons','tracks'],False))
+                            brrr=shutil.move(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]), pathery(['~','.local','share','supertuxkart','addons',the_place],False))
                         except:
-                            messengerella.append("Error in mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons','tracks'],False))
+                            messengerella.append("Error in mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons',the_place],False))
                         else:
-                            messengerella.append("Done mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons','tracks'],False))
+                            messengerella.append("Done mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons',the_place],False))
                             try:
                                 Path.unlink(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip"]))
                             except:

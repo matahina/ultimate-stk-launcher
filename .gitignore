@@ -13,3 +13,5 @@ libs/__pycache__
 /assets/*.csv
 /assets/tmp_files/*
 /assets/recipes/*
+!/assets/tmp_files/.placeholder
+!/assets/recipes/.placeholder
