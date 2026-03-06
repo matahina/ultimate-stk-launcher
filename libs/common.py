@@ -500,7 +500,7 @@ def get_addon(the_index,the_type,the_method):
     the_place = "tracks"
     if the_method == "install":
         the_word = "installing"
-    if the_type = "kart":
+    if the_type == "kart":
         the_place = "karts"
 
     messengerella = []
