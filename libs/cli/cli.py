@@ -51,6 +51,7 @@ def menu():
                 'Tweak your profiles',
                 'Do another install',
                 "See who's online",
+                "Install ALL ADDONS",
                 'Quit'
                 ]
     option = questionary.select(title, options).ask()
@@ -82,6 +83,9 @@ def menu():
         playerella()
         menu()
     elif index == 6:
+        karts_and_all()
+        menu()
+    elif index == 7:
         print()
         exit()
 
@@ -224,6 +228,132 @@ def recipes():
     print("")
 
 
+def karts_and_all():
+
+
+    message(libs.common.update_addon_database(False))
+
+    print("")
+    print("")
+
+    if libs.variables.addon_lib.upd_track != []:
+        complmt = ""
+        for i in libs.variables.addon_lib.upd_track:
+            complmt = complmt + "\n" + "\n- " + libs.variables.addon_lib.avail_tracks[i][1].replace("\r"," ").replace("\n","") + " by " + libs.variables.addon_lib.avail_tracks[i][4].replace("\r"," ").replace("\n","") + " " + libs.variables.addon_lib.avail_tracks[i][5].replace("\r"," ").replace("\n","") + "\n" + "desc: " + libs.variables.addon_lib.avail_tracks[i][6].replace("\r"," ").replace("\n","") + "\n" + "size: " + str(round(int(libs.variables.addon_lib.avail_tracks[i][8])/(1024*1024),1)) + "MB"
+
+        title = "Do you wanna update those addon tracks?"+complmt
+        options = ['Yeah',
+                    'Nope'
+                    ]
+        option = questionary.select(title, options).ask()
+        index = options.index(option)
+        print("")
+
+        if index == 0:
+            for i in libs.variables.addon_lib.upd_track:
+                log = libs.common.get_addon(i,"track","update")
+                message(log)
+
+    if libs.variables.addon_lib.to_inst_track != []:
+        complmt = ""
+        for i in libs.variables.addon_lib.to_inst_track:
+            complmt = complmt + "\n" + "\n- " + libs.variables.addon_lib.avail_tracks[i][1].replace("\r"," ").replace("\n","") + " by " + libs.variables.addon_lib.avail_tracks[i][4].replace("\r"," ").replace("\n","") + " " + libs.variables.addon_lib.avail_tracks[i][5].replace("\r"," ").replace("\n","") + "\n" + "desc: " + libs.variables.addon_lib.avail_tracks[i][6].replace("\r"," ").replace("\n","") + "\n" + "size: " + str(round(int(libs.variables.addon_lib.avail_tracks[i][8])/(1024*1024),1)) + "MB"
+
+        title = "Do you wanna install those addon tracks?"+complmt
+        options = ['Yeah',
+                    'Nope'
+                    ]
+        option = questionary.select(title, options).ask()
+        index = options.index(option)
+        print("")
+
+        if index == 0:
+            for i in libs.variables.addon_lib.upd_track:
+                log = libs.common.get_addon(i,"track","update")
+                message(log)
+
+
+    if libs.variables.addon_lib.upd_arena != []:
+        complmt = ""
+        for i in libs.variables.addon_lib.upd_arena:
+            complmt = complmt + "\n" + "\n- " + libs.variables.addon_lib.avail_arenas[i][1].replace("\r"," ").replace("\n","") + " by " + libs.variables.addon_lib.avail_arenas[i][4].replace("\r"," ").replace("\n","") + " " + libs.variables.addon_lib.avail_arenas[i][5].replace("\r"," ").replace("\n","") + "\n" + "desc: " + libs.variables.addon_lib.avail_arenas[i][6].replace("\r"," ").replace("\n","") + "\n" + "size: " + str(round(int(libs.variables.addon_lib.avail_arenas[i][8])/(1024*1024),1)) + "MB"
+
+        title = "Do you wanna update those addon arenas?"+complmt
+        options = ['Yeah',
+                    'Nope'
+                    ]
+        option = questionary.select(title, options).ask()
+        index = options.index(option)
+        print("")
+
+        if index == 0:
+            for i in libs.variables.addon_lib.upd_arena:
+                log = libs.common.get_addon(i,"arena","update")
+                message(log)
+
+
+
+    if libs.variables.addon_lib.to_inst_arena != []:
+        complmt = ""
+        for i in libs.variables.addon_lib.to_inst_arena:
+            complmt = complmt + "\n" + "\n- " + libs.variables.addon_lib.avail_arenas[i][1].replace("\r"," ").replace("\n","") + " by " + libs.variables.addon_lib.avail_arenas[i][4].replace("\r"," ").replace("\n","") + " " + libs.variables.addon_lib.avail_arenas[i][5].replace("\r"," ").replace("\n","") + "\n" + "desc: " + libs.variables.addon_lib.avail_arenas[i][6].replace("\r"," ").replace("\n","") + "\n" + "size: " + str(round(int(libs.variables.addon_lib.avail_arenas[i][8])/(1024*1024),1)) + "MB"
+
+        title = "Do you wanna install those addon arenas?"+complmt
+        options = ['Yeah',
+                    'Nope'
+                    ]
+        option = questionary.select(title, options).ask()
+        index = options.index(option)
+        print("")
+
+        if index == 0:
+            for i in libs.variables.addon_lib.upd_arena:
+                log = libs.common.get_addon(i,"arena","install")
+                message(log)
+
+
+    if libs.variables.addon_lib.upd_kart != []:
+        complmt = ""
+        for i in libs.variables.addon_lib.upd_kart:
+            complmt = complmt + "\n" + "\n- " + libs.variables.addon_lib.avail_karts[i][1].replace("\r"," ").replace("\n","") + " by " + libs.variables.addon_lib.avail_karts[i][4].replace("\r"," ").replace("\n","") + " " + libs.variables.addon_lib.avail_karts[i][5].replace("\r"," ").replace("\n","") + "\n" + "desc: " + libs.variables.addon_lib.avail_karts[i][6].replace("\r"," ").replace("\n","") + "\n" + "size: " + str(round(int(libs.variables.addon_lib.avail_karts[i][8])/(1024*1024),1)) + "MB"
+
+        title = "Do you wanna update those addon karts?"+complmt
+        options = ['Yeah',
+                    'Nope'
+                    ]
+        option = questionary.select(title, options).ask()
+        index = options.index(option)
+        print("")
+
+        if index == 0:
+            for i in libs.variables.addon_lib.upd_kart:
+                log = libs.common.get_addon(i,"kart","update")
+                message(log)
+
+
+
+    if libs.variables.addon_lib.to_inst_kart != []:
+        complmt = ""
+        for i in libs.variables.addon_lib.to_inst_kart:
+            complmt = complmt + "\n" + "\n- " + libs.variables.addon_lib.avail_karts[i][1].replace("\r"," ").replace("\n","") + " by " + libs.variables.addon_lib.avail_karts[i][4].replace("\r"," ").replace("\n","") + " " + libs.variables.addon_lib.avail_karts[i][5].replace("\r"," ").replace("\n","") + "\n" + "desc: " + libs.variables.addon_lib.avail_karts[i][6].replace("\r"," ").replace("\n","") + "\n" + "size: " + str(round(int(libs.variables.addon_lib.avail_karts[i][8])/(1024*1024),1)) + "MB"
+
+        title = "Do you wanna install those addon karts?"+complmt
+        options = ['Yeah',
+                    'Nope'
+                    ]
+        option = questionary.select(title, options).ask()
+        index = options.index(option)
+        print("")
+
+        if index == 0:
+            for i in libs.variables.addon_lib.upd_kart:
+                log = libs.common.get_addon(i,"kart","install")
+                message(log)
+
+
+    print("")
+    print("")
+
 def addons():
 
     message(libs.common.update_addon_database())
@@ -302,6 +432,45 @@ def addons():
                 sel_arenas.append(libs.variables.addon_lib.to_inst_arena[options.index(i)])
             for j,i in enumerate(sel_arenas):
                 log = libs.common.get_addon(i,"arena","install")
+                message(log)
+
+
+    if libs.variables.addon_lib.upd_kart != []:
+        complmt = ""
+        for i in libs.variables.addon_lib.upd_kart:
+            complmt = complmt + "\n" + "\n- " + libs.variables.addon_lib.avail_karts[i][1].replace("\r"," ").replace("\n","") + " by " + libs.variables.addon_lib.avail_karts[i][4].replace("\r"," ").replace("\n","") + " " + libs.variables.addon_lib.avail_karts[i][5].replace("\r"," ").replace("\n","") + "\n" + "desc: " + libs.variables.addon_lib.avail_karts[i][6].replace("\r"," ").replace("\n","") + "\n" + "size: " + str(round(int(libs.variables.addon_lib.avail_karts[i][8])/(1024*1024),1)) + "MB"
+
+        title = "Do you wanna update those addon karts?"+complmt
+        options = ['Yeah',
+                    'Nope'
+                    ]
+        option = questionary.select(title, options).ask()
+        index = options.index(option)
+        print("")
+
+        if index == 0:
+            for i in libs.variables.addon_lib.upd_kart:
+                log = libs.common.get_addon(i,"kart","update")
+                message(log)
+
+
+
+    if libs.variables.addon_lib.to_inst_kart != []:
+        complmt = ""
+        for i in libs.variables.addon_lib.to_inst_kart:
+            complmt = complmt + "\n" + "\n- " + libs.variables.addon_lib.avail_karts[i][1].replace("\r"," ").replace("\n","") + " by " + libs.variables.addon_lib.avail_karts[i][4].replace("\r"," ").replace("\n","") + " " + libs.variables.addon_lib.avail_karts[i][5].replace("\r"," ").replace("\n","") + "\n" + "desc: " + libs.variables.addon_lib.avail_karts[i][6].replace("\r"," ").replace("\n","") + "\n" + "size: " + str(round(int(libs.variables.addon_lib.avail_karts[i][8])/(1024*1024),1)) + "MB"
+
+        title = "Do you wanna update those addon karts?"+complmt
+        options = ['Yeah',
+                    'Nope'
+                    ]
+        option = questionary.select(title, options).ask()
+        index = options.index(option)
+        print("")
+
+        if index == 0:
+            for i in libs.variables.addon_lib.upd_kart:
+                log = libs.common.get_addon(i,"kart","install")
                 message(log)
 
 

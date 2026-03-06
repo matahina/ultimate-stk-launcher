@@ -30,10 +30,14 @@ class AddonLibrary:
         self.stk_tree = []
         self.upd_track = []
         self.to_inst_track = []
+        self.upd_kart = []
+        self.to_inst_kart = []
         self.upd_arena = []
         self.to_inst_arena = []
         self.avail_tracks = []
         self.installed_tracks = []
+        self.avail_karts = []
+        self.installed_karts = []
         self.avail_arenas = []
         self.installed_arenas = []
 
@@ -64,6 +68,21 @@ class AddonLibrary:
                     if child.attrib['installed'] == "true":
                         self.installed_tracks.append([child.attrib["id"], child.attrib["name"], child.attrib["installed-revision"],child.attrib["date"]])
 
+    def init_avail_karts(self):
+        self.avail_karts = []
+        if self.stk_tree != []:
+            for user in self.stk_tree.xpath("/assets/kart"):
+                self.avail_karts.append([user.get("id"),user.get("name"),user.get("file"),user.get("date"),user.get("uploader"),user.get("designer"),user.get("description"),user.get("revision"),user.get("size")])
+
+    def init_installed_karts(self):
+        self.installed_karts = []
+        if self.mytree != []:
+            root = self.mytree.getroot()
+            for child in root:
+                if child.tag == '{https://online.supertuxkart.net/}kart':
+                    if child.attrib['installed'] == "true":
+                        self.installed_karts.append([child.attrib["id"], child.attrib["name"], child.attrib["installed-revision"],child.attrib["date"]])
+
     def init_avail_arenas(self):
         self.avail_arenas = []
         if self.stk_tree != []:
@@ -79,7 +98,7 @@ class AddonLibrary:
                             if child.attrib['installed'] == "true":
                                 self.installed_arenas.append([child.attrib["id"], child.attrib["name"], child.attrib["installed-revision"],child.attrib["date"]])
 
-    def update_db(self):
+    def update_db(self, the_filter=True):
         self.init_stk_tree()
         self.init_mytree()
 
@@ -91,6 +110,8 @@ class AddonLibrary:
         self.to_inst_track = []
         self.upd_arena = []
         self.to_inst_arena = []
+        self.upd_kart = []
+        self.to_inst_kart = []
 
         if self.installed_tracks != [] and self.avail_tracks != []:
             list_a = [row[0] for row in self.avail_tracks]
@@ -123,6 +144,9 @@ class AddonLibrary:
             last_installed = max(list_bb)
 
             new_tracks = []
+
+            if not(the_filter):
+                last_installed = "0"
 
             if last_avail > last_installed:
                 for i, stamps in enumerate(list_aa):
@@ -170,6 +194,9 @@ class AddonLibrary:
 
             new_arenas = []
 
+            if not(the_filter):
+                last_installed = "0"
+
             if last_avail > last_installed:
                 for i, stamps in enumerate(list_aa):
                     if stamps > last_installed:
@@ -181,12 +208,63 @@ class AddonLibrary:
                             self.to_inst_arena.append(new_elem)
                 self.to_inst_arena=[row[0] for row in self.to_inst_arena]
 
+        self.init_avail_karts()
+        self.init_installed_karts()
+
+        if self.installed_karts != [] and self.avail_karts != []:
+            list_a = [row[0] for row in self.avail_karts]
+            list_b = [row[0] for row in self.installed_karts]
+
+            indexes_online = []
+            indexes_offline = []
+            for idx,kart in enumerate(list_b):
+                try:
+                    indices = ([i for i, x in enumerate(list_a) if x == kart])
+                    maxi = 0
+                    idx_online = 0
+                except:
+                    pass
+                else:
+                    for i in indices:
+                        if int(self.avail_karts[i][7])>maxi:
+                            maxi = int(self.avail_karts[i][7])
+                            idx_online = i
+                    if maxi > int(self.installed_karts[idx][2]):
+                        self.upd_kart.append(idx_online)
+
+
+            list_a = [row[0] for row in self.avail_karts]
+            list_b = [row[0] for row in self.installed_karts]
+
+            list_aa = [row[3] for row in self.avail_karts]
+            last_avail = max(list_aa)
+            list_bb = [row[3] for row in self.installed_karts]
+            last_installed = max(list_bb)
+
+            new_karts = []
+
+            if not(the_filter):
+                last_installed = "0"
+
+            if last_avail > last_installed:
+                for i, stamps in enumerate(list_aa):
+                    if stamps > last_installed:
+                        if not(self.avail_karts[i][0] in list_b):
+                            new_elem=[i,self.avail_karts[i][0],self.avail_karts[i][1]]
+                            if self.to_inst_kart != []:
+                                if self.to_inst_kart[-1][1] == new_elem[1]:
+                                    brrr=self.to_inst_kart.pop()
+                            self.to_inst_kart.append(new_elem)
+                self.to_inst_kart=[row[0] for row in self.to_inst_kart]
+
     def getavail_by_type(self,the_type,the_index,the_elem):
         the_answer = ""
         if the_type == "track" and self.avail_tracks != []:
             the_answer = self.avail_tracks[the_index][the_elem]
         if the_type == "arena" and self.avail_arenas != []:
             the_answer = self.avail_arenas[the_index][the_elem]
+        if the_type == "kart" and self.avail_karts != []:
+            the_answer = self.avail_karts[the_index][the_elem]
         return the_answer
 
 class OnlineDatabase:
@@ -405,13 +483,13 @@ def update_online_database():
 
 
 
-def update_addon_database():
+def update_addon_database(the_filter=True):
     messengerella = []
     messengerella.append("## Checking for addons")
 
     messengerella = messengerella + dl_file("https://online.supertuxkart.net/dl/xml/online_assets.xml","online_assets")
 
-    libs.variables.addon_lib.update_db()
+    libs.variables.addon_lib.update_db(the_filter)
 
     return messengerella
 
@@ -425,10 +503,11 @@ def get_addon(the_index,the_type,the_method):
     messengerella = messengerella + dl_file(libs.variables.addon_lib.getavail_by_type(the_type,the_index,2),libs.variables.addon_lib.getavail_by_type(the_type,the_index,0),".zip","tmp_files")
     if not any(["[Could not retrieve]" in element for element in messengerella]):
         try:
-            # if Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser().is_dir():
-            shutil.rmtree(str(
-                Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser()
-                ))
+            ##########################!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser().is_dir():
+                shutil.rmtree(str(
+                    Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser()
+                    ))
         except:
             messengerella.append("Error at rm -R "+str(
                     Path('~','.local','share','supertuxkart','addons','tracks',libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser())
@@ -455,11 +534,11 @@ def get_addon(the_index,the_type,the_method):
                         messengerella.append("Error can't extract zip!")
                     else:
                         try:
-                            brrr=shutil.move(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]), pathery(['~','.local','share','supertuxkart','addons","tracks'],False))
+                            brrr=shutil.move(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]), pathery(['~','.local','share','supertuxkart','addons','tracks'],False))
                         except:
-                            messengerella.append("Error in mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons","tracks'],False))
+                            messengerella.append("Error in mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons','tracks'],False))
                         else:
-                            messengerella.append("Done mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons","tracks'],False))
+                            messengerella.append("Done mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons','tracks'],False))
                             try:
                                 Path.unlink(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip"]))
                             except:
