@@ -231,7 +231,7 @@ def recipes():
 def karts_and_all():
 
 
-    message(libs.common.update_addon_database(False))
+    message(libs.common.update_addon_database(the_filter=False))
 
     print("")
     print("")
@@ -268,7 +268,7 @@ def karts_and_all():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.upd_track:
+            for i in libs.variables.addon_lib.to_inst_track:
                 log = libs.common.get_addon(i,"track","update")
                 message(log)
 
@@ -307,7 +307,7 @@ def karts_and_all():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.upd_arena:
+            for i in libs.variables.addon_lib.to_inst_arena:
                 log = libs.common.get_addon(i,"arena","install")
                 message(log)
 
@@ -346,7 +346,7 @@ def karts_and_all():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.upd_kart:
+            for i in libs.variables.addon_lib.to_inst_kart:
                 log = libs.common.get_addon(i,"kart","install")
                 message(log)
 
@@ -456,20 +456,19 @@ def addons():
 
 
     if libs.variables.addon_lib.to_inst_kart != []:
-        complmt = ""
+        options = []
         for i in libs.variables.addon_lib.to_inst_kart:
-            complmt = complmt + "\n" + "\n- " + libs.variables.addon_lib.avail_karts[i][1].replace("\r"," ").replace("\n","") + " by " + libs.variables.addon_lib.avail_karts[i][4].replace("\r"," ").replace("\n","") + " " + libs.variables.addon_lib.avail_karts[i][5].replace("\r"," ").replace("\n","") + "\n" + "desc: " + libs.variables.addon_lib.avail_karts[i][6].replace("\r"," ").replace("\n","") + "\n" + "size: " + str(round(int(libs.variables.addon_lib.avail_karts[i][8])/(1024*1024),1)) + "MB"
+            options.append(libs.variables.addon_lib.avail_karts[i][1].replace("\r"," ").replace("\n","") + "  |  " + "by " + libs.variables.addon_lib.avail_karts[i][4].replace("\r"," ").replace("\n","") + " " + libs.variables.addon_lib.avail_karts[i][5].replace("\r"," ").replace("\n","") + "  |  " + "desc: " + libs.variables.addon_lib.avail_karts[i][6].replace("\r"," ").replace("\n","") + "  |  " + "size: " + str(round(int(libs.variables.addon_lib.avail_karts[i][8])/(1024*1024),1)) + "MB"+ "\n")
 
-        title = "Do you wanna update those addon karts?"+complmt
-        options = ['Yeah',
-                    'Nope'
-                    ]
-        option = questionary.select(title, options).ask()
-        index = options.index(option)
+        title = "Maybe you wanna install those new addon karts since last time?\n[Press SPACE to select, ▲ ▼ to navigate, ENTER to confirm]"
+        selected = questionary.checkbox(title,choices=options).ask()
         print("")
 
-        if index == 0:
-            for i in libs.variables.addon_lib.upd_kart:
+        if selected != []:
+            sel_karts = []
+            for i in selected:
+                sel_karts.append(libs.variables.addon_lib.to_inst_kart[options.index(i)])
+            for j,i in enumerate(sel_karts):
                 log = libs.common.get_addon(i,"kart","install")
                 message(log)
 
