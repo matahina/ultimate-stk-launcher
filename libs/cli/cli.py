@@ -14,6 +14,7 @@ import json
 import yaml
 from pathlib import Path
 import libs.cli.variables
+import shlex
 
 class color:
    PURPLE = '\033[95m'
@@ -553,7 +554,7 @@ def goo():
 
 def run(the_command, the_message):
 
-        the_message.append(" ".join(the_command))
+        the_message.append(shlex.join(the_command))
         message(the_message)
 
         # invoke process

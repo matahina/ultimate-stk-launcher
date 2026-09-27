@@ -10,6 +10,7 @@ import json
 import questionary
 import libs.cli.cli
 import libs.cli.variables
+import shlex
 
 def manage_profile(da_recipe_name,the_type):
 
@@ -433,8 +434,10 @@ def compileroo(cmake_optionellas, the_path):
     Path(the_path,"cmake_build").mkdir(parents=True, exist_ok=True)
 
     command = ["cmake"]
+
     if cmake_optionellas != "none":
-        command.append(cmake_optionellas)
+        command.extend(shlex.split(cmake_optionellas))
+
     command.append("-B"+libs.common.pathery([the_path,"cmake_build"],False))
     command.append("-S"+the_path)
     messengerella = ["","# Configuring"]
