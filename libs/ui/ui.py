@@ -8,6 +8,9 @@ import wx
 import os ## !!!!
 import libs.common
 import libs.variables
+import csv
+
+import libs.cli.cli
 
 class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
     def __init__(self,parent):
@@ -27,7 +30,12 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
         self.m_choice1.SetSelection(0)
         self.m_choice1.Bind(wx.EVT_CHOICE, self.OnChoice1)
 
-        self.pup_list_update()
+        self.pup_refresh(EVT_UPDATE_FILES)
+
+
+
+        libs.cli.cli.recipes()
+
 
         term_apps = ["konsole","gnome-terminal","yakuake","guake","terminator","tilda","terminology","xterm","pantheon-terminal","deepin-terminal","mauikit-terminal","xfce4-terminal","lxterminal","xfterm4"]
         terminals = []
@@ -257,12 +265,42 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
         self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.GREEN))
         self.m_textCtrl3.AppendText("\n## Downloading powerup files in ".upper())
         self.m_textCtrl3.SetDefaultStyle(wx.TextAttr(wx.WHITE))
-        self.m_textCtrl3.AppendText(libs.variables.orig_directory+"/tmp_files/\n")
-        workers = []
-        for index,row in libs.variables.assets_data[["url","name"]].iterrows():
-            workers.append(UpdateFilesThread(self, row["name"], row["url"]))
-        for worker in workers:
-            worker.start()
+        self.m_textCtrl3.AppendText(libs.common.pathery(["assets"])+"\n")
+        messagerella = libs.variables.assets_data.reset()
+        for elem in messagerella:
+            self.m_textCtrl3.AppendText(elem)
+            self.m_textCtrl3.AppendText("\n")
+        try:
+            with open(libs.common.pathery(['assets','sources.csv'])) as csvfile:
+                spamreader = csv.reader(csvfile)
+                for row in spamreader:
+                    if row[0] != "id":
+                        messagerella = []
+                        messagea = []
+                        messageb = []
+                        if row[4] != "standard":
+                            messagea = libs.common.dl_file(row[4],"powerup_"+row[2])
+                            messagerella = messagerella + messagea
+                        if row[5] != "standard":
+                            messageb = libs.common.dl_file(row[5],"kart_"+row[2])
+                            messagerella = messagerella + messageb
+                        if ("Could not retrieve" not in " ".join(messagea) and "Could not retrieve" not in " ".join(messageb)):
+                            if row[0] == "standard" :
+                                libs.variables.assets_data.add_standard(row[2],row[3],row[4],row[5])
+                            else:
+                                libs.variables.assets_data.add_asset(row[0],row[2],row[3],row[4],row[5])
+                        for elem in messagerella:
+                            self.m_textCtrl3.AppendText(elem)
+                            self.m_textCtrl3.AppendText("\n")
+        except:
+            self.m_textCtrl3.AppendText("No asset sources! \n")
+        # workers = []
+        # for index,row in libs.variables.assets_data[["url","name"]].iterrows():
+        #     workers.append(UpdateFilesThread(self, row["name"], row["url"]))
+        # for worker in workers:
+        #     worker.start()
+
+        self.pup_list_update()
 
     def OnUpdateFiles(self, evt):
         self.message_gui(evt.GetValue())
@@ -282,9 +320,10 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
             if libs.variables.ustkl_config.get(libs.variables.ustkl_config.sections()[i],"name") == profile_answer:
                 num=i
 
-
-        self.m_choice2.SetItems(libs.common.powerup_list(libs.variables.ustkl_config.get(libs.variables.ustkl_config.sections()[num], 'type')))
-
+        self.m_choice2.SetItems(
+            libs.variables.assets_data.list_assets(libs.variables.ustkl_config.get(libs.variables.ustkl_config.sections()[num], 'stk-version'))
+            # libs.common.powerup_list(libs.variables.ustkl_config.get(libs.variables.ustkl_config.sections()[num], 'type'))
+            )
         self.m_choice2.SetSelection(0)
 
 
