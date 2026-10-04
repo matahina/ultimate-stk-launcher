@@ -353,13 +353,14 @@ def manage_profile(da_recipe_name,the_type):
                     gitupdate(the_path_a, "assets")
 
                 if config["code"]["type"] == "git" and config["code"]["updatable"]:
-                    gitupdate(the_path_b, "code")
 
                     try:
                         if config["code"]["branch"] != "none":
                             gitbranch(config["code"]["branch"], the_path_b)
                     except:
                         pass
+
+                    gitupdate(the_path_b, "code")
 
                     try:
                         if config["code"]["patch"] != "none":
@@ -392,11 +393,11 @@ def gitcommithash(the_hash, the_path):
     libs.cli.cli.run(command, messengerella)
 
 def gitupdate(the_path, the_type):
-    command = ["git", "-C", the_path, "reset", "--hard"]
-    messengerella = ["","# Reverting "+the_type]
+    command = ["git", "-C", the_path, "fetch", "--prune"]
+    messengerella = ["","# Fetching "+the_type]
     libs.cli.cli.run(command, messengerella)
 
-    command = ["git", "-C", the_path, "pull"]
+    command = ["git", "-C", the_path,  "reset", "--hard", "@{u}"]
     messengerella = ["","# Updating "+the_type]
     libs.cli.cli.run(command, messengerella)
 
