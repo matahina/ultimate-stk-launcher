@@ -351,7 +351,7 @@ def manage_profile(da_recipe_name,the_type):
 
                 elif config["assets"]["type"] == "git" and config["assets"]["updatable"]:
                     gitfetch(the_path_a, "assets")
-                    gitupdate(the_path_a, "assets")
+                    gitupdate(the_path_a, "assets", "@{u}")
 
                 if config["code"]["type"] == "git" and config["code"]["updatable"]:
 
@@ -360,10 +360,14 @@ def manage_profile(da_recipe_name,the_type):
                     try:
                         if config["code"]["branch"] != "none":
                             gitbranch(config["code"]["branch"], the_path_b)
+                            gitupdate(the_path_b,"code","origin/" + config["code"]["branch"])
+                        else:
+                            command = ["git", "-C", the_path_b, "remote", "set-head", "origin", "-a"]
+                            messengerella = ["", "# Updating origin/HEAD"]
+                            libs.cli.cli.run(command, messengerella)
+                            gitupdate(the_path_b, "code", "origin/HEAD")
                     except:
                         pass
-
-                    gitupdate(the_path_b, "code")
 
                     try:
                         if config["code"]["patch"] != "none":
@@ -400,8 +404,8 @@ def gitfetch(the_path, the_type):
     messengerella = ["", "# Fetching " + the_type]
     libs.cli.cli.run(command, messengerella)
 
-def gitupdate(the_path, the_type):
-    command = ["git", "-C", the_path, "reset", "--hard", "@{u}"]
+def gitupdate(the_path, the_type, the_target):
+    command = ["git", "-C", the_path, "reset", "--hard", the_target]
     messengerella = ["", "# Updating " + the_type]
     libs.cli.cli.run(command, messengerella)
 
