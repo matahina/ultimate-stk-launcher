@@ -350,9 +350,12 @@ def manage_profile(da_recipe_name,the_type):
                     svnupdate(the_path_a)
 
                 elif config["assets"]["type"] == "git" and config["assets"]["updatable"]:
+                    gitfetch(the_path_a, "assets")
                     gitupdate(the_path_a, "assets")
 
                 if config["code"]["type"] == "git" and config["code"]["updatable"]:
+
+                    gitfetch(the_path_b, "code")
 
                     try:
                         if config["code"]["branch"] != "none":
@@ -392,15 +395,15 @@ def gitcommithash(the_hash, the_path):
     messengerella = ["","# Go to commit "+the_hash]
     libs.cli.cli.run(command, messengerella)
 
-def gitupdate(the_path, the_type):
+def gitfetch(the_path, the_type):
     command = ["git", "-C", the_path, "fetch", "--prune"]
-    messengerella = ["","# Fetching "+the_type]
+    messengerella = ["", "# Fetching " + the_type]
     libs.cli.cli.run(command, messengerella)
 
-    command = ["git", "-C", the_path,  "reset", "--hard", "@{u}"]
-    messengerella = ["","# Updating "+the_type]
+def gitupdate(the_path, the_type):
+    command = ["git", "-C", the_path, "reset", "--hard", "@{u}"]
+    messengerella = ["", "# Updating " + the_type]
     libs.cli.cli.run(command, messengerella)
-
 
 def svncollect(the_url, the_path):
     if the_url == "standard":
