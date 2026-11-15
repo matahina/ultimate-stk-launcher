@@ -15,6 +15,7 @@ import yaml
 from pathlib import Path
 import libs.cli.variables
 import shlex
+import threading
 
 class color:
    PURPLE = '\033[95m'
@@ -177,26 +178,45 @@ def powerup_update():
 
     try:
         with open(libs.common.pathery(['assets','sources.csv'])) as csvfile:
-            spamreader = csv.reader(csvfile)
-            for row in spamreader:
-                if row[0] != "id":
-                    messagerella = []
-                    messagea = []
-                    messageb = []
-                    if row[4] != "standard":
-                        messagea = libs.common.dl_file(row[4],"powerup_"+row[2])
-                        messagerella = messagerella + messagea
-                    if row[5] != "standard":
-                        messageb = libs.common.dl_file(row[5],"kart_"+row[2])
-                        messagerella = messagerella + messageb
-                    if ("Could not retrieve" not in " ".join(messagea) and "Could not retrieve" not in " ".join(messageb)):
-                        if row[0] == "standard" :
-                            libs.variables.assets_data.add_standard(row[2],row[3],row[4],row[5])
-                        else:
-                            libs.variables.assets_data.add_asset(row[0],row[2],row[3],row[4],row[5])
-                    message(messagerella)
+            rows = [row for row in csv.reader(csvfile) if row[0] != "id"]
+
+        results = {}
+
+        def worker(i,row):
+            messagea = []
+            messageb = []
+
+            if row[4] != "standard":
+                messagea = libs.common.dl_file(row[4],"powerup_"+row[2])
+            if row[5] != "standard":
+                messageb = libs.common.dl_file(row[5],"kart_"+row[2])
+
+            results[i] = (messagea,messageb)
+
+        workers = []
+
+        for i,row in enumerate(rows):
+            workers.append(threading.Thread(target=worker,args=(i,row)))
+
+        for thread in workers:
+            thread.start()
+
+        for thread in workers:
+            thread.join()
+
+        for i,row in enumerate(rows):
+            messagea,messageb = results[i]
+
+            if ("Could not retrieve" not in " ".join(messagea) and "Could not retrieve" not in " ".join(messageb)):
+                if row[0] == "standard":
+                    libs.variables.assets_data.add_standard(row[2],row[3],row[4],row[5])
+                else:
+                    libs.variables.assets_data.add_asset(row[0],row[2],row[3],row[4],row[5])
+
+            message(messagea + messageb)
     except:
         message(["No asset sources!"])
+
     print("")
 
 
@@ -211,10 +231,26 @@ def recipes():
         with open(libs.common.pathery(["assets","tmp_files","recipes.json"])) as jsonfile:
             recipes_file = json.load(jsonfile)
 
+        results = {}
+
+        def worker(elem):
+            da_recipe_name = elem["name"].replace(".yaml","")
+            results[elem["name"]] = libs.common.dl_file(elem["download_url"],da_recipe_name,".yaml","recipes")
+
+        workers = []
+
+        for elem in recipes_file:
+            workers.append(threading.Thread(target=worker,args=(elem,)))
+
+        for thread in workers:
+            thread.start()
+
+        for thread in workers:
+            thread.join()
+
         for elem in recipes_file:
             da_recipe_name = elem["name"].replace(".yaml","")
-            messagerella = []
-            messagerella = messagerella + libs.common.dl_file(elem["download_url"],da_recipe_name,".yaml","recipes")
+            messagerella = results[elem["name"]]
             if ("Could not retrieve" not in " ".join(messagerella) and da_recipe_name != "example"):
                 config = yaml.safe_load(open(
                     libs.common.pathery(["assets","recipes",da_recipe_name+".yaml"])))
@@ -255,9 +291,7 @@ def karts_and_all():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.upd_track:
-                log = libs.common.get_addon(i,"track","update")
-                message(log)
+            get_addons(libs.variables.addon_lib.upd_track,"track","update")
 
     if libs.variables.addon_lib.to_inst_track != []:
         complmt = ""
@@ -273,9 +307,7 @@ def karts_and_all():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.to_inst_track:
-                log = libs.common.get_addon(i,"track","update")
-                message(log)
+            get_addons(libs.variables.addon_lib.to_inst_track,"track","install")
 
 
     if libs.variables.addon_lib.upd_arena != []:
@@ -292,9 +324,8 @@ def karts_and_all():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.upd_arena:
-                log = libs.common.get_addon(i,"arena","update")
-                message(log)
+            get_addons(libs.variables.addon_lib.upd_arena,"arena","update")
+
 
 
 
@@ -312,9 +343,7 @@ def karts_and_all():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.to_inst_arena:
-                log = libs.common.get_addon(i,"arena","install")
-                message(log)
+            get_addons(libs.variables.addon_lib.to_inst_arena,"arena","install")
 
 
     if libs.variables.addon_lib.upd_kart != []:
@@ -331,9 +360,7 @@ def karts_and_all():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.upd_kart:
-                log = libs.common.get_addon(i,"kart","update")
-                message(log)
+            get_addons(libs.variables.addon_lib.upd_kart,"kart","update")
 
 
 
@@ -351,9 +378,7 @@ def karts_and_all():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.to_inst_kart:
-                log = libs.common.get_addon(i,"kart","install")
-                message(log)
+            get_addons(libs.variables.addon_lib.to_inst_kart,"kart","install")
 
 
     print("")
@@ -380,9 +405,8 @@ def addons():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.upd_track:
-                log = libs.common.get_addon(i,"track","update")
-                message(log)
+            get_addons(libs.variables.addon_lib.upd_track,"track","update")
+
 
     if libs.variables.addon_lib.to_inst_track != []:
         options = []
@@ -397,9 +421,7 @@ def addons():
             sel_tracks = []
             for i in selected:
                 sel_tracks.append(libs.variables.addon_lib.to_inst_track[options.index(i)])
-            for j,i in enumerate(sel_tracks):
-                log = libs.common.get_addon(i,"track","install")
-                message(log)
+            get_addons(sel_tracks,"track","install")
 
 
     if libs.variables.addon_lib.upd_arena != []:
@@ -416,9 +438,7 @@ def addons():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.upd_arena:
-                log = libs.common.get_addon(i,"arena","update")
-                message(log)
+            get_addons(libs.variables.addon_lib.upd_arena,"arena","update")
 
 
 
@@ -435,9 +455,7 @@ def addons():
             sel_arenas = []
             for i in selected:
                 sel_arenas.append(libs.variables.addon_lib.to_inst_arena[options.index(i)])
-            for j,i in enumerate(sel_arenas):
-                log = libs.common.get_addon(i,"arena","install")
-                message(log)
+            get_addons(sel_arenas,"arena","install")
 
 
     if libs.variables.addon_lib.upd_kart != []:
@@ -454,9 +472,7 @@ def addons():
         print("")
 
         if index == 0:
-            for i in libs.variables.addon_lib.upd_kart:
-                log = libs.common.get_addon(i,"kart","update")
-                message(log)
+            get_addons(libs.variables.addon_lib.upd_kart,"kart","update")
 
 
 
@@ -473,14 +489,29 @@ def addons():
             sel_karts = []
             for i in selected:
                 sel_karts.append(libs.variables.addon_lib.to_inst_kart[options.index(i)])
-            for j,i in enumerate(sel_karts):
-                log = libs.common.get_addon(i,"kart","install")
-                message(log)
+            get_addons(sel_karts,"kart","install")
 
 
     print("")
     print("")
 
+def get_addons(indices,the_type,the_method):
+    message_lock = threading.Lock()
+
+    def worker(i):
+        message_bloc = libs.common.get_addon(i,the_type,the_method)
+        with message_lock:
+            message(message_bloc)
+
+    workers = []
+    for i in indices:
+        workers.append(threading.Thread(target=worker,args=(i,)))
+
+    for thread in workers:
+        thread.start()
+
+    for thread in workers:
+        thread.join()
 
 def goo():
     title = "Which profile do you want to use today?"

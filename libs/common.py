@@ -355,7 +355,7 @@ def scanerella(the_path,go_depth=True,only_dirs=False):
 
 def copyrella(data_source, new_place = "", is_data = False):
     if new_place == "":
-        new_place = tempfile.mkdtemp()
+        new_place = tempfile.mkdtemp(prefix="ustkl-")
         if is_data:
             Path(new_place,"data").mkdir(parents=True, exist_ok=True)
             new_place = pathery([new_place,"data"])
@@ -443,32 +443,44 @@ def enderella():
     messengerella = []
     messengerella.append("")
     messengerella.append("# Removing tmp files")
-    messengerella.append("rm -R "+"/".join(pathery([libs.variables.data_relocation]).split("/")[:-1]))
-    shutil.rmtree("/".join(pathery([libs.variables.data_relocation]).split("/")[:-1]))
+
+    folders = []
+
+    if libs.variables.data_relocation != "":
+        folders.append(Path(libs.variables.data_relocation).parent)
+
     if libs.variables.assets_relocation != "":
-        messengerella.append("rm -R "+libs.variables.assets_relocation)
-        shutil.rmtree(libs.variables.assets_relocation)
+        folders.append(Path(libs.variables.assets_relocation))
+
+    for folder in folders:
+        if folder.parent.resolve() == Path(tempfile.gettempdir()).resolve() and folder.name.startswith("ustkl-") and not folder.is_symlink():
+            messengerella.append("rm -R "+str(folder))
+            shutil.rmtree(folder)
+        else:
+            messengerella.append("Error: unsafe directory "+str(folder))
+
     messengerella.append("## Dooooone =D")
     libs.variables.assets_relocation = ""
     libs.variables.data_relocation = ""
 
     return messengerella
 
-
 def dl_file(the_url,the_name, the_ext = ".xml",the_dir = ""):
     messengerella = []
     messengerella.append("\n# "+the_name)
-    try:
-        Path.unlink(Path(libs.variables.orig_directory,"assets",the_name+the_ext).expanduser())
-    except:
-        pass
+
+    destination = Path(pathery(["assets",the_dir,the_name+the_ext]))
 
     try:
-        request.urlretrieve(the_url, pathery(["assets",the_dir,the_name+the_ext]))
+        with tempfile.TemporaryDirectory(dir=destination.parent) as tmp_dir:
+            tmp_file = Path(tmp_dir,destination.name)
+            request.urlretrieve(the_url,str(tmp_file))
+            tmp_file.replace(destination)
     except:
         messengerella.append("[Could not retrieve] " + the_url)
     else:
         messengerella.append("[OK] " + the_url)
+
     return messengerella
 
 
@@ -505,45 +517,73 @@ def get_addon(the_index,the_type,the_method):
         the_place = "karts"
 
     messengerella = []
+
+    addon_id = libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)
+
+    # Avoid bad path that might turn later in rm -rf / or rm -rf /$HOME
+    if not addon_id or addon_id in [".", ".."] or "/" in addon_id or "\\" in addon_id:
+        messengerella.append("Error: invalid addon ID")
+        return messengerella
     messengerella = messengerella + dl_file(libs.variables.addon_lib.getavail_by_type(the_type,the_index,2),libs.variables.addon_lib.getavail_by_type(the_type,the_index,0),".zip","tmp_files")
     if not any(["[Could not retrieve]" in element for element in messengerella]):
         try:
-            ##########################!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if Path('~','.local','share','supertuxkart','addons',the_place,libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser().is_dir():
-                shutil.rmtree(str(
-                    Path('~','.local','share','supertuxkart','addons',the_place,libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser()
-                    ))
+            zip_ref = zipfile.ZipFile(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip"]),"r")
         except:
-            messengerella.append("Error at rm -R "+str(
-                    Path('~','.local','share','supertuxkart','addons',the_place,libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser())
-            )
+            messengerella.append("Error can't open zip file!")
         else:
-            messengerella.append("rm -R "+str(
-                    Path('~','.local','share','supertuxkart','addons',the_place,libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).expanduser())
-            )
             try:
-                zip_ref = zipfile.ZipFile(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip"]),"r")
+                tmp_dir = Path(libs.variables.orig_directory,"assets","tmp_files",addon_id)
+                if tmp_dir.is_dir():
+                    shutil.rmtree(tmp_dir)
+                tmp_dir.mkdir(parents=True, exist_ok=False)
             except:
-                messengerella.append("Error can't open zip file!")
+                messengerella.append("Error can't create target dir!")
             else:
+                messengerella.append("Will extract in "+
+                                     pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]))
                 try:
-                    Path(libs.variables.orig_directory,"assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)).mkdir(parents=True, exist_ok=True)
+                    zip_ref.extractall(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]))
+                    # check if zip is valid addon pack!
+                    if not Path(tmp_dir,"kart.xml" if the_type == "kart" else "track.xml").is_file():
+                        raise ValueError("Missing addon definition")
                 except:
-                    messengerella.append("Error can't create target dir!")
+                    messengerella.append("Error can't extract zip!")
                 else:
-                    messengerella.append("Will extract in "+
-                                         pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]))
+                    installed_dir = Path('~','.local','share','supertuxkart','addons',the_place,addon_id).expanduser()
+                    backup_dir = installed_dir.with_name(addon_id+".ustkl-backup")
+
                     try:
-                        zip_ref.extractall(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]))
+                        if backup_dir.exists() or backup_dir.is_symlink():
+                            raise FileExistsError(str(backup_dir))
+
+                        if installed_dir.is_symlink():
+                            raise ValueError("Unexpected symlink")
+
+                        if installed_dir.is_dir():
+                            installed_dir.rename(backup_dir)
+                            messengerella.append("Backup created "+str(backup_dir))
                     except:
-                        messengerella.append("Error can't extract zip!")
+                        messengerella.append("Error backing up "+str(installed_dir))
                     else:
                         try:
-                            brrr=shutil.move(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)]), pathery(['~','.local','share','supertuxkart','addons',the_place],False))
+                            tmp_dir.rename(installed_dir)
                         except:
-                            messengerella.append("Error in mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons',the_place],False))
+                            messengerella.append("Error in mv "+str(tmp_dir)+" "+str(installed_dir))
+                            try:
+                                if backup_dir.is_dir():
+                                    backup_dir.rename(installed_dir)
+                                    messengerella.append("Backup restored "+str(installed_dir))
+                            except:
+                                messengerella.append("Error restoring "+str(backup_dir))
                         else:
-                            messengerella.append("Done mv "+pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)])+" "+pathery(['~','.local','share','supertuxkart','addons',the_place],False))
+                            messengerella.append("Done mv "+str(tmp_dir)+" "+str(installed_dir))
+
+                            try:
+                                if backup_dir.is_dir():
+                                    shutil.rmtree(backup_dir)
+                            except:
+                                messengerella.append("Error removing "+str(backup_dir))
+
                             try:
                                 Path.unlink(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip"]))
                             except:
@@ -580,6 +620,7 @@ def get_addon(the_index,the_type,the_method):
 
 
     return messengerella
+
 
 def break_line(long_string,cut_length):
     trigger_a = False
