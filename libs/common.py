@@ -49,7 +49,7 @@ class AddonLibrary:
 
     def init_stk_tree(self):
         try:
-            self.stk_tree = etree.parse(pathery(["assets","online_assets.xml"]))
+            self.stk_tree = etree.parse(pathery(["assets","online_assets.xml"]), parser=etree.XMLParser(resolve_entities=False,no_network=True))
         except:
             self.stk_tree = []
 
@@ -281,7 +281,7 @@ class OnlineDatabase:
         self.players = []
         self.total_players = 0
         try:
-            self.the_tree = etree.parse(pathery(["assets","online_now.xml"]))
+            self.the_tree = etree.parse(pathery(["assets","online_now.xml"]), parser=etree.XMLParser(resolve_entities=False,no_network=True))
             for elem in self.the_tree.xpath("/get-all/servers/server/server-info"):
                 if elem.get("current_players") != "0":
                     self.players.append([])
