@@ -13,15 +13,15 @@
 
 - On Ubuntu:
 ```
-sudo apt install python3-questionary python3-lxml python3-setproctitle python3-pandas
+sudo apt install python3-questionary python3-lxml python3-setproctitle
 ```
 ```
-sudo apt install --no-install-suggest wxpython-tools python3-pandas # for GUI
+sudo apt install --no-install-suggest wxpython-tools # for GUI
 ```
 
 - On Arch/Manjaro:
 ```
-sudo pacman -S python3-lxml python3-setproctitle python3-pandas
+sudo pacman -S python3-lxml python3-setproctitle
 ```
 ```
 sudo pacman -S python-wxpython # for GUI
