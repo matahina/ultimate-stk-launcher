@@ -549,7 +549,7 @@ def get_addon(the_index,the_type,the_method):
                             else:
                                 messengerella.append("Success "+the_word+" "+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))
                                 try:
-                                    replacement = '<'+the_type+' name="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,1))+'" id="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))+'" designer="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,5))+'" date="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,3))+'" installed="true" installed-revision="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,7))+'" size="'+parser_of_the_year(libs.variables.addon_lib.getavail_by_type(the_type,the_index,8))+'"/>\n'
+                                    replacement = '<'+the_type+' name="'+parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,1))+'" id="'+parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))+'" designer="'+parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,5))+'" date="'+parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,3))+'" installed="true" installed-revision="'+parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,7))+'" size="'+parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,8))+'"/>\n'
                                     #open file1 in reading mode
                                     file1 = open(pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False), 'r')
                                     #open file2 in writing mode
@@ -614,14 +614,13 @@ def quantity(number, action):
         result = result.replace("addon","addons")
     return result+" "
 
-def parser_of_the_year(my_string):
-    not_illegal='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_,".@()[]{{|}}*+'
+def parser_of_the_universe(my_string):
     new_good_string = ""
     for char in my_string:
-        if char in not_illegal:
-            new_good_string+=char
+        if ord(char) >= 128 or char in '&<>" ':
+            new_good_string+=f"&#x{ord(char):X};"
         else:
-            new_good_string+="&#x"+hex(ord((char)))[2:].upper()+";"
+            new_good_string+=char
     return new_good_string
 
 def pathery(the_args,start_from_there=True):
