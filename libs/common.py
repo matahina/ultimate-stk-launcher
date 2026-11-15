@@ -557,7 +557,7 @@ def get_addon(the_index,the_type,the_method):
                                     attributes = {
                                         "id": libs.variables.addon_lib.getavail_by_type(the_type,the_index,0),
                                         "name": libs.variables.addon_lib.getavail_by_type(the_type,the_index,1),
-                                        "designer": libs.variables.addon_lib.getavail_by_type(the_type,the_index,5),
+                                        "designer": libs.variables.addon_lib.getavail_by_type(the_type,the_index,5) or "",
                                         "date": libs.variables.addon_lib.getavail_by_type(the_type,the_index,3),
                                         "installed": "true",
                                         "installed-revision": libs.variables.addon_lib.getavail_by_type(the_type,the_index,7),
