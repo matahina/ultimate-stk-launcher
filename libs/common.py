@@ -100,11 +100,12 @@ class AddonLibrary:
 
     def update_db(self, the_filter=True):
         self.init_stk_tree()
-        self.init_mytree()
 
-        self.init_avail_tracks()
-        self.init_installed_tracks()
-
+        with libs.helpers_xml.xml_lock:
+            self.init_mytree()
+            self.init_installed_tracks()
+            self.init_installed_arenas()
+            self.init_installed_karts()
 
         self.upd_track = []
         self.to_inst_track = []
@@ -112,6 +113,8 @@ class AddonLibrary:
         self.to_inst_arena = []
         self.upd_kart = []
         self.to_inst_kart = []
+
+        self.init_avail_tracks()
 
         if self.installed_tracks != [] and self.avail_tracks != []:
             list_a = [row[0] for row in self.avail_tracks]
@@ -160,7 +163,6 @@ class AddonLibrary:
                 self.to_inst_track=[row[0] for row in self.to_inst_track]
 
         self.init_avail_arenas()
-        self.init_installed_arenas()
 
         if self.installed_arenas != [] and self.avail_arenas != []:
             list_a = [row[0] for row in self.avail_arenas]
@@ -209,7 +211,6 @@ class AddonLibrary:
                 self.to_inst_arena=[row[0] for row in self.to_inst_arena]
 
         self.init_avail_karts()
-        self.init_installed_karts()
 
         if self.installed_karts != [] and self.avail_karts != []:
             list_a = [row[0] for row in self.avail_karts]
@@ -549,40 +550,34 @@ def get_addon(the_index,the_type,the_method):
                                 messengerella.append("Error removing temporary zip file")
                             else:
                                 messengerella.append("Success "+the_word+" "+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))
-                                try:
-                                    replacement = '<'+the_type+' name="'+libs.helpers_xml.parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,1))+'" id="'+libs.helpers_xml.parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))+'" designer="'+libs.helpers_xml.parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,5))+'" date="'+libs.helpers_xml.parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,3))+'" installed="true" installed-revision="'+libs.helpers_xml.parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,7))+'" size="'+libs.helpers_xml.parser_of_the_universe(libs.variables.addon_lib.getavail_by_type(the_type,the_index,8))+'"/>\n'
-                                    #open file1 in reading mode
-                                    file1 = open(pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False), 'r')
-                                    #open file2 in writing mode
-                                    file2 = open(pathery(['~','.local','share','supertuxkart','addons','addons_installed2.xml'],False),'w')
 
-                                    if the_method == "install":
-                                        #read from file1 and write to file2
-                                        for line in file1:
-                                            if "</addons>" in line:
-                                                file2.write(replacement)
-                                            file2.write(line)
-                                    else: #update
-                                        #read from file1 and write to file2
-                                        for line in file1:
-                                            if the_type in line and libs.variables.addon_lib.getavail_by_type(the_type,the_index,0) in line:
-                                                file2.write(replacement)
-                                            else:
-                                                file2.write(line)
-                                    #close file1 and file2
-                                    file1.close()
-                                    file2.close()
-                                    Path.unlink(
-                                        pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False)
-                                        )
-                                    shutil.move(
-                                        pathery(['~','.local','share','supertuxkart','addons','addons_installed2.xml'],False),
-                                        pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False)
-                                        )
+                                xml_path = pathery(['~', '.local', 'share', 'supertuxkart', 'addons', 'addons_installed.xml'], False)
+
+                                try:
+                                    attributes = {
+                                        "id": libs.variables.addon_lib.getavail_by_type(the_type,the_index,0),
+                                        "name": libs.variables.addon_lib.getavail_by_type(the_type,the_index,1),
+                                        "designer": libs.variables.addon_lib.getavail_by_type(the_type,the_index,5),
+                                        "date": libs.variables.addon_lib.getavail_by_type(the_type,the_index,3),
+                                        "installed": "true",
+                                        "installed-revision": libs.variables.addon_lib.getavail_by_type(the_type,the_index,7),
+                                        "size": libs.variables.addon_lib.getavail_by_type(the_type,the_index,8)
+                                    }
+                                    with libs.helpers_xml.xml_lock:
+                                        libs.variables.addon_lib.init_mytree()
+                                        tree = libs.variables.addon_lib.mytree
+
+                                        if tree == []:
+                                            raise ValueError("Could not read installed addons")
+
+                                        libs.helpers_xml.update_installed_addon(xml_path, the_type, attributes, tree)
+
                                 except:
-                                    messengerella.append("Error updating "+pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False))
+                                    messengerella.append("Error updating " + xml_path)
+
                                 else:
-                                    messengerella.append("Success updating "+pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False))
+                                    messengerella.append("Success updating " + xml_path)
+
 
     return messengerella
 
