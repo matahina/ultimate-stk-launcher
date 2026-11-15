@@ -615,3 +615,22 @@ def pathery(the_args,start_from_there=True):
         return str(Path(libs.variables.orig_directory,*the_args).expanduser())
     else:
         return str(Path(*the_args).expanduser())
+
+
+def cleanup_addons():
+    messengerella = []
+
+    try:
+        removed, skipped = libs.helpers_xml.clean_addon_database(
+            pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False),
+            libs.variables.addon_lib.stk_tree
+        )
+    except Exception as error:
+        messengerella.append("Error cleaning addon database")
+    else:
+        messengerella.append("Removed "+str(removed)+" XML entries")
+
+        for addon_id in skipped:
+            messengerella.append("Skipped "+addon_id)
+
+    return messengerella

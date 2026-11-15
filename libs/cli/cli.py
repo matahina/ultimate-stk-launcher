@@ -49,6 +49,7 @@ def menu():
     options = ['STÖÖÖÖRT STK',
                 'Update powerups, recipes and addons',
                 'Update STK from git and svn',
+                'Cleanup addons_installed.xml',
                 'Tweak your profiles',
                 'Do another install',
                 "See who's online",
@@ -71,22 +72,25 @@ def menu():
         updaterella()
         menu()
     elif index == 3:
+        message(libs.common.cleanup_addons())
+        menu()
+    elif index == 4:
         messengerella = []
         messengerella.append("## Profiles Tuning")
         messengerella.append("Do it yourself :p")
         messengerella.append("Have fun at: "+libs.common.pathery(["magic_libs.variables.ustkl_config.ini"]))
         message(messengerella)
         menu()
-    elif index == 4:
+    elif index == 5:
         installerella()
         menu()
-    elif index == 5:
+    elif index == 6:
         playerella()
         menu()
-    elif index == 6:
+    elif index == 7:
         karts_and_all()
         menu()
-    elif index == 7:
+    elif index == 8:
         print()
         exit()
 
