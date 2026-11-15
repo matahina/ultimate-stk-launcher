@@ -11,7 +11,6 @@ import shutil
 import zipfile
 from configparser import ConfigParser
 from lxml import etree
-import xml.etree.ElementTree as ET
 import ipaddress
 import pycountry
 import subprocess
@@ -43,7 +42,7 @@ class AddonLibrary:
 
     def init_mytree(self):
         try:
-            self.mytree = ET.parse(pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False))
+            self.mytree = etree.parse(pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False))
         except:
             self.mytree = []
 
