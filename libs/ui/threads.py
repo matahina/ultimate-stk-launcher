@@ -114,10 +114,14 @@ class GearsThread(threading.Thread):
                     try:
                         os.kill(elem,0)
                         running_stk = True
-                    except:
+                    except ProcessLookupError:
                         pass
-            except:
+                    except Exception:
+                        libs.variables.mylog.exception("Error checking STK process")
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
                 pass
+            except Exception:
+                libs.variables.mylog.exception("Error scanning STK processes")
 
         evt = GearsEvent(myEVT_GEARS, -1, value=self._revert_list)
         wx.PostEvent(self._parent, evt)

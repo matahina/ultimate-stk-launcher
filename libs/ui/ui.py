@@ -292,7 +292,8 @@ class LaunchApp(libs.ui.uSTKl_gui.MainFrame):
                         for elem in messagerella:
                             self.m_textCtrl3.AppendText(elem)
                             self.m_textCtrl3.AppendText("\n")
-        except:
+        except Exception:
+            libs.variables.mylog.exception("Error updating powerup assets")
             self.m_textCtrl3.AppendText("No asset sources! \n")
         # workers = []
         # for index,row in libs.variables.assets_data[["url","name"]].iterrows():

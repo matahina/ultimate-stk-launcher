@@ -102,7 +102,7 @@ def manage_profile(da_recipe_name,the_type):
                                 f = open(libs.common.pathery([title, "test.txt"],False), "a")
                                 f.close()
                                 Path.unlink(libs.common.pathery([title, "test.txt"],False))
-                            except:
+                            except Exception:
                                 main_path_writable = False
                             options_filtered.append("..")
                             for elem in options:
@@ -268,7 +268,8 @@ def manage_profile(da_recipe_name,the_type):
                                     try:
                                         Path.unlink(libs.common.pathery(["assets","tmp_files",the_release+the_file_ext]))
                                         messengerella.append("OK!")
-                                    except:
+                                    except Exception:
+                                        libs.variables.mylog.exception("Error removing archive file")
                                         messengerella.append("Error removing archive file")
 
                                     libs.cli.cli.message(messengerella)
@@ -297,20 +298,23 @@ def manage_profile(da_recipe_name,the_type):
                                 try:
                                     if config["code"]["branch"] != "none":
                                         gitbranch(config["code"]["branch"], the_path_b)
-                                except:
+                                except Exception:
+                                    libs.variables.mylog.exception("Error selecting git branch")
                                     pass
 
                                 try:
                                     if config["code"]["commit"] != "none":
                                         gitcommithash(config["code"]["commit"], the_path_b)
 
-                                except:
+                                except Exception:
+                                    libs.variables.mylog.exception("Error selecting git commit")
                                     pass
 
                                 try:
                                     if config["code"]["patch"] != "none":
                                         patcheroo(config["code"]["patch"], the_path_b)
-                                except:
+                                except Exception:
+                                    libs.variables.mylog.exception("Error applying git patch")
                                     pass
 
                                 compileroo(config["code"]["cmake_options"], the_path_b)
@@ -337,7 +341,8 @@ def manage_profile(da_recipe_name,the_type):
             try:
                 config = yaml.safe_load(open(libs.common.pathery(["assets","recipes",libs.variables.ustkl_config.get(da_recipe_name,'type')+".yaml"])))
 
-            except:
+            except Exception:
+                libs.variables.mylog.exception("Error loading profile recipe")
                 libs.cli.cli.message(["Recipe not found!!!"])
                 stop_now = True
 
@@ -366,13 +371,15 @@ def manage_profile(da_recipe_name,the_type):
                             messengerella = ["", "# Updating origin/HEAD"]
                             libs.cli.cli.run(command, messengerella)
                             gitupdate(the_path_b, "code", "origin/HEAD")
-                    except:
+                    except Exception:
+                        libs.variables.mylog.exception("Error updating git code")
                         pass
 
                     try:
                         if config["code"]["patch"] != "none":
                             patcheroo(config["code"]["patch"], the_path_b)
-                    except:
+                    except Exception:
+                        libs.variables.mylog.exception("Error applying git patch")
                         pass
 
                     compileroo(config["code"]["cmake_options"], the_path_b)

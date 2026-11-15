@@ -214,7 +214,8 @@ def powerup_update():
                     libs.variables.assets_data.add_asset(row[0],row[2],row[3],row[4],row[5])
 
             message(messagea + messageb)
-    except:
+    except Exception:
+        libs.variables.mylog.exception("Error updating powerup assets")
         message(["No asset sources!"])
 
     print("")
@@ -264,7 +265,8 @@ def recipes():
                                                        config['assets']['updatable'] or config['code']['updatable']
                                                        )
             message(messagerella)
-    except:
+    except Exception:
+        libs.variables.mylog.exception("Error updating recipes")
         message(["No recipe sources!"])
     print("")
 
@@ -613,7 +615,7 @@ def get_nproc():
         computer_says = int(subprocess.check_output(['nproc']).decode("utf-8").replace("\n",""))-1
         if computer_says > 1:
             result = str(computer_says)
-    except:
+    except Exception:
         pass
 
     return result

@@ -6,6 +6,7 @@ from copy import deepcopy
 from lxml import etree
 from threading import Lock
 import shutil
+import logging
 from pathlib import Path
 
 xml_lock = Lock()
@@ -197,6 +198,7 @@ def clean_addon_database(filename, catalogue_tree):
 
                 # other errors than I/O file error, xml syntax or bad type should break cleanup
                 except (OSError, etree.XMLSyntaxError, ValueError):
+                    logging.getLogger("ustkl").exception("Skipping invalid addon "+addon_id)
                     skipped.append(addon_id)
                     continue
 

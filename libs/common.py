@@ -44,13 +44,15 @@ class AddonLibrary:
     def init_mytree(self):
         try:
             self.mytree = etree.parse(pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False))
-        except:
+        except Exception:
+            libs.variables.mylog.exception("Error reading installed addons XML")
             self.mytree = []
 
     def init_stk_tree(self):
         try:
             self.stk_tree = etree.parse(pathery(["assets","online_assets.xml"]), parser=etree.XMLParser(resolve_entities=False,no_network=True))
-        except:
+        except Exception:
+            libs.variables.mylog.exception("Error reading online addons XML")
             self.stk_tree = []
 
     def init_avail_tracks(self):
@@ -127,7 +129,8 @@ class AddonLibrary:
                     indices = ([i for i, x in enumerate(list_a) if x == track])
                     maxi = 0
                     idx_online = 0
-                except:
+                except Exception:
+                    libs.variables.mylog.exception("Error selecting track revision")
                     pass
                 else:
                     for i in indices:
@@ -175,7 +178,8 @@ class AddonLibrary:
                     indices = ([i for i, x in enumerate(list_a) if x == arena])
                     maxi = 0
                     idx_online = 0
-                except:
+                except Exception:
+                    libs.variables.mylog.exception("Error selecting arena revision")
                     pass
                 else:
                     for i in indices:
@@ -223,7 +227,8 @@ class AddonLibrary:
                     indices = ([i for i, x in enumerate(list_a) if x == kart])
                     maxi = 0
                     idx_online = 0
-                except:
+                except Exception:
+                    libs.variables.mylog.exception("Error selecting kart revision")
                     pass
                 else:
                     for i in indices:
@@ -289,7 +294,7 @@ class OnlineDatabase:
                         line = ""
                         try:
                             rank = "(rank: " + subelem.get("rank") +")"
-                        except:
+                        except Exception:
                             rank = ""
                         line = line + subelem.get("username") + " " + pycountry.countries.get(alpha_2=subelem.get("country-code")).flag + " "+ rank
                         self.players[-1].append(line)
@@ -339,7 +344,8 @@ class OnlineDatabase:
             self.total_players = 0
             for elem in self.players:
                 self.total_players = self.total_players + len(elem)
-        except:
+        except Exception:
+            libs.variables.mylog.exception("Error reading online server database")
             pass
 
 def scanerella(the_path,go_depth=True,only_dirs=False):
@@ -476,7 +482,8 @@ def dl_file(the_url,the_name, the_ext = ".xml",the_dir = ""):
             tmp_file = Path(tmp_dir,destination.name)
             request.urlretrieve(the_url,str(tmp_file))
             tmp_file.replace(destination)
-    except:
+    except Exception:
+        libs.variables.mylog.exception("Could not retrieve "+the_url)
         messengerella.append("[Could not retrieve] " + the_url)
     else:
         messengerella.append("[OK] " + the_url)
@@ -528,7 +535,8 @@ def get_addon(the_index,the_type,the_method):
     if not any(["[Could not retrieve]" in element for element in messengerella]):
         try:
             zip_ref = zipfile.ZipFile(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip"]),"r")
-        except:
+        except Exception:
+            libs.variables.mylog.exception("Error opening addon ZIP "+addon_id)
             messengerella.append("Error can't open zip file!")
         else:
             try:
@@ -536,7 +544,8 @@ def get_addon(the_index,the_type,the_method):
                 if tmp_dir.is_dir():
                     shutil.rmtree(tmp_dir)
                 tmp_dir.mkdir(parents=True, exist_ok=False)
-            except:
+            except Exception:
+                libs.variables.mylog.exception("Error creating temporary addon directory "+addon_id)
                 messengerella.append("Error can't create target dir!")
             else:
                 messengerella.append("Will extract in "+
@@ -546,7 +555,8 @@ def get_addon(the_index,the_type,the_method):
                     # check if zip is valid addon pack!
                     if not Path(tmp_dir,"kart.xml" if the_type == "kart" else "track.xml").is_file():
                         raise ValueError("Missing addon definition")
-                except:
+                except Exception:
+                    libs.variables.mylog.exception("Error extracting addon ZIP "+addon_id)
                     messengerella.append("Error can't extract zip!")
                 else:
                     installed_dir = Path('~','.local','share','supertuxkart','addons',the_place,addon_id).expanduser()
@@ -562,18 +572,21 @@ def get_addon(the_index,the_type,the_method):
                         if installed_dir.is_dir():
                             installed_dir.rename(backup_dir)
                             messengerella.append("Backup created "+str(backup_dir))
-                    except:
+                    except Exception:
+                        libs.variables.mylog.exception("Error backing up "+str(installed_dir))
                         messengerella.append("Error backing up "+str(installed_dir))
                     else:
                         try:
                             tmp_dir.rename(installed_dir)
-                        except:
+                        except Exception:
+                            libs.variables.mylog.exception("Error moving "+str(tmp_dir)+" to "+str(installed_dir))
                             messengerella.append("Error in mv "+str(tmp_dir)+" "+str(installed_dir))
                             try:
                                 if backup_dir.is_dir():
                                     backup_dir.rename(installed_dir)
                                     messengerella.append("Backup restored "+str(installed_dir))
-                            except:
+                            except Exception:
+                                libs.variables.mylog.exception("Error restoring "+str(backup_dir))
                                 messengerella.append("Error restoring "+str(backup_dir))
                         else:
                             messengerella.append("Done mv "+str(tmp_dir)+" "+str(installed_dir))
@@ -581,12 +594,14 @@ def get_addon(the_index,the_type,the_method):
                             try:
                                 if backup_dir.is_dir():
                                     shutil.rmtree(backup_dir)
-                            except:
+                            except Exception:
+                                libs.variables.mylog.exception("Error removing "+str(backup_dir))
                                 messengerella.append("Error removing "+str(backup_dir))
 
                             try:
                                 Path.unlink(pathery(["assets","tmp_files",libs.variables.addon_lib.getavail_by_type(the_type,the_index,0)+".zip"]))
-                            except:
+                            except Exception:
+                                libs.variables.mylog.exception("Error removing temporary ZIP "+addon_id)
                                 messengerella.append("Error removing temporary zip file")
                             else:
                                 messengerella.append("Success "+the_word+" "+libs.variables.addon_lib.getavail_by_type(the_type,the_index,0))
@@ -612,7 +627,8 @@ def get_addon(the_index,the_type,the_method):
 
                                         libs.helpers_xml.update_installed_addon(xml_path, the_type, attributes, tree)
 
-                                except:
+                                except Exception:
+                                    libs.variables.mylog.exception("Error updating "+xml_path)
                                     messengerella.append("Error updating " + xml_path)
 
                                 else:
@@ -666,7 +682,8 @@ def cleanup_addons():
             pathery(['~','.local','share','supertuxkart','addons','addons_installed.xml'],False),
             libs.variables.addon_lib.stk_tree
         )
-    except Exception as error:
+    except Exception:
+        libs.variables.mylog.exception("Error cleaning addon database")
         messengerella.append("Error cleaning addon database")
     else:
         messengerella.append("Removed "+str(removed)+" XML entries")
