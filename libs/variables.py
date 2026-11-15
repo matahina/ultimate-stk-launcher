@@ -50,7 +50,7 @@ def init():
         "wip-karts",
         "wip-library",
         "wip-tracks"]
-    version = "2025.09.beta3"
+    version = "2026.12.beta1"
     mylog = logging.getLogger("ustkl")
     mylogfile = libs.common.pathery(["logs",datetime.datetime.now().strftime("%Y%m%d_%H%M%S")+'.log'])
     logging.basicConfig(filename=mylogfile, encoding='utf-8', level=logging.DEBUG, format="%(asctime)s | %(message)s")
