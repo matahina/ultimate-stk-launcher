@@ -351,6 +351,32 @@ def manage_profile(da_recipe_name,the_type):
                 the_path_a = libs.variables.ustkl_config.get(da_recipe_name,'assets_path')
                 the_path_b = libs.variables.ustkl_config.get(da_recipe_name,'code_path')
 
+                clean_build = False
+
+                if config["code"]["type"] == "git" and config["code"]["updatable"]:
+                    options = [
+                        "NÖÖÖ",
+                        "YES!",
+                        libs.cli.variables.go_back_string
+                    ]
+
+                    option = questionary.select(
+                        "Full rebuild??? (rm -rf cmake_build/)".upper(),
+                        options
+                    ).ask()
+
+                    if option is None or option == libs.cli.variables.go_back_string:
+                        return
+
+                    clean_build = (option == "YES!")
+
+                    if clean_build:
+                        code_path = Path(the_path_b).expanduser()
+
+                        if not the_path_b.strip() or not code_path.is_absolute() or not code_path.is_dir():
+                            libs.cli.cli.message(["Invalid code_path! Full rebuild aborted."])
+                            return
+
                 if config["assets"]["type"] == "standard":
                     svnupdate(the_path_a)
 
@@ -381,6 +407,16 @@ def manage_profile(da_recipe_name,the_type):
                     except Exception:
                         libs.variables.mylog.exception("Error applying git patch")
                         pass
+
+                    if clean_build:
+                        build_path = libs.common.pathery([the_path_b,"cmake_build"],False)
+                        command = ["rm", "-rf", "--", build_path]
+                        messengerella = ["", "# Cleaning cmake_build"]
+                        libs.cli.cli.run(command, messengerella)
+
+                        if Path(build_path).exists() or Path(build_path).is_symlink():
+                            libs.cli.cli.message(["Error cleaning cmake_build"])
+                            return
 
                     compileroo(config["code"]["cmake_options"], the_path_b)
 
