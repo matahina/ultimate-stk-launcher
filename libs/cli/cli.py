@@ -583,11 +583,14 @@ def goo():
 
                 messengerella = ["# Running executable"]
 
-                run([command]+suffix, messengerella)
-
-                messengerella = libs.common.enderella()
-
-                message(messengerella)
+                try:
+                    run([command]+suffix, messengerella)
+                except subprocess.CalledProcessError as error:
+                    libs.variables.mylog.exception("Error running STK")
+                    message([str(error)], err=True)
+                finally:
+                    messengerella = libs.common.enderella()
+                    message(messengerella)
 
 def run(the_command, the_message):
 
@@ -607,6 +610,10 @@ def run(the_command, the_message):
                 re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])').sub('',
                                                                          str(output.strip()))
                                                 ])
+        process.wait()
+
+        if process.returncode != 0:
+            raise subprocess.CalledProcessError(process.returncode, the_command)
 
 def get_nproc():
 
